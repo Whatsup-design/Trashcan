@@ -1,0 +1,328 @@
+/* components/layout/Sidebar.module.css */
+
+/* ── CSS Variables ───────────────────────────────────────── */
+.sidebar {
+  --blue:        #1177FE;
+  --blue-light:  #48B7FF;
+  --blue-bg:     rgba(17, 119, 254, 0.08);
+  --border:      #e8edf3;
+  --text-main:   #1e293b;
+  --text-muted:  #94a3b8;
+  --text-active: #1177FE;
+  --bg:          #ffffff;
+  --hover-bg:    #f4f7fb;
+  --radius:      12px;
+  --collapsed-w: 68px;
+  --expanded-w:  240px;
+  --transition:  all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Desktop sidebar ─────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--collapsed-w);
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  box-shadow: 2px 0 16px rgba(17, 119, 254, 0.05);
+  overflow: hidden;
+  transition: var(--transition);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar:hover,
+.sidebar.expanded {
+  width: var(--expanded-w);
+}
+
+/* ── Mobile: hidden by default ───────────────────────────── */
+@media (max-width: 767px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: var(--expanded-w);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.mobileOpen {
+    transform: translateX(0);
+  }
+
+  /* ── Mobile: show everything when open, no hover needed ── */
+  .sidebar.mobileOpen .navLabel {
+    opacity: 1;
+    width: 140px;
+  }
+
+  .sidebar.mobileOpen .sectionLabel {
+    opacity: 1;
+    height: 20px;
+  }
+
+  .sidebar.mobileOpen .adminBadgeInner {
+    opacity: 1;
+  }
+
+  .sidebar.mobileOpen .logoMark {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ── Inner scroll container ──────────────────────────────── */
+.inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 8px;
+  overflow: hidden;
+}
+
+/* ── Brand ───────────────────────────────────────────────── */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  margin-bottom: 32px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+.logoMark {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  object-fit: contain;
+  transition: var(--transition);
+}
+
+.sidebar:hover .logoMark {
+  width: 80px;
+  height: 80px;
+}
+
+/* ── Section label ───────────────────────────────────────── */
+.sectionLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 12px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  height: 0;
+  transition: var(--transition);
+}
+
+.sidebar:hover .sectionLabel,
+.sidebar.expanded .sectionLabel {
+  opacity: 1;
+  height: 20px;
+}
+
+/* ── Nav sections ────────────────────────────────────────── */
+.section {
+  margin-bottom: 20px;
+}
+
+.generalSection {
+  flex: 1;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 12px 20px;
+  opacity: 0.6;
+}
+
+/* ── Nav item ────────────────────────────────────────────── */
+.navItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+  margin-bottom: 2px;
+}
+
+.navItem:hover {
+  background: var(--hover-bg);
+  color: var(--text-main);
+}
+
+.navItem.active {
+  background: var(--blue-bg);
+  color: var(--text-active);
+}
+
+/* Active left bar */
+.navItem.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: 0 3px 3px 0;
+  background: var(--blue);
+}
+
+/* ── Nav icon ────────────────────────────────────────────── */
+.navIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) invert(60%);
+  transition: filter 0.18s ease;
+}
+
+.navItem:hover .navIcon {
+  filter: brightness(0) invert(30%);
+}
+
+.navItem.active .navIcon {
+  filter: brightness(0) saturate(100%)
+    invert(27%) sepia(98%) saturate(1600%)
+    hue-rotate(208deg) brightness(102%) contrast(101%);
+}
+
+/* ── Nav label ───────────────────────────────────────────── */
+.navLabel {
+  font-size: 13.5px;
+  font-weight: 500;
+  overflow: hidden;
+  opacity: 0;
+  width: 0;
+  transition: var(--transition);
+  color: inherit;
+}
+
+.sidebar:hover .navLabel,
+.sidebar.expanded .navLabel {
+  opacity: 1;
+  width: 140px;
+}
+
+/* ── Admin badge ─────────────────────────────────────────── */
+.adminBadge {
+  margin-top: auto;
+  padding-top: 12px;
+  overflow: hidden;
+}
+
+.adminBadgeInner {
+  background: linear-gradient(135deg, rgba(17,119,254,0.08), rgba(72,183,255,0.08));
+  border: 1px solid rgba(17, 119, 254, 0.15);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.2s ease 0.1s;
+  white-space: nowrap;
+}
+
+.sidebar:hover .adminBadgeInner,
+.sidebar.expanded .adminBadgeInner {
+  opacity: 1;
+}
+
+.adminAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1177FE, #48B7FF);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adminInfo {
+  overflow: hidden;
+}
+
+.adminName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.adminRole {
+  font-size: 10px;
+  color: var(--blue);
+  font-weight: 500;
+}
+
+/* ── Mobile overlay ──────────────────────────────────────── */
+.overlay {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(2px);
+    z-index: 39;
+  }
+}
+
+/* ── Hamburger button ────────────────────────────────────── */
+.hamburger {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 50;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    cursor: pointer;
+    color: #64748b;
+    transition: color 0.15s ease;
+  }
+
+  .hamburger:hover {
+    color: #1177FE;
+  }
+
+  .hamburger svg {
+    width: 18px;
+    height: 18px;
+  }
+}

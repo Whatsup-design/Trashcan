@@ -1,0 +1,54 @@
+/* components/dashboard/StatCard.module.css */
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e8edf3;
+  border-radius: 16px;
+  padding: 28px 24px;  /* เพิ่มจาก 20px */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+}
+
+/* ── แถบสีด้านซ้าย ─────────────────────────────────────── */
+.accentBar {
+  width: 4px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.accentBlue   { background: #1177FE; }
+.accentSky    { background: #48B7FF; }
+.accentGreen  { background: #22c55e; }
+.accentOrange { background: #f97316; }
+
+/* ── Content ─────────────────────────────────────────────── */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 0;
+}
+
+.value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+}

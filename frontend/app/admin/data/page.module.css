@@ -1,0 +1,23 @@
+/* app/admin/data/page.module.css */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.heading { display: flex; flex-direction: column; gap: 4px; }
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+
+.sub {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
+}

@@ -1,0 +1,52 @@
+/* app/(admin)/dashboard/page.module.css */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Heading ─────────────────────────────────────────────── */
+.heading { display: flex; flex-direction: column; gap: 4px; }
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+
+.sub {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Stat Cards Grid ─────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* เพิ่มจาก 160px */
+  gap: 16px;
+}   
+
+/* ── Mobile only ─────────────────────────────────────────── */
+.mobileOnly { display: none; }
+
+/* ── Bottom row — Activity + Feedback ───────────────────── */
+.bottomRow {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.wide   { flex: 2; min-width: 0; }
+.narrow { flex: 1; min-width: 0; }
+.narrow     { width: 100%; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .statsGrid  { display: none; }
+  .mobileOnly { display: block; }
+  .bottomRow  { flex-direction: column; }
+}

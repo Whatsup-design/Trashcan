@@ -1,0 +1,38 @@
+/* components/dashboard/MobileCarousel.module.css */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* viewport ต้อง overflow: hidden เสมอ — embla requirement */
+.viewport {
+  overflow: hidden;
+}
+
+/* container เป็น flex row — embla จะ translate มันเพื่อ swipe */
+.container {
+  display: flex;
+  gap: 12px;
+}
+
+/* แต่ละ slide — กว้าง 80% ของ viewport ทำให้เห็น slide ถัดไปนิดนึง */
+.slide {
+  flex: 0 0 80%;
+  min-width: 0;
+}
+
+/* ── Dot indicators ──────────────────────────────────────── */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e2e8f0;
+}

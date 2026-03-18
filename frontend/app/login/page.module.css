@@ -1,0 +1,120 @@
+/* app/login/page.module.css */
+
+/* ── Full page center ────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f6ff 0%, #e8f4ff 50%, #f5f0ff 100%);
+  padding: 20px;
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 40px rgba(17, 119, 254, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Logo ────────────────────────────────────────────────── */
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.appName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.appSub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.activeTab {
+  background: #fff;
+  color: #1177FE;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: #e8edf3;
+}
+
+.dividerText {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ── Demo hint ───────────────────────────────────────────── */
+.hint {
+  text-align: center;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.hint p {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.hint code {
+  background: #e8edf3;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #1177FE;
+}

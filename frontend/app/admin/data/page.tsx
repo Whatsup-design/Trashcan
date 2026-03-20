@@ -2,7 +2,7 @@
 // Server Component — mockup data อยู่ที่นี่
 // ตอน connect Supabase แก้แค่ mockData array ด้านล่างครับ
 
-import DataTable, { type DataRow } from "@/components/Data/DataTable";
+import DataTable, { type DataRow } from "@/components/RouterAdmin/Data/DataTable";
 import styles from "./page.module.css";
 
 // ── Mockup data 20 rows ───────────────────────────────────

@@ -6,8 +6,8 @@
 "use client";
 
 import { useState } from "react";
-import BottleSummary, { type BottleSummaryData } from "@/components/Bottle/BottleSummary";
-import BottleChart,   { type BottleChartData   } from "@/components/Bottle/BottleChart";
+import BottleSummary, { type BottleSummaryData } from "@/components/RouterAdmin/Bottle/BottleSummary";
+import BottleChart,   { type BottleChartData   } from "@/components/RouterAdmin/Bottle/BottleChart";
 import styles from "./page.module.css";
 
 // ── Mockup Summary Data ───────────────────────────────────

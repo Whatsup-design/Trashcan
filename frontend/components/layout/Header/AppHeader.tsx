@@ -8,6 +8,7 @@
 import Logout from "./Logout/Logout";
 import styles from "./AppHeader.module.css";
 import Bell from "./Bells/bell";
+import Searchbar from "./Search/Searchbar";
 
 export default function AppHeader() {
   return (
@@ -22,16 +23,9 @@ export default function AppHeader() {
       <div className={styles.headerRight}>
 
         {/* Search */}
-        <button className={styles.iconBtn} aria-label="Search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-        </button>
-
+        <Searchbar />
         {/* Bell */}
         <Bell />
-
         {/* Logout — แยกเป็น component มี confirm dialog */}
         <Logout />
 

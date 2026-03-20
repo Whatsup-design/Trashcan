@@ -2,10 +2,10 @@
 // Server Component — fetch ข้อมูลครั้งเดียว แล้วส่ง props ลงไป
 
 import { getDashboardData } from "@/lib/DashboardData";
-import StatCard       from "@/components/dashboard/StatCard";
-import ActivityTable  from "@/components/dashboard/ActivityTable";
-import FeedbackCard   from "@/components/dashboard/FeedbackCard";
-import MobileCarousel from "@/components/dashboard/MobileCarousel";
+import StatCard       from "@/components/RouterAdmin/dashboard/StatCard";
+import ActivityTable  from "@/components/RouterAdmin/dashboard/ActivityTable";
+import FeedbackCard   from "@/components/RouterAdmin/dashboard/FeedbackCard";
+import MobileCarousel from "@/components/RouterAdmin/dashboard/MobileCarousel";
 import styles         from "./page.module.css";
 
 export default async function DashboardPage() {

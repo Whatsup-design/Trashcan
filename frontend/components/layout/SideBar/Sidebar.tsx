@@ -12,10 +12,11 @@ function LogoMark() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/IconLogo.jpg"
+      src="/enviroment_Logo.jpg"
       alt="Trashcan Smart"
-      className={styles.logoWrap}
+      className={styles.logoMark}  // ← className ถูก
     />
+    // ไม่มี div ห่อ — CSS hover ทำงานได้ตรงๆ
   );
 }
 

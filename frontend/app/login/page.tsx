@@ -1,71 +1,57 @@
 // app/login/page.tsx
 // ─────────────────────────────────────────────────────────
-// Login page — Tab สลับระหว่าง Login และ Register
-// เช็ค session ตอนโหลด ถ้ามีแล้ว redirect ทันที
-// "use client" เพราะมี tab state + เช็ค session
+// Landing — เลือกว่าเป็นใคร
 // ─────────────────────────────────────────────────────────
-"use client";
-
-import { useState, useEffect } from "react";
-import LoginForm    from "@/components/auth/LoginForm";
-import RegisterForm from "@/components/auth/RegisterForm";
-import GoogleButton from "@/components/auth/GoogleButton";
+import Link from "next/link";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
-  const [tab, setTab] = useState<"login" | "register">("login");
-
   return (
     <div className={styles.page}>
-
-      {/* ── Card กลางหน้าจอ ──────────────────────────── */}
       <div className={styles.card}>
 
-        {/* ── Logo ────────────────────────────────────── */}
+        {/* ── Logo ──────────────────────────────────── */}
         <div className={styles.logoWrap}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/IconLogo.jpg" alt="Trashcan Smart" className={styles.logo} />
+          <img src="/enviroment_Logo.jpg" alt="Trashcan Smart" className={styles.logo} />
           <div>
             <p className={styles.appName}>Trashcan Smart</p>
-            <p className={styles.appSub}>Admin & User Portal</p>
+            <p className={styles.appSub}>Please select your account type</p>
           </div>
         </div>
 
-        {/* ── Tab switch: Login / Register ────────────── */}
-        <div className={styles.tabs}>
-          <button
-            className={`${styles.tab} ${tab === "login" ? styles.activeTab : ""}`}
-            onClick={() => setTab("login")}
-            type="button"
-          >
-            Sign In
-          </button>
-          <button
-            className={`${styles.tab} ${tab === "register" ? styles.activeTab : ""}`}
-            onClick={() => setTab("register")}
-            type="button"
-          >
-            Register
-          </button>
+        {/* ── Choose type ───────────────────────────── */}
+        <div className={styles.choices}>
+
+          {/* Student / Staff */}
+          <Link href="/login/students" className={styles.choiceCard}>
+            <img className={styles.choiceIcon} src="/kajonkietschool_Logo (1).png" alt="Student" width={24} style={{ margin : '4.5px' }} />
+            <div className={styles.choiceText}>
+              <p className={styles.choiceTitle}>Student & Staff</p>
+              <p className={styles.choiceSub}>Login with Student ID or Staff ID</p>
+            </div>
+            <span className={styles.arrow}>→</span>
+          </Link>
+
+          {/* External */}
+          <Link href="/login/external" className={`${styles.choiceCard} ${styles.disabled}`}>
+            <span className={styles.choiceIcon}>👤</span>
+            <div className={styles.choiceText}>
+              <p className={styles.choiceTitle}>External / Visitor</p>
+              <p className={styles.choiceSub}>Guardian · Line Point (coming soon)</p>
+            </div>
+            <span className={styles.comingSoon}>Soon</span>
+          </Link>
+
         </div>
 
-        {/* ── Form ────────────────────────────────────── */}
-        {tab === "login" ? <LoginForm /> : <RegisterForm />}
-
-        {/* ── Divider ─────────────────────────────────── */}
-        <div className={styles.divider}>
-          <span className={styles.dividerLine} />
-          <span className={styles.dividerText}>or</span>
-          <span className={styles.dividerLine} />
-        </div>
-
-        {/* ── Google button ───────────────────────────── */}
-        <GoogleButton />
-
-        {/* ── Hint สำหรับ mockup ──────────────────────── */}
-        <div className={styles.hint}>
-          <p>Demo: <code>admin / 1234</code> or <code>user / 1234</code></p>
-        </div>
+        {/* ── Admin hint ─────────────────────────────── */}
+        <p className={styles.adminHint}>
+          Admin?{" "}
+          <Link href="/login/students" className={styles.adminLink}>
+            Sign in here
+          </Link>
+        </p>
 
       </div>
     </div>

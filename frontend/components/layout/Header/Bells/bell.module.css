@@ -1,0 +1,186 @@
+/* components/layout/Bell.module.css */
+
+/* ── Bell button ─────────────────────────────────────────── */
+.iconBtn {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.iconBtn:hover {
+  background: #f1f5f9;
+  color: #1177FE;
+}
+
+.iconBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Unread badge ────────────────────────────────────────── */
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: #1177FE;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #fff;
+}
+
+/* ── Backdrop transparent ────────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  /* transparent — แค่ดัก click นอก dropdown */
+}
+
+/* ── Dropdown ────────────────────────────────────────────── */
+.dropdown {
+  position: fixed;
+  z-index: 101;
+  width: 320px;
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+/* ── Dropdown header ─────────────────────────────────────── */
+.dropHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.dropTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.markAllBtn {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1177FE;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+
+.markAllBtn:hover { opacity: 0.7; }
+
+/* ── Notification list ───────────────────────────────────── */
+.list {
+  max-height: 360px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.list::-webkit-scrollbar { display: none; }
+
+/* ── Notification item ───────────────────────────────────── */
+.item {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.item:last-child { border-bottom: none; }
+
+.item:hover { background: #f8fafc; }
+
+/* unread item — ไฮไลท์ background */
+.unread { background: rgba(17, 119, 254, 0.03); }
+
+/* ── Dot ─────────────────────────────────────────────────── */
+.dotWrap {
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.dot {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e2e8f0; /* read = grey */
+}
+
+.dotActive {
+  background: #1177FE; /* unread = blue */
+}
+
+/* ── Item content ────────────────────────────────────────── */
+.itemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.itemTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.itemMsg {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemTime {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Empty ───────────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 32px;
+  color: #94a3b8;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ── Mobile — full width ─────────────────────────────────── */
+@media (max-width: 767px) {
+  .dropdown {
+    width: calc(100vw - 24px); /* เกือบเต็มหน้าจอ */
+    right: 12px !important;    /* override inline style */
+  }
+}

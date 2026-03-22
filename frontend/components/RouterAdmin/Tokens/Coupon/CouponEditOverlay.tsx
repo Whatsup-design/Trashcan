@@ -1,13 +1,9 @@
 // components/tokens/coupon/CouponEditOverlay.tsx
-// ─────────────────────────────────────────────────────────
-// Modal overlay สำหรับ Edit coupon
-// ใช้ createPortal ครอบทั้งหน้า
-// ─────────────────────────────────────────────────────────
 "use client";
 
 import { createPortal } from "react-dom";
 import CouponForm from "./CouponForm";
-import type { Coupon, CouponFormData } from "./type"; // ← fix: import จาก types
+import type { Coupon, CouponFormData } from "./types";
 import styles from "./CouponEditOverlay.module.css";
 
 type Props = {
@@ -20,7 +16,6 @@ export default function CouponEditOverlay({ coupon, onSubmit, onClose }: Props) 
   return createPortal(
     <>
       <div className={styles.backdrop} onClick={onClose} />
-
       <div className={styles.modal}>
         <div className={styles.header}>
           <p className={styles.title}>Edit Coupon</p>
@@ -30,9 +25,7 @@ export default function CouponEditOverlay({ coupon, onSubmit, onClose }: Props) 
             </svg>
           </button>
         </div>
-
         <div className={styles.body}>
-          {/* ← fix: ส่ง coupon ทั้งก้อนเป็น initialData ตรงๆ */}
           <CouponForm
             initialData={coupon}
             onSubmit={(data) => onSubmit(coupon.id, data)}

@@ -18,6 +18,5 @@ export const MENU_ITEMS: NavItem[] = [
 
 export const GENERAL_ITEMS: NavItem[] = [
   { href: "/admin/activity-log",      label: "Activity Log",      Icon: Icons.ActivtyLog      },
-  { href: "/admin/system-monitoring", label: "System Monitoring", Icon: Icons.SysteMonitoring },
   { href: "/admin/settings",          label: "Setting",           Icon: Icons.Settigs         },
 ];

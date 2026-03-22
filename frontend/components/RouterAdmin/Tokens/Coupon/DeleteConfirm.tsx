@@ -5,7 +5,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import type { Coupon } from "./type";
+import type { Coupon } from "./types";
 import styles from "./DeleteConfirm.module.css";
 
 type Props = {

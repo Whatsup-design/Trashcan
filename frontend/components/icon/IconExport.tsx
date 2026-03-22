@@ -50,7 +50,13 @@ function IconMenu(props: IconProps) {
 function IconClose(props: IconProps) {
   return <Icon src="/icon/IconClose.png" alt="Close" {...props} />;
 }
+function IconInfo(props: IconProps) {
+  return <Icon src="/icon/IconInfo.png" alt="Info" {...props} />;
+}
 
+function IconLeader(props: IconProps) {
+  return <Icon src="/icon/IconLeader.png" alt="Leader" {...props} />;
+}
 // ── Export ทั้งหมดใน object เดียว ─────────────────────────
 export const Icons = {
   Dashboard:       IconDashboard,
@@ -63,4 +69,6 @@ export const Icons = {
   Settigs:         IconSettigs,
   Menu:            IconMenu,
   Close:           IconClose,
+  Info:            IconInfo,
+  Leader:          IconLeader,
 };

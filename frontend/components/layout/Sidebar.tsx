@@ -92,6 +92,7 @@ export default function Sidebar({ role = "admin" }: Props) {
           {/* Brand / Logo */}
           <div className={styles.brand}>
             <LogoMark />
+            
           </div>
 
           {/* MENU section */}

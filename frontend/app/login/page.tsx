@@ -45,13 +45,7 @@ export default function LoginPage() {
 
         </div>
 
-        {/* ── Admin hint ─────────────────────────────── */}
-        <p className={styles.adminHint}>
-          Admin?{" "}
-          <Link href="/login/students" className={styles.adminLink}>
-            Sign in here
-          </Link>
-        </p>
+       
 
       </div>
     </div>

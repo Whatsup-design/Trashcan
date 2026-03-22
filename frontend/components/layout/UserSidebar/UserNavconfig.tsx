@@ -16,8 +16,8 @@ type NavItem = {
 export const USER_MENU_ITEMS: NavItem[] = [
   { href: "/user/dashboard",    label: "Dashboard",       Icon: Icons.Dashboard  },
   { href: "/user/token-market", label: "Token & Market",  Icon: Icons.Tokens     },
-  { href: "/user/leaderboard",  label: "Leaderboard",     Icon: Icons.Data       },
-  { href: "/user/about",        label: "About",           Icon: Icons.Devices    },
+  { href: "/user/leaderboard",  label: "Leaderboard",     Icon: Icons.Leader     },
+  { href: "/user/about",        label: "About",           Icon: Icons.Info    },
 ];
 
 export const USER_GENERAL_ITEMS: NavItem[] = [

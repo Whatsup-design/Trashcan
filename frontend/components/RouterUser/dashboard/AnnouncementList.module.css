@@ -1,0 +1,67 @@
+/* components/user/dashboard/AnnouncementList.module.css */
+
+.wrap {
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 16px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Item ────────────────────────────────────────────────── */
+.item {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  border-left: 3px solid transparent;
+}
+
+.info    { background: rgba(17,119,254,0.04);  border-left-color: #1177FE; }
+.warning { background: rgba(245,158,11,0.06);  border-left-color: #f59e0b; }
+.success { background: rgba(34,197,94,0.06);   border-left-color: #22c55e; }
+
+.icon { font-size: 18px; flex-shrink: 0; }
+
+.content { display: flex; flex-direction: column; gap: 3px; }
+
+.itemTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.itemMsg {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+.itemDate {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Empty ───────────────────────────────────────────────── */
+.empty {
+  font-size: 13px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 20px 0;
+  margin: 0;
+}

@@ -12,7 +12,7 @@ export const MENU_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", Icon: Icons.Dashboard       },
   { href: "/admin/data",      label: "Data",      Icon: Icons.Data            },
   { href: "/admin/devices",   label: "Devices",   Icon: Icons.Devices         },
-  { href: "/admin/bottles",   label: "Bottles",   Icon: Icons.Bottls          },
+  { href: "/admin/bottles",   label: "Bottles",   Icon: Icons.Leader          },
   { href: "/admin/tokens",    label: "Tokens",    Icon: Icons.Tokens          },
 ];
 

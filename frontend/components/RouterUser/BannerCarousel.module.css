@@ -1,0 +1,113 @@
+/* components/user/Banner/BannerCarousel.module.css */
+
+/* ── Wrapper — edge to edge ──────────────────────────────── */
+.wrapper {
+  position: relative;
+  width: calc(100% + var(--page-padding, 28px) * 2);
+  margin-left: calc(-1 * var(--page-padding, 28px));
+  margin-right: calc(-1 * var(--page-padding, 28px));
+}
+
+/* ── Embla viewport ──────────────────────────────────────── */
+.viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ── Container ───────────────────────────────────────────── */
+.container {
+  display: flex;
+  touch-action: pan-y;
+}
+
+/* ── Slide ───────────────────────────────────────────────── */
+.slide {
+  flex: 0 0 100%; /* mobile: 1 slide */
+  min-width: 0;
+}
+
+/* Desktop: 3 slides visible */
+@media (min-width: 768px) {
+  .slide {
+    flex: 0 0 calc(100% / 3);
+  }
+}
+
+/* ── 16:10 image wrapper ─────────────────────────────────── */
+.imgWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+/* ── Image ───────────────────────────────────────────────── */
+.img {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.slide:hover .img {
+  transform: scale(1.02);
+}
+
+/* ── Overlay ─────────────────────────────────────────────── */
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+}
+
+.overlayTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.overlaySub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  margin: 4px 0 0;
+}
+
+/* ── Dots ────────────────────────────────────────────────── */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.dot:hover {
+  background: #1177FE;
+}
+
+/* active dot — ขยายเป็น pill */
+.dotActive {
+  background: #1177FE !important;
+  width: 18px;
+  border-radius: 99px;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .wrapper {
+    --page-padding: 16px;
+  }
+}

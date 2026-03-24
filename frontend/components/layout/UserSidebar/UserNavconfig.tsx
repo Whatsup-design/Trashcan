@@ -6,16 +6,12 @@
 
 import { ComponentType } from "react";
 import { Icons } from "@/components/icon/IconExport";
+import { NavItem } from "../type";
 
-type NavItem = {
-  href: string;
-  label: string;
-  Icon: ComponentType<{ className?: string; size?: number }>;
-};
 
 export const USER_MENU_ITEMS: NavItem[] = [
   { href: "/user/dashboard",    label: "Dashboard",       Icon: Icons.Dashboard  },
-  { href: "/user/token-market", label: "Token & Market",  Icon: Icons.Tokens     },
+  { href: "/user/tokenmarket", label: "Token & Market",  Icon: Icons.Tokens     },
   { href: "/user/leaderboard",  label: "Leaderboard",     Icon: Icons.Leader     },
   { href: "/user/about",        label: "About",           Icon: Icons.Info    },
 ];
@@ -23,3 +19,4 @@ export const USER_MENU_ITEMS: NavItem[] = [
 export const USER_GENERAL_ITEMS: NavItem[] = [
   { href: "/user/settings", label: "Settings", Icon: Icons.Settigs },
 ];
+//user side

@@ -13,7 +13,7 @@ export default function LoginPage() {
         {/* ── Logo ──────────────────────────────────── */}
         <div className={styles.logoWrap}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/enviroment_Logo.jpg" alt="Trashcan Smart" className={styles.logo} />
+          <img src="/IconLogo.png" alt="Trashcan Smart" className={styles.logo} />
           <div>
             <p className={styles.appName}>Trashcan Smart</p>
             <p className={styles.appSub}>Please select your account type</p>

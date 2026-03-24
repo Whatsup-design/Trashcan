@@ -1,12 +1,8 @@
 // components/layout/navConfig.ts
 import { ComponentType } from "react";
 import { Icons } from "@/components/icon/IconExport";
+import { NavItem } from "../type";
 
-type NavItem = {
-  href: string;
-  label: string;
-  Icon: ComponentType<{ className?: string; size?: number }>;
-};
 
 export const MENU_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", Icon: Icons.Dashboard       },
@@ -20,3 +16,5 @@ export const GENERAL_ITEMS: NavItem[] = [
   { href: "/admin/activity-log",      label: "Activity Log",      Icon: Icons.ActivtyLog      },
   { href: "/admin/settings",          label: "Setting",           Icon: Icons.Settigs         },
 ];
+
+//admin side

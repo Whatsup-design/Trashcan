@@ -1,0 +1,30 @@
+/* components/user/Market/ProductGrid.module.css */
+
+/* ── Grid: 4 desktop / 2 mobile ─────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ── Empty ───────────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+  font-size: 14px;
+  background: #fff;
+  border: 1px dashed #e8edf3;
+  border-radius: 16px;
+}

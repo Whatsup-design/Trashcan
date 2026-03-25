@@ -1,0 +1,252 @@
+/* components/user/Market/RedeemConfirm.module.css */
+
+/* ── Backdrop ────────────────────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 100;
+}
+
+/* ── Dialog ──────────────────────────────────────────────── */
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── flex-row: picture + info ────────────────────────────── */
+.row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* ── Picture ─────────────────────────────────────────────── */
+.imgWrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imgPlaceholder {
+  font-size: 32px;
+}
+
+/* ── Info ────────────────────────────────────────────────── */
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.productName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.productDesc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Badge ───────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  width: fit-content;
+}
+
+.permanent {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.temporary {
+  background: rgba(249, 115, 22, 0.1);
+  color: #ea580c;
+}
+
+/* ── Price ───────────────────────────────────────────────── */
+.price {
+  margin: 4px 0 0;
+}
+
+.priceNum {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1177FE;
+  letter-spacing: -0.5px;
+}
+
+.priceLabel {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.claimNote {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: #f1f5f9;
+}
+
+/* ── Question ────────────────────────────────────────────── */
+.question {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btns {
+  display: flex;
+  gap: 10px;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid #e8edf3;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cancelBtn:hover { background: #f8fafc; }
+
+.confirmBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #1177FE, #48B7FF);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.confirmBtn:hover { opacity: 0.88; }
+
+/* ── Center stage (loading / success) ───────────────────── */
+.centerStage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+/* ── Spinner ─────────────────────────────────────────────── */
+.spinner {
+  width: 52px;
+  height: 52px;
+  border: 4px solid #e8edf3;
+  border-top-color: #1177FE;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.stageText {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0;
+}
+
+/* ── Success checkmark (SVG animation) ──────────────────── */
+.checkWrap {
+  width: 64px;
+  height: 64px;
+}
+
+.checkIcon {
+  width: 64px;
+  height: 64px;
+}
+
+.checkCircle {
+  stroke: #1177FE;
+  stroke-width: 2;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: drawCircle 0.6s ease forwards;
+}
+
+.checkMark {
+  stroke: #1177FE;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: drawCheck 0.4s ease 0.5s forwards;
+}
+
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+.successText {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1177FE;
+  margin: 0;
+}
+
+.successSub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}

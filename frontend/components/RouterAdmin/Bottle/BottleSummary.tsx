@@ -5,15 +5,7 @@
 // ─────────────────────────────────────────────────────────
 
 import styles from "./BottleSummary.module.css";
-
-export type BottleSummaryData = {
-  total: number;        // รวมทั้งหมด
-  thisWeek: number;     // สัปดาห์นี้
-  thisMonth: number;    // เดือนนี้
-  plastic: number;      // ขวดพลาสติก
-  glass: number;        // ขวดแก้ว
-  aluminum: number;     // กระป๋องอลูมิเนียม
-};
+import { type BottleSummaryData } from "@/types/AdminTypes";
 
 type Props = {
   data: BottleSummaryData;

@@ -9,14 +9,7 @@ import { useState, useMemo } from "react";
 import styles from "./DataTable.module.css";
 
 // ── Type ──────────────────────────────────────────────────
-export type DataRow = {
-  id: string;
-  rfidUid: string;      // RFID UID
-  studentId: string;    // รหัสนักศึกษา
-  name: string;         // ชื่อ
-  bottles: number;      // จำนวนขวด
-  tokens: number;       // จำนวน token
-};
+import {type DataRow} from "@/types/AdminTypes"; // นำเข้า type จาก AdminTypes.tsx
 
 type SortKey = keyof DataRow;
 type SortDir = "asc" | "desc";

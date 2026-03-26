@@ -6,9 +6,11 @@
 "use client";
 
 import { useState } from "react";
-import BottleSummary, { type BottleSummaryData } from "@/components/RouterAdmin/Bottle/BottleSummary";
-import BottleChart,   { type BottleChartData   } from "@/components/RouterAdmin/Bottle/BottleChart";
+import BottleSummary from "@/components/RouterAdmin/Bottle/BottleSummary";
+import BottleChart from "@/components/RouterAdmin/Bottle/BottleChart";
 import styles from "./page.module.css";
+
+import { type BottleSummaryData, type BottleChartData } from "@/types/AdminTypes";
 
 // ── Mockup Summary Data ───────────────────────────────────
 const summaryData: BottleSummaryData = {

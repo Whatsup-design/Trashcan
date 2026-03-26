@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./Sidebar.module.css"; 
 import { MENU_ITEMS, GENERAL_ITEMS }           from "./AdminSideBar/AdminNavconfig"; 
 import { USER_MENU_ITEMS, USER_GENERAL_ITEMS } from "./UserSidebar/UserNavconfig"; 
-import { NavItem } from "./SidebarItem"; 
+import { NavItem } from "@/components/layout/SidebarItem"; 
 import { Icons } from "@/components/icon/IconExport"; 
  
 // ── Props ───────────────────────────────────────────────── 

@@ -4,9 +4,9 @@
 // Server Component — ไม่ต้องการ state
 // ─────────────────────────────────────────────────────────
 
-import type { FeedbackItem } from "@/lib/DashboardData";
-import styles from "./FeedbackCard.module.css";
 
+import styles from "./FeedbackCard.module.css";
+import { type FeedbackItem } from "@/types/AdminTypes";
 type FeedbackCardProps = {
   data: FeedbackItem[];
   avgRating: number; // คะแนนเฉลี่ยทั้งหมด

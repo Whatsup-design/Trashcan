@@ -6,38 +6,8 @@
 // ─────────────────────────────────────────────────────────
 
 // ── Types ─────────────────────────────────────────────────
-export type ActivityItem = {
-  id: string;
-  device: string;       // ชื่อ device
-  action: string;       // สิ่งที่เกิดขึ้น เช่น "Bottle collected"
-  time: string;         // เวลา เช่น "2 mins ago"
-  status: "success" | "warning" | "error";
-};
-
-export type FeedbackItem = {
-  id: string;
-  device: string;       // ชื่อ device ที่ได้รับ feedback
-  rating: number;       // คะแนน 1-5
-  comment: string;      // ความคิดเห็น
-  user: string;         // ชื่อ user
-  time: string;
-};
-
-export type DashboardData = {
-  // ── Stat Cards ────────────────────────────────────────
-  totalDevices: number;
-  bottlesToday: number;  // ยังเก็บไว้ — แค่ยังไม่ใช้ chart
-  activeTokens: number;
-  totalRecords: number;
-  systemUptime: string;
-  avgRating: number;
-
-  // ── Tables ────────────────────────────────────────────
-  recentActivity: ActivityItem[];
-  recentFeedback: FeedbackItem[];
-};
-
 // ── Mockup Data ───────────────────────────────────────────
+import { type DashboardData } from "@/types/AdminTypes";
 export async function getDashboardData(): Promise<DashboardData> {
   return {
     // ── Stat Cards

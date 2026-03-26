@@ -10,22 +10,12 @@ import {
   LineChart, Line, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
+
+import {type BottleChartData, type BottleChartPoint} from "@/types/AdminTypes";
+
 import styles from "./BottleChart.module.css";
 
-// ── Types ─────────────────────────────────────────────────
-export type BottleChartPoint = {
-  date: string;       // วันที่ เช่น "Mon", "Jan 1"
-  total: number;      // รวมทุกประเภท
-  plastic: number;    // พลาสติก
-  glass: number;      // แก้ว
-  aluminum: number;   // อลูมิเนียม
-};
 
-export type BottleChartData = {
-  week:  BottleChartPoint[];  // ข้อมูล 7 วัน
-  month: BottleChartPoint[];  // ข้อมูล 30 วัน
-  all:   BottleChartPoint[];  // ข้อมูลทั้งหมด
-};
 
 type Props = {
   data: BottleChartData;

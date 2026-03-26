@@ -7,9 +7,11 @@
 "use client";
 
 import useEmblaCarousel from "embla-carousel-react";
-import type { DashboardData } from "@/lib/DashboardData";
+
 import StatCard from "./StatCard";
 import styles from "./MobileCarousel.module.css";
+
+import { type DashboardData } from "@/types/AdminTypes";
 
 type MobileCarouselProps = {
   data: DashboardData;

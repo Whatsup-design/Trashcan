@@ -4,8 +4,9 @@
 // Server Component — ไม่มี state หรือ event ใดๆ
 // ─────────────────────────────────────────────────────────
 
-import type { ActivityItem } from "@/lib/DashboardData";
+
 import styles from "./ActivityTable.module.css";
+import {type DashboardData, type ActivityItem} from "@/types/AdminTypes";
 
 type ActivityTableProps = {
   data: ActivityItem[];

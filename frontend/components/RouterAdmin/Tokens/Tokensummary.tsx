@@ -5,14 +5,7 @@
 
 import styles from "./Tokensummary.module.css";
 
-export type TokenSummaryData = {
-  totalAcquired: number;   // token ที่ได้รับทั้งหมด
-  totalRedeemed: number;   // token ที่ใช้ไปแล้ว
-  thisWeekAcquired: number;
-  thisWeekRedeemed: number;
-  thisMonthAcquired: number;
-  thisMonthRedeemed: number;
-};
+import { type TokenSummaryData } from "@/lib/mockData/admin/Tokens";
 
 type Props = {
   data: TokenSummaryData;

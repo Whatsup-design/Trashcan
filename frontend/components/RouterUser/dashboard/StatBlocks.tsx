@@ -8,7 +8,7 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
-import type { UserDashboardData } from "./types";
+import type { UserDashboardData } from "../../../lib/mockData/user/Dashboard";
 import styles from "./StatBlocks.module.css";
 
 // ── Rank suffix helper ────────────────────────────────────

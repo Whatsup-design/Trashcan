@@ -12,17 +12,7 @@ import {
 } from "recharts";
 import styles from "./Tokenchart.module.css";
 
-export type TokenChartPoint = {
-  date: string;
-  acquired: number;
-  redeemed: number;
-};
-
-export type TokenChartData = {
-  week:  TokenChartPoint[];
-  month: TokenChartPoint[];
-  all:   TokenChartPoint[];
-};
+import {type TokenChartData} from "@/lib/mockData/admin/Tokens"
 
 type Props = {
   data: TokenChartData;

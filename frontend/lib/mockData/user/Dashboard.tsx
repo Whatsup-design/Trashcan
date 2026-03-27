@@ -1,0 +1,51 @@
+// components/user/dashboard/types.ts
+
+export type UserDashboardData = {
+  bottlesThrown: number;   // จำนวนขวดที่ทิ้งทั้งหมด
+  weightGram: number;      // น้ำหนักรวมกรัม
+  tokensBalance: number;   // token คงเหลือ
+  leaderboardRank: number; // อันดับ leaderboard
+  totalUsers: number;      // จำนวน user ทั้งหมด (สำหรับแสดง "3rd of 120")
+};
+
+export type Announcement = {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  type: "info" | "warning" | "success";
+};
+
+const mockUserData: UserDashboardData = {
+  bottlesThrown:   142,
+  weightGram:      5840,
+  tokensBalance:   284,
+  leaderboardRank: 3,
+  totalUsers:      120,
+};
+
+const mockAnnouncements: Announcement[] = [
+  {
+    id: "1",
+    title: "New reward available!",
+    message: "Free coffee coupon is now available in Token & Market.",
+    date: "Mar 22, 2025",
+    type: "success",
+  },
+  {
+    id: "2",
+    title: "Maintenance notice",
+    message: "Device B-03 will be offline for maintenance on Mar 25.",
+    date: "Mar 21, 2025",
+    type: "warning",
+  },
+  {
+    id: "3",
+    title: "Token bonus week",
+    message: "Earn double tokens every bottle thrown this week!",
+    date: "Mar 20, 2025",
+    type: "info",
+  },
+];
+
+export default {mockUserData, mockAnnouncements}

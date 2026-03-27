@@ -1,4 +1,12 @@
-import { type ActivityLog } from "@/types/AdminTypes";
+export type ActivityLog = {
+  id: string;
+  studentId: string;    // รหัสนักศึกษา
+  name: string;         // ชื่อ
+  action: string;       // สิ่งที่เกิดขึ้น เช่น "Bottle collected"
+  time: string;         // เวลา HH:MM
+  tokenReceived: number; // token ที่ได้รับ
+  gramOfBottle: number;  // น้ำหนักขวด (กรัม)
+};
 
 const ActivityLogMockData: ActivityLog[] = [
   { id: "1",  studentId: "64010001", name: "Somchai Jaidee",    action: "Bottle collected", time: "08:12", tokenReceived: 2,  gramOfBottle: 35  },

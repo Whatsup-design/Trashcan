@@ -1,0 +1,86 @@
+/* app/user/about/page.module.css */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* ── Hardware section ────────────────────────────────────── */
+.hardwareSection {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  justify-content: center;   /* ← เพิ่ม center */
+  margin-top: 20px;          /* ← เพิ่ม space จากบน */
+  min-height: calc(100vh - 280px); /* ← เกือบเต็มหน้าก่อน scroll */
+  margin-left: auto;
+}
+
+.sliderWrap {
+  width: 70vh;              /* ← ขยายจาก 260px */
+  flex-shrink: 0;
+}
+
+/* Description fills remaining */
+.descWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.descLine {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.bold {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.descBody {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+
+/* Mobile — stack vertically */
+@media (max-width: 767px) {
+  .hardwareSection {
+    flex-direction: column;
+  }
+  .sliderWrap {
+    width: 100%;
+  }
+}
+
+/* ── People section ──────────────────────────────────────── */
+.peopleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0 16px;
+  border-top: 1px solid #e8edf3;
+}
+
+.backToTop {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #1177FE;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+
+.backToTop:hover { opacity: 0.7; }

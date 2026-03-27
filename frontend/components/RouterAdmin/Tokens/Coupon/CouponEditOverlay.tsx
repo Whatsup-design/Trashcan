@@ -3,7 +3,7 @@
 
 import { createPortal } from "react-dom";
 import CouponForm from "./CouponForm";
-import type { Coupon, CouponFormData } from "./types";
+import type { Coupon, CouponFormData } from "../../../../lib/mockData/admin/Coupon";
 import styles from "./CouponEditOverlay.module.css";
 
 type Props = {

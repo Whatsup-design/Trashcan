@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Coupon } from "./types";
+import type { Coupon } from "../../../../lib/mockData/admin/Coupon";
 import DeleteConfirm from "./DeleteConfirm";
 import styles from "./CouponCard.module.css";
 

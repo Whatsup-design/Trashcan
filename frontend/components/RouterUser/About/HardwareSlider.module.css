@@ -1,0 +1,45 @@
+/* components/user/About/HardwareSlider.module.css */
+
+.wrap { display: flex; flex-direction: column; gap: 10px; }
+
+.viewport { overflow: hidden; border-radius: 12px; }
+
+.container { display: flex; }
+
+.slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: #e8edf3;
+}
+
+/* ── Dots ────────────────────────────────────────────────── */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, width 0.2s;
+}
+
+.dotActive {
+  background: #1177FE;
+  width: 18px;
+  border-radius: 99px;
+  
+}

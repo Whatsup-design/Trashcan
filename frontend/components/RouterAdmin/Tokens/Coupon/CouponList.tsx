@@ -2,18 +2,14 @@
 "use client";
 
 import { useState } from "react";
-import type { Coupon, CouponFormData } from "./types";
+import type { Coupon, CouponFormData } from "../../../../lib/mockData/admin/Coupon";
 import { useCouponSearch } from "./useCouponSearch";
 import CouponCard        from "./CouponCard";
 import CouponAddPanel    from "./CouponAddPanel";
 import CouponEditOverlay from "./CouponEditOverlay";
 import styles from "./CouponList.module.css";
+import { INITIAL_COUPONS } from "@/lib/mockData/admin/Coupon";
 
-const INITIAL_COUPONS: Coupon[] = [
-  { id: "1", picture: "", name: "Free Coffee",    description: "Redeem for 1 free coffee at the school canteen", status: "permanent", claimPerMonth: 2, price: 20 },
-  { id: "2", picture: "", name: "Sports Day Pass", description: "Free entry to the annual sports day event",       status: "temporary", dateFrom: "2025-03-01", dateTo: "2025-03-31", claimPerMonth: 1, price: 50 },
-  { id: "3", picture: "", name: "Stationery Set",  description: "1 set of school stationery (pen, pencil, ruler)", status: "permanent", claimPerMonth: 1, price: 30 },
-];
 
 export default function CouponList() {
   const [coupons,    setCoupons]    = useState<Coupon[]>(INITIAL_COUPONS);

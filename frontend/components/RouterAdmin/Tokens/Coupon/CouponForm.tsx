@@ -6,7 +6,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Coupon, CouponFormData } from "./types"; // ← fix: import จาก types
+import type { Coupon, CouponFormData } from "@/lib/mockData/admin/Coupon"; // ← fix: import จาก types
 import styles from "./CouponForm.module.css";
 
 type Props = {

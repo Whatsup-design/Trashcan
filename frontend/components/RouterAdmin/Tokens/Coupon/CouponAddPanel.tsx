@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import CouponForm from "./CouponForm";
-import type { CouponFormData } from "./types";
+import type { CouponFormData } from "../../../../lib/mockData/admin/Coupon";
 import styles from "./CouponSlidePanel.module.css";
 
 type Props = {

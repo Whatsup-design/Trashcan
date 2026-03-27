@@ -4,7 +4,7 @@
 // Server Component — ไม่มี state
 // ─────────────────────────────────────────────────────────
 
-import type { Announcement } from "./types";
+import type { Announcement } from "../../../lib/mockData/user/Dashboard";
 import styles from "./AnnouncementList.module.css";
 
 type Props = { data: Announcement[] };

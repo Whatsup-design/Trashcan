@@ -5,7 +5,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Product } from "./types";
+import type { Product } from "@/lib/mockData/user/BannerToken";
 import RedeemConfirm from "./RedeemConfirm";
 import styles from "./ProductCard.module.css";
 

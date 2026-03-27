@@ -6,7 +6,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Coupon } from "./types";
+import type { Coupon } from "../../../../lib/mockData/admin/Coupon";
 
 export function useCouponSearch(coupons: Coupon[]) {
   const [query,    setQuery]    = useState("");           // ค่าใน input

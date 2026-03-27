@@ -11,7 +11,7 @@
 import { useEffect, useCallback, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
-import type { BannerItem } from "./types";
+import type { BannerItem } from "../../../lib/mockData/user/BannerToken";
 import styles from "./BannerCarousel.module.css";
 
 const DESKTOP_SLIDES_VISIBLE = 3;

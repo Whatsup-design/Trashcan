@@ -1,7 +1,7 @@
 export default function DevicesPage() {
   return (
-    <div>
-      <h1>Devices</h1>
+    <div className="devicestyle">
+      <h1>Soon</h1>
     </div>
   );
 }

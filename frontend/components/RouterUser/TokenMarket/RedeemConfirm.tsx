@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import type { Product } from "./types";
+import type { Product } from "@/lib/mockData/user/BannerToken";
 import styles from "./RedeemConfirm.module.css";
 
 type Props = {

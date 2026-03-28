@@ -1,0 +1,15 @@
+/* components/ui/LoadingScreen.module.css */
+
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.gif {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}

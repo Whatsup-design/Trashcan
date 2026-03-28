@@ -1,52 +1,33 @@
 // app/page.tsx
 // ─────────────────────────────────────────────────────────
-// "/" — เช็ค session แล้ว redirect เลย
-// ไม่มี UI ใดๆ แค่ redirect
-// "use client" เพราะต้องอ่าน localStorage
+// "/" — เช็ค session + setTimeout 5 วิ แล้ว redirect
+// แสดง LoadingScreen gif ระหว่างรอ
 // ─────────────────────────────────────────────────────────
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, getRedirectPath } from "@/lib/auth";
+import LoadingScreen from "@/components/Loadingscreen";
 
 export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const session = getSession();
+    // รอ 5 วิ แล้วค่อยเช็ค session และ redirect
+    const timer = setTimeout(() => {
+      const session = getSession();
 
-    if (session) {
-      // มี session → redirect ไป dashboard ตาม role
-      router.replace(getRedirectPath(session.role));
-    } else {
-      // ไม่มี session → ไป login
-      router.replace("/login");
-    }
+      if (session) {
+        router.replace(getRedirectPath(session.role));
+      } else {
+        router.replace("/login");
+      }
+    }, 3500); // ← 5 วินาที
+
+    return () => clearTimeout(timer); // cleanup ถ้า unmount ก่อน
   }, [router]);
 
-  // แสดง loading ระหว่างเช็ค
-  return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "#f8fafc",
-    }}>
-      <div style={{
-        width: 32,
-        height: 32,
-        border: "3px solid #e8edf3",
-        borderTop: "3px solid #1177FE",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }} />
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-    </div>
-  );
+  // แสดง gif ระหว่างรอ 5 วิ
+  return <LoadingScreen src="/LoadingDefault.gif" />;
 }

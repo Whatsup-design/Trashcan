@@ -1,69 +1,40 @@
-// components/auth/RegisterForm.tsx
-// ─────────────────────────────────────────────────────────
-// Register form — Username + Email + Password + Confirm
-// "use client" เพราะมี state
-// ─────────────────────────────────────────────────────────
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { registerApi } from "@/lib/api";
-import { saveSession, getRedirectPath } from "@/lib/auth";
+
 import styles from "./RegisterForm.module.css";
 
 export default function RegisterForm() {
-  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPass, setShowPass] = useState(false);
 
-  // ── Form state ────────────────────────────────────────
-  const [username,  setUsername]  = useState("");
-  const [email,     setEmail]     = useState("");
-  const [password,  setPassword]  = useState("");
-  const [confirm,   setConfirm]   = useState("");
-  const [loading,   setLoading]   = useState(false);
-  const [error,     setError]     = useState("");
-  const [showPass,  setShowPass]  = useState(false);
-
-  // ── Submit ────────────────────────────────────────────
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    // เช็ค password ตรงกันไหม
     if (password !== confirm) {
       setError("Passwords do not match");
       return;
     }
 
-    // เช็ค password ยาวพอไหม
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
 
     setLoading(true);
-    try {
-      const res = await registerApi({ username, email, password });
-
-      if (res.success && res.role) {
-        saveSession(
-          { role: res.role, token: res.token ?? "", username },
-          false // register ไม่ remember me
-        );
-        router.push(getRedirectPath(res.role));
-      } else {
-        setError(res.message ?? "Registration failed");
-      }
-    } catch {
-      setError("Cannot connect to server");
-    } finally {
-      setLoading(false);
-    }
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setLoading(false);
+    setError("Registration is disabled for now.");
   }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-
-      {/* ── Username ──────────────────────────────────── */}
       <div className={styles.field}>
         <label className={styles.label}>Username</label>
         <input
@@ -76,7 +47,6 @@ export default function RegisterForm() {
         />
       </div>
 
-      {/* ── Email ─────────────────────────────────────── */}
       <div className={styles.field}>
         <label className={styles.label}>Email</label>
         <input
@@ -89,7 +59,6 @@ export default function RegisterForm() {
         />
       </div>
 
-      {/* ── Password ──────────────────────────────────── */}
       <div className={styles.field}>
         <label className={styles.label}>Password</label>
         <div className={styles.passwordWrap}>
@@ -112,7 +81,6 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      {/* ── Confirm password ──────────────────────────── */}
       <div className={styles.field}>
         <label className={styles.label}>Confirm Password</label>
         <input
@@ -125,18 +93,11 @@ export default function RegisterForm() {
         />
       </div>
 
-      {/* ── Error ─────────────────────────────────────── */}
       {error && <p className={styles.error}>{error}</p>}
 
-      {/* ── Submit ────────────────────────────────────── */}
-      <button
-        className={styles.submitBtn}
-        type="submit"
-        disabled={loading}
-      >
+      <button className={styles.submitBtn} type="submit" disabled={loading}>
         {loading ? "Creating account..." : "Create Account"}
       </button>
-
     </form>
   );
 }

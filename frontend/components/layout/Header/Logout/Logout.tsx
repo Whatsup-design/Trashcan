@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";  // ← เพิ่ม
 import { useRouter } from "next/navigation";
-import { clearSession } from "@/lib/auth";
 import styles from "./Logout.module.css";
 
 export default function Logout() {
@@ -11,7 +10,6 @@ export default function Logout() {
   const [open, setOpen] = useState(false);
 
   function handleConfirm() {
-    clearSession();
     router.push("/login");
   }
 

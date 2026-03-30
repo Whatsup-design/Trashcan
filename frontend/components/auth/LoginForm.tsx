@@ -1,58 +1,30 @@
-// components/auth/LoginForm.tsx
-// ─────────────────────────────────────────────────────────
-// Login form — Username/Email + Password + Remember me
-// "use client" เพราะมี state และ form submission
-// ─────────────────────────────────────────────────────────
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { loginApi } from "@/lib/api";
-import { saveSession, getRedirectPath } from "@/lib/auth";
+
 import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
-  const router = useRouter();
-
-  // ── Form state ────────────────────────────────────────
-  const [username,   setUsername]   = useState("");
-  const [password,   setPassword]   = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading,    setLoading]    = useState(false);
-  const [error,      setError]      = useState("");
-  const [showPass,   setShowPass]   = useState(false); // toggle show password
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPass, setShowPass] = useState(false);
 
-  // ── Submit ────────────────────────────────────────────
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    try {
-      const res = await loginApi({ username, password, rememberMe });
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-      if (res.success && res.role) {
-        // บันทึก session
-        saveSession(
-          { role: res.role, token: res.token ?? "", username },
-          rememberMe
-        );
-        // redirect ตาม role
-        router.push(getRedirectPath(res.role));
-      } else {
-        setError(res.message ?? "Login failed");
-      }
-    } catch {
-      setError("Cannot connect to server");
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
+    setError("Login is disabled for now.");
   }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-
-      {/* ── Username ──────────────────────────────────── */}
       <div className={styles.field}>
         <label className={styles.label}>Username</label>
         <input
@@ -66,7 +38,6 @@ export default function LoginForm() {
         />
       </div>
 
-      {/* ── Password ──────────────────────────────────── */}
       <div className={styles.field}>
         <label className={styles.label}>Password</label>
         <div className={styles.passwordWrap}>
@@ -79,7 +50,6 @@ export default function LoginForm() {
             required
             autoComplete="current-password"
           />
-          {/* Toggle show/hide password */}
           <button
             type="button"
             className={styles.eyeBtn}
@@ -91,7 +61,6 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* ── Remember me ───────────────────────────────── */}
       <label className={styles.rememberRow}>
         <input
           type="checkbox"
@@ -102,18 +71,11 @@ export default function LoginForm() {
         <span className={styles.rememberLabel}>Remember me</span>
       </label>
 
-      {/* ── Error message ─────────────────────────────── */}
       {error && <p className={styles.error}>{error}</p>}
 
-      {/* ── Submit button ─────────────────────────────── */}
-      <button
-        className={styles.submitBtn}
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? "Signi ng in..." : "Sign In"}
+      <button className={styles.submitBtn} type="submit" disabled={loading}>
+        {loading ? "Signing in..." : "Sign In"}
       </button>
-
     </form>
   );
 }

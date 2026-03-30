@@ -8,6 +8,13 @@ export type ActivityItem = {
   status: "success" | "warning" | "error";
 };
 
+export type Test = {
+  totalUsers: number;
+  totalBottles: number;
+  totalWeight: number;
+  totalTokens: number;
+};
+
 export type FeedbackItem = {
   id: string;
   device: string;
@@ -15,6 +22,13 @@ export type FeedbackItem = {
   comment: string;
   user: string;
   time: string;
+};
+
+export type AdminDashboardSummary = {
+  totalUsers: number;
+  totalBottles: number;
+  totalWeight: number;
+  totalTokens: number;
 };
 
 export type DashboardData = {
@@ -28,7 +42,7 @@ export type DashboardData = {
   recentFeedback: FeedbackItem[];
 };
 
-// ← เปลี่ยนเป็น const ธรรมดา ไม่ใช่ function
+
 export const dashboardData: DashboardData = {
   totalDevices: 24,
   bottlesToday: 142,

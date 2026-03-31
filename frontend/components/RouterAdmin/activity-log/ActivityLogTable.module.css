@@ -185,7 +185,14 @@
 
 .tokenCell {
   font-weight: 700;
+}
+
+.tokenPositive {
   color: #1177FE !important;
+}
+
+.tokenNegative {
+  color: #dc2626 !important;
 }
 
 .gramCell {

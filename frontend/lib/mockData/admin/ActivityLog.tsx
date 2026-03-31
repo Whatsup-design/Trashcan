@@ -1,34 +1,35 @@
+export type ActivityAction = "Bottle collected" | "Tokens redeemed";
+
 export type ActivityLog = {
-  id: string;
-  studentId: string;    // รหัสนักศึกษา
-  name: string;         // ชื่อ
-  action: string;       // สิ่งที่เกิดขึ้น เช่น "Bottle collected"
-  time: string;         // เวลา HH:MM
-  tokenReceived: number; // token ที่ได้รับ
-  gramOfBottle: number;  // น้ำหนักขวด (กรัม)
+  Student_ID: number;
+  Student_Name: string;
+  action: ActivityAction;
+  tokens: number;
+  weight: number;
+  created_at: string;
 };
 
 const ActivityLogMockData: ActivityLog[] = [
-  { id: "1",  studentId: "64010001", name: "Somchai Jaidee",    action: "Bottle collected", time: "08:12", tokenReceived: 2,  gramOfBottle: 35  },
-  { id: "2",  studentId: "64010002", name: "Malee Srisuwan",    action: "Bottle collected", time: "08:45", tokenReceived: 2,  gramOfBottle: 42  },
-  { id: "3",  studentId: "64010003", name: "Nattapong Khamdi",  action: "Token redeemed",   time: "09:10", tokenReceived: 0,  gramOfBottle: 0   },
-  { id: "4",  studentId: "64010004", name: "Pornpan Rodpai",    action: "Bottle collected", time: "09:33", tokenReceived: 2,  gramOfBottle: 38  },
-  { id: "5",  studentId: "65010001", name: "Piyaphat Charoen",  action: "Bottle collected", time: "10:05", tokenReceived: 2,  gramOfBottle: 44  },
-  { id: "6",  studentId: "64010005", name: "Wichai Thongdee",   action: "Bottle collected", time: "10:22", tokenReceived: 2,  gramOfBottle: 31  },
-  { id: "7",  studentId: "65010002", name: "Supansa Wongpan",   action: "Bottle collected", time: "10:48", tokenReceived: 2,  gramOfBottle: 39  },
-  { id: "8",  studentId: "64010001", name: "Somchai Jaidee",    action: "Bottle collected", time: "11:15", tokenReceived: 2,  gramOfBottle: 36  },
-  { id: "9",  studentId: "65010003", name: "Thanakorn Srisuk",  action: "Token redeemed",   time: "11:30", tokenReceived: 0,  gramOfBottle: 0   },
-  { id: "10", studentId: "64010006", name: "Siriporn Kaewjai",  action: "Bottle collected", time: "11:52", tokenReceived: 2,  gramOfBottle: 41  },
-  { id: "11", studentId: "65010004", name: "Warunee Khamphoo",  action: "Bottle collected", time: "12:08", tokenReceived: 2,  gramOfBottle: 33  },
-  { id: "12", studentId: "64010007", name: "Anuwat Ponsri",     action: "Bottle collected", time: "12:34", tokenReceived: 2,  gramOfBottle: 47  },
-  { id: "13", studentId: "65010005", name: "Kritsana Buakaew",  action: "Token redeemed",   time: "13:10", tokenReceived: 0,  gramOfBottle: 0   },
-  { id: "14", studentId: "64010008", name: "Kanokwan Sombut",   action: "Bottle collected", time: "13:25", tokenReceived: 2,  gramOfBottle: 40  },
-  { id: "15", studentId: "65010006", name: "Naphat Rodsamran",  action: "Bottle collected", time: "13:50", tokenReceived: 2,  gramOfBottle: 35  },
-  { id: "16", studentId: "64010009", name: "Teerawat Janta",    action: "Bottle collected", time: "14:12", tokenReceived: 2,  gramOfBottle: 43  },
-  { id: "17", studentId: "65010007", name: "Monthon Saelee",    action: "Bottle collected", time: "14:40", tokenReceived: 2,  gramOfBottle: 38  },
-  { id: "18", studentId: "64010010", name: "Rujira Phanomwan",  action: "Token redeemed",   time: "15:05", tokenReceived: 0,  gramOfBottle: 0   },
-  { id: "19", studentId: "65010008", name: "Patcharee Jaiboon", action: "Bottle collected", time: "15:22", tokenReceived: 2,  gramOfBottle: 36  },
-  { id: "20", studentId: "65010009", name: "Noppadon Srirak",   action: "Bottle collected", time: "15:48", tokenReceived: 2,  gramOfBottle: 44  },
+  { Student_ID: 64010001, Student_Name: "Somchai Jaidee", action: "Bottle collected", tokens: 2, weight: 35, created_at: "2026-03-31T08:12:00" },
+  { Student_ID: 64010002, Student_Name: "Malee Srisuwan", action: "Bottle collected", tokens: 2, weight: 42, created_at: "2026-03-31T08:45:00" },
+  { Student_ID: 64010003, Student_Name: "Nattapong Khamdi", action: "Tokens redeemed", tokens: -10, weight: 0, created_at: "2026-03-31T09:10:00" },
+  { Student_ID: 64010004, Student_Name: "Pornpan Rodpai", action: "Bottle collected", tokens: 2, weight: 38, created_at: "2026-03-31T09:33:00" },
+  { Student_ID: 65010001, Student_Name: "Piyaphat Charoen", action: "Bottle collected", tokens: 2, weight: 44, created_at: "2026-03-31T10:05:00" },
+  { Student_ID: 64010005, Student_Name: "Wichai Thongdee", action: "Bottle collected", tokens: 2, weight: 31, created_at: "2026-03-31T10:22:00" },
+  { Student_ID: 65010002, Student_Name: "Supansa Wongpan", action: "Bottle collected", tokens: 2, weight: 39, created_at: "2026-03-31T10:48:00" },
+  { Student_ID: 64010001, Student_Name: "Somchai Jaidee", action: "Bottle collected", tokens: 2, weight: 36, created_at: "2026-03-31T11:15:00" },
+  { Student_ID: 65010003, Student_Name: "Thanakorn Srisuk", action: "Tokens redeemed", tokens: -15, weight: 0, created_at: "2026-03-31T11:30:00" },
+  { Student_ID: 64010006, Student_Name: "Siriporn Kaewjai", action: "Bottle collected", tokens: 2, weight: 41, created_at: "2026-03-31T11:52:00" },
+  { Student_ID: 65010004, Student_Name: "Warunee Khamphoo", action: "Bottle collected", tokens: 2, weight: 33, created_at: "2026-03-31T12:08:00" },
+  { Student_ID: 64010007, Student_Name: "Anuwat Ponsri", action: "Bottle collected", tokens: 2, weight: 47, created_at: "2026-03-31T12:34:00" },
+  { Student_ID: 65010005, Student_Name: "Kritsana Buakaew", action: "Tokens redeemed", tokens: -20, weight: 0, created_at: "2026-03-31T13:10:00" },
+  { Student_ID: 64010008, Student_Name: "Kanokwan Sombut", action: "Bottle collected", tokens: 2, weight: 40, created_at: "2026-03-31T13:25:00" },
+  { Student_ID: 65010006, Student_Name: "Naphat Rodsamran", action: "Bottle collected", tokens: 2, weight: 35, created_at: "2026-03-31T13:50:00" },
+  { Student_ID: 64010009, Student_Name: "Teerawat Janta", action: "Bottle collected", tokens: 2, weight: 43, created_at: "2026-03-31T14:12:00" },
+  { Student_ID: 65010007, Student_Name: "Monthon Saelee", action: "Bottle collected", tokens: 2, weight: 38, created_at: "2026-03-31T14:40:00" },
+  { Student_ID: 64010010, Student_Name: "Rujira Phanomwan", action: "Tokens redeemed", tokens: -8, weight: 0, created_at: "2026-03-31T15:05:00" },
+  { Student_ID: 65010008, Student_Name: "Patcharee Jaiboon", action: "Bottle collected", tokens: 2, weight: 36, created_at: "2026-03-31T15:22:00" },
+  { Student_ID: 65010009, Student_Name: "Noppadon Srirak", action: "Bottle collected", tokens: 2, weight: 44, created_at: "2026-03-31T15:48:00" },
 ];
 
-export default ActivityLogMockData
+export default ActivityLogMockData;

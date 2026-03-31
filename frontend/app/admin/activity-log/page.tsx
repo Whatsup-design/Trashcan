@@ -4,17 +4,38 @@
 // ข้อมูลจะถูกล้างทุกวัน (daily reset)
 // ตอน connect Supabase แก้แค่ mockData ครับ
 // ─────────────────────────────────────────────────────────
-
+"use client";
 import ActivityLogTable from "@/components/RouterAdmin/activity-log/ActivityLogTable";
 import styles from "./page.module.css";
-import ActivityLogMockData from "@/lib/mockData/admin/ActivityLog"
-
+import { apiFetch } from "@/lib/api";
+import {useState, useEffect} from "react";
+import {type ActivityLog, type ActivityAction } from "@/lib/mockData/admin/ActivityLog";
 // ── วันที่วันนี้ ───────────────────────────────────────────
 const TODAY = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
 // ── Mockup data ───────────────────────────────────────────
 
 export default function ActivityLogPage() {
+    const [data, setData] = useState<ActivityLog[] | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    apiFetch("/admin/ActivityLog")
+      .then((res: ActivityLog[]) => setData(res))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load activity log data");
+      });
+  }, []);
+
+  if (error) {
+    return <div className={styles.page}>{error}</div>;
+  }
+
+  if (!data) {
+    return <div className={styles.page}>Loading...</div>;
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.heading}>
@@ -22,7 +43,7 @@ export default function ActivityLogPage() {
         <p className={styles.sub}>Daily records — resets every midnight</p>
       </div>
 
-      <ActivityLogTable data={ActivityLogMockData} date={TODAY} />
+      <ActivityLogTable data={data} date={TODAY} />
     </div>
   );
 }

@@ -1,38 +1,31 @@
-// components/activity-log/ActivityLogTable.tsx
-// ─────────────────────────────────────────────────────────
-// ตาราง Activity Log — ID, Name, Action, Time, Token, Gram
-// มี search + sort + pagination
-// ข้อมูลจะถูกล้างทุกวัน (daily reset)
-// "use client" เพราะมี state search/sort/pagination
-// ─────────────────────────────────────────────────────────
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import styles from "./ActivityLogTable.module.css";
 import { type ActivityLog } from "@/lib/mockData/admin/ActivityLog";
-
-// ── Type ──────────────────────────────────────────────────
-
 
 type SortKey = keyof ActivityLog;
 type SortDir = "asc" | "desc";
 
 type Props = {
   data: ActivityLog[];
-  date: string; // วันที่แสดง เช่น "2025-03-22"
+  date: string;
 };
 
 export default function ActivityLogTable({ data, date }: Props) {
-  const [search,  setSearch]  = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("time");
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [page,    setPage]    = useState(1);
+  const [page, setPage] = useState(1);
   const PER_PAGE = 15;
 
-  // ── Sort handler ──────────────────────────────────────
   function handleSort(key: SortKey) {
-    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else { setSortKey(key); setSortDir("asc"); }
+    if (sortKey === key) {
+      setSortDir((dir) => (dir === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
     setPage(1);
   }
 
@@ -41,48 +34,60 @@ export default function ActivityLogTable({ data, date }: Props) {
     return sortDir === "asc" ? " ↑" : " ↓";
   }
 
-  // ── Filter + Sort ─────────────────────────────────────
-  const filtered = useMemo(() => {
-    let rows = [...data];
-
-    // Search
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      rows = rows.filter(
-        (r) =>
-          r.studentId.toLowerCase().includes(q) ||
-          r.name.toLowerCase().includes(q) ||
-          r.action.toLowerCase().includes(q)
-      );
+  function formatTime(timestamp: string) {
+    const parsed = new Date(timestamp);
+    if (Number.isNaN(parsed.getTime())) {
+      return timestamp;
     }
 
-    // Sort
-    rows.sort((a, b) => {
+    return parsed.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    const rows = [...data];
+
+    const searched = query
+      ? rows.filter((row) =>
+          String(row.Student_ID).toLowerCase().includes(query) ||
+          row.Student_Name.toLowerCase().includes(query) ||
+          row.action.toLowerCase().includes(query)
+        )
+      : rows;
+
+    searched.sort((a, b) => {
       const av = a[sortKey];
       const bv = b[sortKey];
+
+      if (sortKey === "created_at") {
+        const aTime = new Date(String(av)).getTime();
+        const bTime = new Date(String(bv)).getTime();
+        return sortDir === "asc" ? aTime - bTime : bTime - aTime;
+      }
+
       if (typeof av === "number" && typeof bv === "number") {
         return sortDir === "asc" ? av - bv : bv - av;
       }
+
       return sortDir === "asc"
         ? String(av).localeCompare(String(bv))
         : String(bv).localeCompare(String(av));
     });
 
-    return rows;
-  }, [data, search, sortKey, sortDir]);
+    return searched;
+  }, [data, search, sortDir, sortKey]);
 
-  // ── Pagination ────────────────────────────────────────
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paginated  = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  // ── Summary stats ─────────────────────────────────────
-  const totalTokens = data.reduce((s, r) => s + r.tokenReceived, 0);
-  const totalGrams  = data.reduce((s, r) => s + r.gramOfBottle, 0);
+  const totalTokens = data.reduce((sum, row) => sum + row.tokens, 0);
+  const totalGrams = data.reduce((sum, row) => sum + row.weight, 0);
 
   return (
     <div className={styles.wrap}>
-
-      {/* ── Date + summary ──────────────────────────── */}
       <div className={styles.topBar}>
         <div className={styles.dateWrap}>
           <span className={styles.dateIcon}>📅</span>
@@ -90,7 +95,6 @@ export default function ActivityLogTable({ data, date }: Props) {
           <span className={styles.dateBadge}>Today</span>
         </div>
 
-        {/* Summary stats */}
         <div className={styles.stats}>
           <div className={styles.stat}>
             <p className={styles.statVal}>{data.length}</p>
@@ -109,45 +113,47 @@ export default function ActivityLogTable({ data, date }: Props) {
         </div>
       </div>
 
-      {/* ── Search ──────────────────────────────────── */}
       <div className={styles.toolbar}>
         <div className={styles.searchWrap}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="7" /><path d="m21 21-4.35-4.35" />
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
           <input
             className={styles.search}
             type="text"
             placeholder="Search ID, name, action..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
         <p className={styles.count}>{filtered.length} records</p>
       </div>
 
-      {/* ── Table ───────────────────────────────────── */}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th onClick={() => handleSort("studentId")} className={styles.sortable}>
-                Student ID{sortIcon("studentId")}
+              <th onClick={() => handleSort("Student_ID")} className={styles.sortable}>
+                Student ID{sortIcon("Student_ID")}
               </th>
-              <th onClick={() => handleSort("name")} className={styles.sortable}>
-                Name{sortIcon("name")}
+              <th onClick={() => handleSort("Student_Name")} className={styles.sortable}>
+                Name{sortIcon("Student_Name")}
               </th>
               <th onClick={() => handleSort("action")} className={styles.sortable}>
                 Action{sortIcon("action")}
               </th>
-              <th onClick={() => handleSort("time")} className={styles.sortable}>
-                Time{sortIcon("time")}
+              <th onClick={() => handleSort("created_at")} className={styles.sortable}>
+                Time{sortIcon("created_at")}
               </th>
-              <th onClick={() => handleSort("tokenReceived")} className={styles.sortable}>
-                Tokens{sortIcon("tokenReceived")}
+              <th onClick={() => handleSort("tokens")} className={styles.sortable}>
+                Tokens{sortIcon("tokens")}
               </th>
-              <th onClick={() => handleSort("gramOfBottle")} className={styles.sortable}>
-                Weight (g){sortIcon("gramOfBottle")}
+              <th onClick={() => handleSort("weight")} className={styles.sortable}>
+                Weight (g){sortIcon("weight")}
               </th>
             </tr>
           </thead>
@@ -158,20 +164,31 @@ export default function ActivityLogTable({ data, date }: Props) {
               </tr>
             ) : (
               paginated.map((row) => (
-                <tr key={row.id}>
-                  <td className={styles.mono}>{row.studentId}</td>
-                  <td className={styles.nameCell}>{row.name}</td>
+                <tr key={`${row.Student_ID}-${row.created_at}`}>
+                  <td className={styles.mono}>{row.Student_ID}</td>
+                  <td className={styles.nameCell}>{row.Student_Name}</td>
                   <td>
-                    <span className={`${styles.actionBadge} ${
-                      row.action.includes("collected") ? styles.collected :
-                      row.action.includes("redeemed")  ? styles.redeemed  : styles.other
-                    }`}>
+                    <span
+                      className={`${styles.actionBadge} ${
+                        row.action === "Bottle collected"
+                          ? styles.collected
+                          : row.action === "Tokens redeemed"
+                            ? styles.redeemed
+                            : styles.other
+                      }`}
+                    >
                       {row.action}
                     </span>
                   </td>
-                  <td className={styles.timeCell}>{row.time}</td>
-                  <td className={styles.tokenCell}>+{row.tokenReceived}</td>
-                  <td className={styles.gramCell}>{row.gramOfBottle}g</td>
+                  <td className={styles.timeCell}>{formatTime(row.created_at)}</td>
+                  <td
+                    className={`${styles.tokenCell} ${
+                      row.tokens >= 0 ? styles.tokenPositive : styles.tokenNegative
+                    }`}
+                  >
+                    {row.tokens > 0 ? `+${row.tokens}` : row.tokens}
+                  </td>
+                  <td className={styles.gramCell}>{row.weight}g</td>
                 </tr>
               ))
             )}
@@ -179,33 +196,35 @@ export default function ActivityLogTable({ data, date }: Props) {
         </table>
       </div>
 
-      {/* ── Pagination ──────────────────────────────── */}
       {totalPages > 1 && (
         <div className={styles.pagination}>
           <button
             className={styles.pageBtn}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
             disabled={page === 1}
-          >←</button>
+          >
+            ←
+          </button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((currentPage) => (
             <button
-              key={p}
-              className={`${styles.pageBtn} ${p === page ? styles.activePage : ""}`}
-              onClick={() => setPage(p)}
+              key={currentPage}
+              className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ""}`}
+              onClick={() => setPage(currentPage)}
             >
-              {p}
+              {currentPage}
             </button>
           ))}
 
           <button
             className={styles.pageBtn}
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
             disabled={page === totalPages}
-          >→</button>
+          >
+            →
+          </button>
         </div>
       )}
-
     </div>
   );
 }

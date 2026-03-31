@@ -9,7 +9,7 @@
 
 import { useState, useMemo } from "react";
 import styles from "./ActivityLogTable.module.css";
-import { type ActivityLog } from "@/types/AdminTypes";
+import { type ActivityLog } from "@/lib/mockData/admin/ActivityLog";
 
 // ── Type ──────────────────────────────────────────────────
 

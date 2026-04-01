@@ -18,12 +18,14 @@ type Props = {
 export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
   const [name,          setName]          = useState(initialData?.name          ?? "");
   const [description,   setDescription]   = useState(initialData?.description   ?? "");
+  const [price,         setPrice]         = useState(initialData?.price         ?? 10);
   const [status,        setStatus]        = useState<"permanent" | "temporary">(initialData?.status ?? "permanent");
+  const [claimPerMonth, setClaimPerMonth] = useState(initialData?.claimPerMonth ?? 1);
+  const [picture,       setPicture]       = useState(initialData?.picture       ?? "");
   const [dateFrom,      setDateFrom]      = useState(initialData?.dateFrom      ?? "");
   const [dateTo,        setDateTo]        = useState(initialData?.dateTo        ?? "");
-  const [claimPerMonth, setClaimPerMonth] = useState(initialData?.claimPerMonth ?? 1);
-  const [price,         setPrice]         = useState(initialData?.price         ?? 10); // ← fix: price
-  const [picture,       setPicture]       = useState(initialData?.picture       ?? "");
+  
+
   const [error,         setError]         = useState("");
 
   // ── Image upload → base64 ────────────────────────────

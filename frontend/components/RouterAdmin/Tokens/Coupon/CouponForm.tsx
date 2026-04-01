@@ -6,7 +6,7 @@ import styles from "./CouponForm.module.css";
 
 type Props = {
   initialData?: Coupon;
-  onSubmit: (data: CouponFormData) => void;
+  onSubmit: (data: CouponFormData) => Promise<void> | void;
   onCancel: () => void;
 };
 
@@ -20,6 +20,7 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
   const [Product_StartDate, setProduct_StartDate] = useState(initialData?.Product_StartDate ?? "");
   const [Product_EndDate, setProduct_EndDate] = useState(initialData?.Product_EndDate ?? "");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -48,6 +49,7 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
       return;
     }
 
+    setIsSubmitting(true);
     onSubmit({
       Product_name: Product_name.trim(),
       Product_Description: Product_Description.trim(),
@@ -58,6 +60,9 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
       Product_StartDate: Product_Status === "Temporary" ? Product_StartDate : undefined,
       Product_EndDate: Product_Status === "Temporary" ? Product_EndDate : undefined,
     });
+    setTimeout(() => {
+      setIsSubmitting(false);
+    }, 1500);
   }
 
   return (
@@ -163,8 +168,14 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
         <button type="button" className={styles.cancelBtn} onClick={onCancel}>
           Cancel
         </button>
-        <button type="submit" className={styles.confirmBtn}>
-          {initialData ? "Save Changes" : "Add Coupon"}
+        <button type="submit" className={styles.confirmBtn} disabled={isSubmitting}>
+          {isSubmitting
+            ? initialData
+              ? "Saving..."
+              : "Adding..."
+            : initialData
+              ? "Save Changes"
+              : "Add Coupon"}
         </button>
       </div>
     </form>

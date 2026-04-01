@@ -73,7 +73,9 @@ export default function CouponList({ coupons, onAdd, onEdit, onDelete }: Props) 
         <CouponAddPanel
           onSubmit={(data) => {
             onAdd(data);
-            setShowAdd(false);
+            setTimeout(() => {
+              setShowAdd(false);
+            }, 1000);
           }}
           onClose={() => setShowAdd(false)}
         />
@@ -84,7 +86,9 @@ export default function CouponList({ coupons, onAdd, onEdit, onDelete }: Props) 
           coupon={editCoupon}
           onSubmit={(id, data) => {
             onEdit(id, data);
-            setEditCoupon(null);
+            setTimeout(() => {
+              setEditCoupon(null);
+            }, 1100);
           }}
           onClose={() => setEditCoupon(null)}
         />

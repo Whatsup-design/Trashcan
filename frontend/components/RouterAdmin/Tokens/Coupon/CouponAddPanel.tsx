@@ -7,7 +7,7 @@ import type { CouponFormData } from "../../../../lib/mockData/admin/Coupon";
 import styles from "./CouponSlidePanel.module.css";
 
 type Props = {
-  onSubmit: (data: CouponFormData) => void;
+  onSubmit: (data: CouponFormData) => Promise<void> | void;
   onClose: () => void;
 };
 

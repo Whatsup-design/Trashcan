@@ -74,7 +74,9 @@ export default function CouponCard({ coupon, onDelete, onEdit }: Props) {
           coupon={coupon}
           onConfirm={(id) => {
             onDelete(id);
-            setShowDelete(false);
+            setTimeout(() => {
+              setShowDelete(false);
+            }, 1500);
           }}
           onCancel={() => setShowDelete(false)}
         />

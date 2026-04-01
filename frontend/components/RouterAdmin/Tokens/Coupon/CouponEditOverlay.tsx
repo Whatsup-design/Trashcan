@@ -7,7 +7,7 @@ import styles from "./CouponEditOverlay.module.css";
 
 type Props = {
   coupon: Coupon;
-  onSubmit: (id: number, data: CouponFormData) => void;
+  onSubmit: (id: number, data: CouponFormData) => Promise<void> | void;
   onClose: () => void;
 };
 

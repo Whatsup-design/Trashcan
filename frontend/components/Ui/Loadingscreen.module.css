@@ -1,0 +1,14 @@
+.wrap {
+  width: 100%;
+  min-height: 55vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+}
+ 
+.gif {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+}

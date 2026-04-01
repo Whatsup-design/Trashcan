@@ -17,7 +17,7 @@ function LogoMark() {
   return ( 
     // eslint-disable-next-line @next/next/no-img-element 
     <img 
-      src="/IconLogo.png" 
+      src="/icon.png" 
       alt="Trashcan Smart" 
       className={styles.logoMark} 
     /> 

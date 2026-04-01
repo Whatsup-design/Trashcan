@@ -1,4 +1,3 @@
-// components/tokens/coupon/CouponCard.tsx
 "use client";
 
 import { useState } from "react";
@@ -8,7 +7,7 @@ import styles from "./CouponCard.module.css";
 
 type Props = {
   coupon: Coupon;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
   onEdit: (coupon: Coupon) => void;
 };
 
@@ -18,12 +17,10 @@ export default function CouponCard({ coupon, onDelete, onEdit }: Props) {
   return (
     <>
       <div className={styles.card}>
-
-        {/* Picture */}
         <div className={styles.imgWrap}>
-          {coupon.picture ? (
+          {coupon.Product_ImgUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={coupon.picture} alt={coupon.name} className={styles.img} />
+            <img src={coupon.Product_ImgUrl} alt={coupon.Product_name} className={styles.img} />
           ) : (
             <div className={styles.imgPlaceholder}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -33,25 +30,27 @@ export default function CouponCard({ coupon, onDelete, onEdit }: Props) {
               </svg>
             </div>
           )}
-          <span className={`${styles.statusBadge} ${coupon.status === "permanent" ? styles.permanent : styles.temporary}`}>
-            {coupon.status === "permanent" ? "Permanent" : "Temporary"}
+          <span className={`${styles.statusBadge} ${coupon.Product_Status === "Permanent" ? styles.permanent : styles.temporary}`}>
+            {coupon.Product_Status}
           </span>
         </div>
 
-        {/* Info */}
         <div className={styles.info}>
-          <p className={styles.name}>{coupon.name}</p>
-          <p className={styles.desc}>{coupon.description}</p>
-          {coupon.status === "temporary" && coupon.dateFrom && coupon.dateTo && (
-            <p className={styles.dateRange}>📅 {coupon.dateFrom} → {coupon.dateTo}</p>
-          )}
+          <p className={styles.name}>{coupon.Product_name}</p>
+          <p className={styles.desc}>{coupon.Product_Description}</p>
+          <div className={styles.dateSlot}>
+            {coupon.Product_Status === "Temporary" && coupon.Product_StartDate && coupon.Product_EndDate ? (
+              <p className={styles.dateRange}>{coupon.Product_StartDate} - {coupon.Product_EndDate}</p>
+            ) : (
+              <p className={styles.dateRangePlaceholder}>No active date</p>
+            )}
+          </div>
           <div className={styles.bottomRow}>
-            <span className={styles.claim}>{coupon.claimPerMonth}x / month</span>
-            <span className={styles.price}>{coupon.price} tokens</span>
+            <span className={styles.claim}>{coupon.Product_limit}x / month</span>
+            <span className={styles.price}>{coupon.Product_Price} tokens</span>
           </div>
         </div>
 
-        {/* Actions */}
         <div className={styles.actions}>
           <button className={styles.actionBtn} onClick={() => onEdit(coupon)} aria-label="Edit">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -68,14 +67,15 @@ export default function CouponCard({ coupon, onDelete, onEdit }: Props) {
             </svg>
           </button>
         </div>
-
       </div>
 
-      {/* Delete confirm */}
       {showDelete && (
         <DeleteConfirm
           coupon={coupon}
-          onConfirm={(id) => { onDelete(id); setShowDelete(false); }}
+          onConfirm={(id) => {
+            onDelete(id);
+            setShowDelete(false);
+          }}
           onCancel={() => setShowDelete(false)}
         />
       )}

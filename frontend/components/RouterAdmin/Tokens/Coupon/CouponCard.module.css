@@ -50,13 +50,13 @@
 }
 
 .permanent {
-  background: rgba(17,119,254,0.12);
-  color: #1177FE;
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
 }
 
 .temporary {
-  background: rgba(249,115,22,0.12);
-  color: #ea580c;
+  background: rgba(17, 119, 254, 0.12);
+  color: #1177FE;
 }
 
 /* ── Info ────────────────────────────────────────────────── */
@@ -88,17 +88,29 @@
   overflow: hidden;
 }
 
+.dateSlot {
+  min-height: 18px;
+}
+
 .dateRange {
   font-size: 11px;
   color: #94a3b8;
   margin: 0;
 }
 
+.dateRangePlaceholder {
+  font-size: 11px;
+  color: transparent;
+  margin: 0;
+  user-select: none;
+}
+
 .bottomRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: auto;
+  padding-top: 4px;
 }
 
 .claim {

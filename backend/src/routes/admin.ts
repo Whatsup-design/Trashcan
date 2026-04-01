@@ -2,7 +2,15 @@ import express from 'express';
 import { dashboardController } from '../controller/admin/dashboard.js';
 import { dataController } from '../controller/admin/data.js';
 import {activityLogController} from "../controller/admin/activityLog.js";
-import {TokensController} from "../controller/admin/tokenMarket.js";
+
+
+import {
+  getAllProductsController,
+  getProductByIdController,
+  createProductController,
+  updateProductController,
+  deleteProductController,
+} from "../controller/admin/market.js";
 
 
 const router = express.Router();
@@ -15,8 +23,12 @@ router.get('/Data', dataController);
 // ── ข้อมูลสำหรับหน้า Activity Log ───────────────────────────────
 router.get("/ActivityLog", activityLogController);
 
-router.get("/Tokens", TokensController);
-
+// ── ข้อมูลสำหรับหน้า Market ───────────────────────────────
+router.get("/Market", getAllProductsController);
+router.get("/Market/:id", getProductByIdController);
+router.post("/Market", createProductController);
+router.put("/Market/:id", updateProductController);
+router.delete("/Market/:id", deleteProductController);
 
 export default router;
 

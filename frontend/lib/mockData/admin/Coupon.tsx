@@ -1,26 +1,38 @@
-// components/tokens/coupon/types.ts
-// Shared types สำหรับทุก coupon component
-
-export type CouponStatus = "permanent" | "temporary";
+export type ProductStatus = "Permanent" | "Temporary";
 
 export type Coupon = {
-  id: string;
-  picture: string;
-  name: string;
-  description: string;
-  status: CouponStatus;
-  dateFrom?: string;        // เฉพาะ temporary (YYYY-MM-DD)
-  dateTo?: string;
-  claimPerMonth: number;
-  price: number;            // ราคาเป็น token (ชื่อเดียวกันทั้งหมด)
+  Product_ID: number;
+  Product_name: string;
+  Product_Description: string;
+  Product_Price: number;
+  Product_Status: ProductStatus;
+  Product_limit: number;
+  Product_ImgUrl: string | null;
+  Product_StartDate?: string;
+  Product_EndDate?: string;
 };
 
-// สำหรับ form (omit id เพราะ generate เอง)
-export type CouponFormData = Omit<Coupon, "id">;
-
+export type CouponFormData = Omit<Coupon, "Product_ID">;
 
 export const INITIAL_COUPONS: Coupon[] = [
-  { id: "1", picture: "", name: "Free Coffee",    description: "Redeem for 1 free coffee at the school canteen", status: "permanent", claimPerMonth: 2, price: 20 },
-  { id: "2", picture: "", name: "Sports Day Pass", description: "Free entry to the annual sports day event",       status: "temporary", dateFrom: "2025-03-01", dateTo: "2025-03-31", claimPerMonth: 1, price: 50 },
-  { id: "3", picture: "", name: "Stationery Set",  description: "1 set of school stationery (pen, pencil, ruler)", status: "permanent", claimPerMonth: 1, price: 30 },
+  {
+    Product_ID: 1,
+    Product_name: "Free Coffee",
+    Product_Description: "Redeem for 1 free coffee at the school canteen",
+    Product_Price: 20,
+    Product_Status: "Permanent",
+    Product_limit: 2,
+    Product_ImgUrl: null,
+  },
+  {
+    Product_ID: 2,
+    Product_name: "Stationary",
+    Product_Description: "This is the Stationary",
+    Product_Price: 10,
+    Product_Status: "Temporary",
+    Product_limit: 2,
+    Product_ImgUrl: null,
+    Product_StartDate: "2026-04-01",
+    Product_EndDate: "2026-04-29",
+  },
 ];

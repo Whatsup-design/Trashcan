@@ -10,9 +10,15 @@ import BottleSummary from "@/components/RouterAdmin/Bottle/BottleSummary";
 import BottleChart from "@/components/RouterAdmin/Bottle/BottleChart";
 import styles from "./page.module.css";
 
+import TokenSummary from "@/components/RouterAdmin/Tokens/Tokensummary";
+import TokenChart from "@/components/RouterAdmin/Tokens/Tokenchart";
+
 import bottleData from "@/lib/mockData/admin/Bottles"
 
-const { summaryData, chartData } = bottleData
+import { summaryData } from "@/lib/mockData/admin/Tokens";
+import { chartData } from "@/lib/mockData/admin/Tokens";
+
+const { summaryDataBottle, chartDataBottle } = bottleData
 
 
 // ── Mockup Summary Data ───────────────────────────────────
@@ -20,7 +26,8 @@ const { summaryData, chartData } = bottleData
 
 export default function BottlesPage() {
   // filter state แชร์ระหว่างซ้ายและขวา
-  const [filter, setFilter] = useState<"week" | "month" | "all">("week");
+  const [filterBottle, setFilterBottle] = useState<"week" | "month" | "all">("week");
+  const [filterTokens, setFilterTokens] = useState<"week" | "month" | "all">("week");
 
   return (
     <div className={styles.page}>
@@ -34,18 +41,35 @@ export default function BottlesPage() {
         {/* ซ้าย — summary + filter */}
         <div className={styles.left}>
           <BottleSummary
-            data={summaryData}
-            filter={filter}
-            onFilter={setFilter}   // ← เมื่อกด filter ซ้าย → เปลี่ยน chart ขวาด้วย
+            data={summaryDataBottle}
+            filter={filterBottle}
+            onFilter={setFilterBottle}   // ← เมื่อกด filter ซ้าย → เปลี่ยน chart ขวาด้วย
           />
         </div>
 
         {/* ขวา — chart */}
         <div className={styles.right}>
           <BottleChart
-            data={chartData}
-            filter={filter}         // ← รับ filter เดียวกันจากซ้าย
+            data={chartDataBottle}
+            filter={filterBottle}         // ← รับ filter เดียวกันจากซ้าย
           />
+        </div>
+      </div>
+
+
+      {/* ── Token acquisition + redemption ────────────────────── */}
+        <div className={styles.heading}>
+        <h1 className={styles.title}>Tokens</h1>
+        <p className={styles.sub}>Acquisition & redemption overview</p>
+      </div>
+
+      {/* ── Summary + Chart ──────────────────────────── */}
+      <div className={styles.layout}>
+        <div className={styles.left}>
+          <TokenSummary data={summaryData} filter={filterTokens} onFilter={setFilterTokens} />
+        </div>
+        <div className={styles.right}>
+          <TokenChart data={chartData} filter={filterTokens} />
         </div>
       </div>
     </div>

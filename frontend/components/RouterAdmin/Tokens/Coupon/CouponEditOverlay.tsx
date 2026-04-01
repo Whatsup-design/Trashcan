@@ -1,4 +1,3 @@
-// components/tokens/coupon/CouponEditOverlay.tsx
 "use client";
 
 import { createPortal } from "react-dom";
@@ -8,7 +7,7 @@ import styles from "./CouponEditOverlay.module.css";
 
 type Props = {
   coupon: Coupon;
-  onSubmit: (id: string, data: CouponFormData) => void;
+  onSubmit: (id: number, data: CouponFormData) => void;
   onClose: () => void;
 };
 
@@ -28,7 +27,7 @@ export default function CouponEditOverlay({ coupon, onSubmit, onClose }: Props) 
         <div className={styles.body}>
           <CouponForm
             initialData={coupon}
-            onSubmit={(data) => onSubmit(coupon.id, data)}
+            onSubmit={(data) => onSubmit(coupon.Product_ID, data)}
             onCancel={onClose}
           />
         </div>

@@ -22,7 +22,7 @@ export type BottleSummaryData = {
 
 {/* mockdata bottles */}
 
-const summaryData: BottleSummaryData = {
+const summaryDataBottle: BottleSummaryData = {
   total:     12480,
   thisWeek:  842,
   thisMonth: 3210,
@@ -32,7 +32,7 @@ const summaryData: BottleSummaryData = {
 };
 
 // ── Mockup Chart Data ─────────────────────────────────────
-const chartData: BottleChartData = {
+const chartDataBottle: BottleChartData = {
   // ข้อมูล 7 วัน
   week: [
     { date: "Mon", total: 98,  plastic: 55, glass: 25, aluminum: 18 },
@@ -68,6 +68,6 @@ const chartData: BottleChartData = {
   ],
 };
 
-export default {summaryData,
-                chartData    
+export default {summaryDataBottle,
+                chartDataBottle    
 };

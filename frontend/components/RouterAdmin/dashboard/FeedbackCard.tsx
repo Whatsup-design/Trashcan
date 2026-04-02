@@ -36,17 +36,17 @@ export default function FeedbackCard({ data, avgRating }: FeedbackCardProps) {
         <p className={styles.title}>Device Feedback</p>
         <div className={styles.avgWrap}>
           <span className={styles.avgScore}>{avgRating}</span>
-          <span className={styles.avgStar}>★</span>
+          <span className={styles.avgStar}>★ </span>
           <span className={styles.avgLabel}>avg</span>
         </div>
       </div>
 
       {/* รายการ feedback */}
+    
       <div className={styles.list}>
         {data.map((item) => (
           <div key={item.id} className={styles.item}>
             <div className={styles.itemTop}>
-              <span className={styles.device}>{item.device}</span>
               <StarRating rating={item.rating} />
             </div>
             <p className={styles.comment}>{item.comment}</p>
@@ -56,6 +56,7 @@ export default function FeedbackCard({ data, avgRating }: FeedbackCardProps) {
           </div>
         ))}
       </div>
+     
     </div>
   );
 }

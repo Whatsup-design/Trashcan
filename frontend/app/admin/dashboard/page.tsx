@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import StatCard from "@/components/RouterAdmin/dashboard/StatCard";
-import ActivityTable from "@/components/RouterAdmin/dashboard/ActivityTable";
-import FeedbackCard from "@/components/RouterAdmin/dashboard/FeedbackCard";
-import MobileCarousel from "@/components/RouterAdmin/dashboard/MobileCarousel";
+import StatCard from "@/components/RouterAdmin/Dashboard/StatCard";
+import ActivityTable from "@/components/RouterAdmin/Dashboard/ActivityTable";
+import FeedbackCard from "@/components/RouterAdmin/Dashboard/FeedbackCard";
+import MobileCarousel from "@/components/RouterAdmin/Dashboard/MobileCarousel";
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
 import { apiFetch } from "@/lib/api";

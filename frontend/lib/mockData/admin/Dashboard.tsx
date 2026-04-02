@@ -17,7 +17,6 @@ export type Test = {
 
 export type FeedbackItem = {
   id: string;
-  device: string;
   rating: number;
   comment: string;
   user: string;
@@ -58,9 +57,9 @@ export const dashboardData: DashboardData = {
     { id: "5", device: "Device B-01", action: "Bottle collected",    time: "1 hr ago",    status: "success" },
   ],
   recentFeedback: [
-    { id: "1", device: "Device A-01", rating: 5, comment: "Works great!", user: "User001", time: "1 hr ago"  },
-    { id: "2", device: "Device B-03", rating: 4, comment: "Good machine",  user: "User042", time: "3 hrs ago" },
-    { id: "3", device: "Device A-02", rating: 3, comment: "A bit slow",    user: "User018", time: "5 hrs ago" },
-    { id: "4", device: "Device C-01", rating: 5, comment: "Love it!",      user: "User007", time: "1 day ago" },
+    { id: "1", rating: 5, comment: "Works great!", user: "User001", time: "1 hr ago"  },
+    { id: "2", rating: 4, comment: "Good machine",  user: "User042", time: "3 hrs ago" },
+    { id: "3", rating: 3, comment: "A bit slow",    user: "User018", time: "5 hrs ago" },
+    { id: "4", rating: 5, comment: "Love it!",      user: "User007", time: "1 day ago" },
   ],
 };

@@ -2,6 +2,7 @@ import express from 'express';
 import { dashboardController } from '../controller/admin/dashboard.js';
 import { dataController } from '../controller/admin/data.js';
 import {activityLogController} from "../controller/admin/activityLog.js";
+import {overviewController} from "../controller/admin/overview.js";
 
 
 import {
@@ -30,6 +31,7 @@ router.post("/Market", createProductController);
 router.put("/Market/:id", updateProductController);
 router.delete("/Market/:id", deleteProductController);
 
+router.get('/overview', overviewController);
 export default router;
 
 

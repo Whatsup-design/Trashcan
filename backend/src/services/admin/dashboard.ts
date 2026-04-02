@@ -1,36 +1,53 @@
 import { supabase } from "../../lib/supabase.js";
 
 export async function getDashboardData() {
-  const { data, error } = await supabase
+  const { data: DashboardData, error: DashboardError } = await supabase
     .from("User")
     .select("Student_Bottles, Student_Tokens, Student_weight");
+    
 
-  if (error) {
-    console.error("Error fetching dashboard data:", error);
+  if (DashboardError) {
+    console.error("Error fetching dashboard data:", DashboardError);
     throw new Error("Failed to fetch dashboard data");
   }
 
-  const totalUsers = data.length;
+  const {data: FeedbackData, error: FeedbackError } = await supabase
+    .from("Feedback")
+    .select("ID, Student_ID, comment, time, Rating");
 
-  const totalBottles = data.reduce(
+  if (FeedbackError) {
+    console.error("Error fetching feedback data:", FeedbackError);
+    throw new Error("Failed to fetch feedback data");
+  }
+
+  const avgRating = FeedbackData.length > 0
+    ? FeedbackData.reduce((sum, feedback) => sum + feedback.Rating, 0) / FeedbackData.length
+    : 0;
+
+  const totalUsers=DashboardData.length;
+
+  const totalBottles = DashboardData.reduce(
     (sum, user) => sum + (user.Student_Bottles ?? 0),
     0
   );
 
-  const totalWeight = data.reduce(
+  const totalWeight = DashboardData.reduce(
     (sum, user) => sum + (user.Student_weight ?? 0),
     0
   );
 
-  const totalTokens = data.reduce(
+  const totalTokens = DashboardData.reduce(
     (sum, user) => sum + (user.Student_Tokens ?? 0),
     0
   );
 
   return {
-    totalUsers,
-    totalBottles,
-    totalWeight,
-    totalTokens,
+    dashboardData : {
+      totalUsers,
+      totalBottles,
+      totalWeight,
+      totalTokens
+  }, feedbackData : FeedbackData, avgRating
+    
   };
 }

@@ -13,6 +13,11 @@ import {
   deleteProductController,
 } from "../controller/admin/market.js";
 
+import {
+  deviceScanController,
+  deviceConfirmController,
+} from "../controller/admin/devices.js";
+
 
 const router = express.Router();
 // ── ข้อมูลสำหรับหน้า Dashboard ───────────────────────────────
@@ -31,7 +36,15 @@ router.post("/Market", createProductController);
 router.put("/Market/:id", updateProductController);
 router.delete("/Market/:id", deleteProductController);
 
+//-─ ข้อมูลสำหรับหน้า Overview ───────────────────────────────
 router.get('/overview', overviewController);
+
+// ── ข้อมูลสำหรับหน้า Devices ───────────────────────────────
+router.get("/devices/scan", deviceScanController);
+router.post("/devices/confirm", deviceConfirmController);
+
+
+
 export default router;
 
 

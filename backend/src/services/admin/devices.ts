@@ -16,6 +16,10 @@ type UserRow = {
   Student_Bottles: number | null;
 };
 
+function normalizeWeightForDb(weight: number) {
+  return Math.round(weight);
+}
+
 export async function deviceScan(rfid: string) {
   const { data, error } = await supabase
     .from("User")
@@ -45,6 +49,7 @@ export async function deviceScan(rfid: string) {
 
 export async function deviceConfirm(input: DeviceConfirmInput) {
   const { rfid, student_id, weight, tokens_earned } = input;
+  const storedWeight = normalizeWeightForDb(weight);
 
   const { data: existingRfidUser, error: existingRfidUserError } = await supabase
     .from("User")
@@ -62,7 +67,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
 
   if (currentUser) {
     const nextTokens = (currentUser.Student_Tokens ?? 0) + tokens_earned;
-    const nextWeight = (currentUser.Student_weight ?? 0) + weight;
+    const nextWeight = (currentUser.Student_weight ?? 0) + storedWeight;
     const nextBottles = (currentUser.Student_Bottles ?? 0) + 1;
 
     const { data: updatedUser, error: updateError } = await supabase
@@ -86,7 +91,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
     return {
       status: "SUCCESS",
       name: savedUser.Student_Name,
-      weight,
+      weight: storedWeight,
       tokens_earned,
       tokens: savedUser.Student_Tokens ?? nextTokens,
     };
@@ -119,7 +124,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
   }
 
   const nextTokens = (bindTargetUser.Student_Tokens ?? 0) + tokens_earned;
-  const nextWeight = (bindTargetUser.Student_weight ?? 0) + weight;
+  const nextWeight = (bindTargetUser.Student_weight ?? 0) + storedWeight;
   const nextBottles = (bindTargetUser.Student_Bottles ?? 0) + 1;
 
   const { data: updatedStudent, error: bindError } = await supabase
@@ -147,7 +152,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
   return {
     status: "SUCCESS",
     name: savedStudent.Student_Name,
-    weight,
+    weight: storedWeight,
     tokens_earned,
     tokens: savedStudent.Student_Tokens ?? nextTokens,
   };

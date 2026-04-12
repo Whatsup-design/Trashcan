@@ -5,14 +5,22 @@ export async function deviceScanController(req: Request, res: Response) {
   try {
     const { rfid } = req.body as { rfid?: string };
 
-    if (!rfid) {
+    if (!rfid || !rfid.trim()) {
       return res.status(400).json({
         status: "ERROR",
         message: "rfid is required",
       });
     }
 
-    const result = await deviceScan(rfid);
+    const startedAt = Date.now();
+    const result = await deviceScan(rfid.trim());
+
+    console.log("deviceScan OK", {
+      rfid: rfid.trim(),
+      status: result.status,
+      ms: Date.now() - startedAt,
+    });
+
     return res.status(200).json(result);
   } catch (error) {
     console.error("deviceScanController error:", error);
@@ -32,7 +40,7 @@ export async function deviceConfirmController(req: Request, res: Response) {
       tokens_earned?: number;
     };
 
-    if (!rfid) {
+    if (!rfid || !rfid.trim()) {
       return res.status(400).json({
         status: "ERROR",
         message: "rfid is required",
@@ -46,11 +54,33 @@ export async function deviceConfirmController(req: Request, res: Response) {
       });
     }
 
+    if (weight <= 0 || tokens_earned < 0) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "invalid weight or tokens_earned",
+      });
+    }
+
+    if (typeof student_id === "number" && student_id <= 0) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "invalid student_id",
+      });
+    }
+
+    const startedAt = Date.now();
     const result = await deviceConfirm({
-      rfid,
+      rfid: rfid.trim(),
       weight,
       tokens_earned,
       ...(typeof student_id === "number" ? { student_id } : {}),
+    });
+
+    console.log("deviceConfirm OK", {
+      rfid: rfid.trim(),
+      student_id,
+      status: result.status,
+      ms: Date.now() - startedAt,
     });
 
     return res.status(200).json(result);

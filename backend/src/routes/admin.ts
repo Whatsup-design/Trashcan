@@ -4,6 +4,8 @@
   import {activityLogController} from "../controller/admin/activityLog.js";
   import {overviewController} from "../controller/admin/overview.js";
 
+  import { supabase } from "../lib/supabase.js";
+
 
   import {
     getAllProductsController,
@@ -17,6 +19,8 @@
     deviceScanController,
     deviceConfirmController,
   } from "../controller/admin/devices.js";
+
+  
 
 
   const router = express.Router();
@@ -43,8 +47,24 @@
   router.post("/devices/scan", deviceScanController);
   router.post("/devices/confirm", deviceConfirmController);
 
+  router.get("/school/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
 
+      const { data, error } = await supabase
+        .from("School_Data")
+        .select("*")
+        .eq("id", id);
 
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
   export default router;
 
 

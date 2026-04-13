@@ -11,7 +11,7 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
 
-import {type BottleChartData, type BottleChartPoint} from "@/types/AdminTypes";
+import { type BottleChartData } from "@/types/AdminTypes";
 
 import styles from "./BottleChart.module.css";
 

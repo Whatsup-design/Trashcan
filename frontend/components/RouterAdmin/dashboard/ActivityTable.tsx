@@ -6,7 +6,7 @@
 
 
 import styles from "./ActivityTable.module.css";
-import {type DashboardData, type ActivityItem} from "@/types/AdminTypes";
+import { type ActivityItem } from "@/types/AdminTypes";
 
 type ActivityTableProps = {
   data: ActivityItem[];

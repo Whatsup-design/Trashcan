@@ -6,7 +6,6 @@
 // ─────────────────────────────────────────────────────────
 "use client";
 
-import { useState } from "react";
 import type { Product } from "@/lib/mockData/user/BannerToken";
 import ProductCard from "./ProductCard";
 import styles from "./ProductGrid.module.css";

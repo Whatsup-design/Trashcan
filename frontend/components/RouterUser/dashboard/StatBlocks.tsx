@@ -95,7 +95,6 @@ export default function StatBlocks({ data }: Props) {
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
-    onSelect();
   }, [emblaApi, onSelect]);
 
   return (

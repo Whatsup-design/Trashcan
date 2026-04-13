@@ -1,37 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import type { Coupon } from "../../../../lib/mockData/admin/Coupon";
 
 export function useCouponSearch(coupons: Coupon[]) {
   const [query, setQuery] = useState("");
-  const [filtered, setFiltered] = useState(coupons);
-  const [loading, setLoading] = useState(false);
+  const deferredQuery = useDeferredValue(query);
 
-  useEffect(() => {
-    setLoading(true);
+  const filtered = useMemo(() => {
+    const q = deferredQuery.trim().toLowerCase();
 
-    const timer = setTimeout(() => {
-      const q = query.trim().toLowerCase();
+    if (!q) {
+      return coupons;
+    }
 
-      if (!q) {
-        setFiltered(coupons);
-      } else {
-        setFiltered(
-          coupons.filter(
-            (coupon) =>
-              coupon.Product_name.toLowerCase().includes(q) ||
-              coupon.Product_Description.toLowerCase().includes(q) ||
-              coupon.Product_Status.toLowerCase().includes(q)
-          )
-        );
-      }
+    return coupons.filter(
+      (coupon) =>
+        coupon.Product_name.toLowerCase().includes(q) ||
+        coupon.Product_Description.toLowerCase().includes(q) ||
+        coupon.Product_Status.toLowerCase().includes(q)
+    );
+  }, [coupons, deferredQuery]);
 
-      setLoading(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query, coupons]);
+  const loading = query !== deferredQuery;
 
   return { query, setQuery, filtered, loading };
 }

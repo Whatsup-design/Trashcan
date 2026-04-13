@@ -19,7 +19,7 @@ export default function UserDashboardPage() {
       {/* ── Greeting ─────────────────────────────────── */}
       <div className={styles.greeting}>
         <h1 className={styles.title}>Welcome back! 👋</h1>
-        <p className={styles.sub}>Here's your activity overview</p>
+        <p className={styles.sub}>Here is your activity overview</p>
       </div>
 
       {/* ── Stat blocks ──────────────────────────────── */}

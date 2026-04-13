@@ -30,7 +30,7 @@ export default function DeleteConfirm({ coupon, onConfirm, onCancel }: Props) {
         <div className={styles.icon}>Delete</div>
         <p className={styles.title}>Delete coupon?</p>
         <p className={styles.sub}>
-          <strong>"{coupon.Product_name}"</strong> will be permanently removed.
+          <strong>&quot;{coupon.Product_name}&quot;</strong> will be permanently removed.
         </p>
         <div className={styles.btns}>
           <button className={styles.cancelBtn} onClick={onCancel} disabled={isDeleting}>Cancel</button>

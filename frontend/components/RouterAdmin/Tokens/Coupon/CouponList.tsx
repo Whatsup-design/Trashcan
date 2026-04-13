@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Coupon, CouponFormData } from "../../../../lib/mockData/admin/Coupon";
 import { useCouponSearch } from "./useCouponSearch";
 import CouponCard from "./CouponCard";

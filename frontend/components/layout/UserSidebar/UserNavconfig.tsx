@@ -4,7 +4,6 @@
 // แยกออกจาก Navconfig.ts (admin) เพื่อไม่ให้ปนกัน
 // ─────────────────────────────────────────────────────────
 
-import { ComponentType } from "react";
 import { Icons } from "@/components/icon/IconExport";
 import { NavItem } from "../type";
 

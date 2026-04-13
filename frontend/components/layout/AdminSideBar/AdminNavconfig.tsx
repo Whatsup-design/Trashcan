@@ -1,5 +1,4 @@
 // components/layout/navConfig.ts
-import { ComponentType } from "react";
 import { Icons } from "@/components/icon/IconExport";
 import { NavItem } from "../type";
 

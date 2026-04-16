@@ -8,7 +8,9 @@ import styles from "./page.module.css";
 export default function StudentLoginPage() {
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
+  
   const [rememberMe, setRememberMe] = useState(false);
+
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

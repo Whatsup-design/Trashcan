@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
+import { apiPost } from "@/lib/api";
 import styles from "./page.module.css";
 
+import { type PayloadLogin } from "@/lib/mockData/auth/login/login";
 export default function StudentLoginPage() {
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
@@ -18,13 +19,34 @@ export default function StudentLoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (!studentId) {
+      setError("กรุณากรอก Student ID");
+      return;
+    }
+
     setLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    try {
+      const payload = {
+        Student_ID: Number(studentId),
+        password,
+        rememberMe,
+      } as PayloadLogin;
 
-    setLoading(false);
-    setError("Login is disabled for now.");
+      const res = await apiPost("/auth/login", payload);
+      console.log("login response:", res);
+    } catch (error) {
+      console.error(error);
+      setError("Invalid Student ID or password.");
+    } finally {
+      // เพิ่ม delay เพื่อให้ loading เห็นนานขึ้น (ปรับเป็นมิลลิวินาทีตามต้องการ)
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setLoading(false);
+    }
+
   }
+
 
   return (
     <div className={styles.page}>

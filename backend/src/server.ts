@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
+import authRoutes from './routes/auth.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,6 +17,7 @@ app.get('/health', (_req, res) => {
 
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
+app.use('/auth', authRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

@@ -1,9 +1,9 @@
-// import { PostLogin } from "../../services/auth/login.js";
-// import type { Request, Response } from "express";
+import { PostLogin } from "../../services/auth/login.js";
+import type { Request, Response } from "express";
 
-// import { generateToken } from "../../utils/generateToken.js";
-// export async function loginController(req: Request, res: Response) {
-//   try {
+import { generateToken } from "../../utils/generateToken.js";
+export async function loginController(req: Request, res: Response) {
+  try {
 
     const { student_id, Student_ID, password, remember_me } = req.body as {
       student_id?: string | number;

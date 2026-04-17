@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { apiPost } from "@/lib/api";
 import styles from "./page.module.css";
@@ -15,16 +15,20 @@ export default function StudentLoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const isSubmittingRef = useRef(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (isSubmittingRef.current) return; // guard: already submitting
 
     if (!studentId) {
       setError("กรุณากรอก Student ID");
       return;
     }
 
+    isSubmittingRef.current = true;
     setLoading(true);
 
     try {
@@ -43,6 +47,7 @@ export default function StudentLoginPage() {
       // เพิ่ม delay เพื่อให้ loading เห็นนานขึ้น (ปรับเป็นมิลลิวินาทีตามต้องการ)
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setLoading(false);
+      isSubmittingRef.current = false;
     }
 
   }

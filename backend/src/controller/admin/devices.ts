@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { deviceConfirm, deviceScan } from "../../services/admin/devices.js";
+import { hashPassword } from "../../utils/bycryto.js";
 
 //Good
 export async function deviceScanController(req: Request, res: Response) {
@@ -41,6 +42,7 @@ export async function deviceConfirmController(req: Request, res: Response) {
       student_id?: number;
       weight?: number;
       tokens_earned?: number;
+      password?: string;
     };
     //Error checker
     if (!rfid || !rfid.trim()) {
@@ -70,7 +72,7 @@ export async function deviceConfirmController(req: Request, res: Response) {
         message: "invalid student_id",
       });
     }
-
+    
     const startedAt = Date.now();
     //Contact to services
     const result = await deviceConfirm({

@@ -1,10 +1,12 @@
 import { supabase } from "../../lib/supabase.js";
+import { hashPassword } from "../../utils/bycryto.js";
 
 type DeviceConfirmInput = {
   rfid: string;
   student_id?: number;
   weight: number;
   tokens_earned: number;
+  password?: string;
 };
 
 type UserRow = {
@@ -14,6 +16,8 @@ type UserRow = {
   Student_Tokens: number | null;
   Student_weight: number | null;
   Student_Bottles: number | null;
+  Password_hash: string | null;
+  
 };
 
 type SchoolRow = {
@@ -208,9 +212,17 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
     return { status: "INVALID_STUDENT_ID" };
   }
 
+
+
   // --------------------------------------------------
   // 7. Create new User row from School_Data + hardware data
   // --------------------------------------------------
+  // generate a default password using the requested pattern: @[student_ID][FullName]
+  const rawPassword = `@${schoolUser.Student_ID}[${
+    schoolUser.Student_FullNameE ?? ""
+  }]`;
+  const passwordHash = await hashPassword(rawPassword);
+
   const { data: insertedUser, error: insertError } = await supabase
     .from("User")
     .insert({
@@ -225,7 +237,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
       Student_Tokens: tokens_earned,
       Student_Bottles: 1,
       Student_weight: storedWeight,
-      password_hash: null,
+      password_hash: passwordHash,
       role: "student",
       status: "active",
       created_at: now,
@@ -250,5 +262,6 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
     weight: storedWeight,
     tokens_earned,
     tokens: savedStudent.Student_Tokens ?? tokens_earned,
+    password: rawPassword,
   };
 }

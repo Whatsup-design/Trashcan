@@ -10,7 +10,10 @@ export async function apiRequest(path: string, init?: RequestInit) {
   });
 
   if (!res.ok) {
-    throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+    // include response body (if any) to make server error messages visible in frontend
+    const body = await res.text();
+    const extra = body ? ` - ${body}` : "";
+    throw new Error(`API request failed: ${res.status} ${res.statusText}${extra}`);
   }
 
   return res.json();

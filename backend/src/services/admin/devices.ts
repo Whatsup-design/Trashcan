@@ -1,5 +1,6 @@
 import { supabase } from "../../lib/supabase.js";
 import { hashPassword } from "../../utils/bycryto.js";
+import { formatNameForPassword } from "../../utils/nameFormat.js";
 
 type DeviceConfirmInput = {
   rfid: string;
@@ -217,10 +218,10 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
   // --------------------------------------------------
   // 7. Create new User row from School_Data + hardware data
   // --------------------------------------------------
-  // generate a default password using the requested pattern: @[student_ID][FullName]
-  const rawPassword = `@${schoolUser.Student_ID}[${
-    schoolUser.Student_FullNameE ?? ""
-  }]`;
+  // generate a default password using the requested pattern: @<studentID><Name>
+  // format the full name to remove honorifics and punctuation
+  const cleanName = formatNameForPassword(schoolUser.Student_FullNameE ?? "");
+  const rawPassword = `@${schoolUser.Student_ID}${cleanName}`;
   const passwordHash = await hashPassword(rawPassword);
 
   const { data: insertedUser, error: insertError } = await supabase

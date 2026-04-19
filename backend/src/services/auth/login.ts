@@ -36,7 +36,7 @@ export async function PostLogin(student_id: string, password: string) {
     await verifyUserPassword(password, user.password_hash);
     
     const sanitizedUser = {
-        id: user.id,
+        id: user.ID,
         student_id: user.Student_ID,
         role: user.role,
     };

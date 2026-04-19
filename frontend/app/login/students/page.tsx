@@ -4,8 +4,11 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { apiPost } from "@/lib/api";
 import styles from "./page.module.css";
-
+import { useAuthStore } from "@/app/store/useAuthStore";
+import { useRouter } from "next/navigation";
 import { type PayloadLogin } from "@/lib/mockData/auth/login/login";
+
+
 export default function StudentLoginPage() {
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
@@ -15,9 +18,15 @@ export default function StudentLoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const isSubmittingRef = useRef(false);
+  
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  const navigate = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
+
     e.preventDefault();
     setError("");
 
@@ -37,15 +46,29 @@ export default function StudentLoginPage() {
         password,
         rememberMe,
       } as PayloadLogin;
-
       const res = await apiPost("/auth/login", payload);
-      console.log("login response:", res);
-    } catch (error) {
-      console.error(error);
-      setError("Invalid Student ID or password.");
-    } finally {
+      // Assuming the response structure is
+      const { user, token } = res;
+      
+      console.log("Login successful:", { user, token });
+      //Set auth (Localstorage + Zustand)
+      setAuth(user, token);
+      //redirect to dashboard
+      navigate.push("/user/dashboard");
+
+      
+
+    } catch (err:any) {
+      
+      console.error("LOGIN ERROR:", err);
+      console.error("RESPONSE:", err?.response);
+
+      setError(err?.response?.data?.message || "Login failed");
+    }
+
+    finally {
       // เพิ่ม delay เพื่อให้ loading เห็นนานขึ้น (ปรับเป็นมิลลิวินาทีตามต้องการ)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       setLoading(false);
       isSubmittingRef.current = false;
     }
@@ -69,7 +92,7 @@ export default function StudentLoginPage() {
             className={styles.headerIcon}
           />
           <div>
-            <h1 className={styles.title}>Student & Staff</h1>
+            <h1 className={styles.title}>Internal Personnel</h1>
             <p className={styles.sub}>Sign in with your Student ID</p>
           </div>
         </div>
@@ -90,9 +113,6 @@ export default function StudentLoginPage() {
 
           <div className={styles.field}>
             <label className={styles.label}>Password</label>
-            <p className={styles.passwordHint}>
-              Default: <code>@{studentId || "StudentID"}[FirstName]</code>
-            </p>
             <div className={styles.passwordWrap}>
               <input
                 className={styles.input}
@@ -108,8 +128,21 @@ export default function StudentLoginPage() {
                 className={styles.eyeBtn}
                 onClick={() => setShowPass((s) => !s)}
                 tabIndex={-1}
+                aria-label={showPass ? "Hide password" : "Show password"}
               >
-                {showPass ? "🙈" : "👁"}
+                {/* use raw image path directly */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={showPass ? "/LoginIcon/Unseen.png" : "/LoginIcon/Seen.png"}
+                  
+                  alt={showPass ? "Hide password" : "Show password"}
+                  width={15}
+                  style={{ display: "block" }}
+                  height={15}
+                  className={styles.eyeIcon}
+                  draggable={false}
+                  aria-hidden="true"
+                />
               </button>
             </div>
           </div>

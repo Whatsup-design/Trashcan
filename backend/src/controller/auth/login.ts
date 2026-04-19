@@ -49,7 +49,11 @@ export async function loginController(req: Request, res: Response) {
     }
     //jwt token generation
     const token = generateToken(result);
-    res.json({ ...result, token });
+    res.json({
+          user: result,
+          token,
+          remember_me: remember_me ?? false,
+        });
 
   } catch (error: any) {
     console.error("Login error:", error);

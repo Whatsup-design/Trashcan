@@ -47,21 +47,27 @@ export default function StudentLoginPage() {
         rememberMe,
       } as PayloadLogin;
       const res = await apiPost("/auth/login", payload);
-      // // Assuming the response structure is
-      // const { user, token } = res.data;
-      // //Set auth (Localstorage + Zustand)
-      // setAuth(user, token);
-      // //redirect to dashboard
-      // navigate.push("/user/dashboard");
+      // Assuming the response structure is
+      const { user, token } = res;
+      
+      console.log("Login successful:", { user, token });
+      //Set auth (Localstorage + Zustand)
+      setAuth(user, token);
+      //redirect to dashboard
+      navigate.push("/user/dashboard");
 
-      console.log("Login response:", res);
+      
 
-    } catch (error) {
-      alert("Login failed. Please check your credentials and try again."); 
-      setError("Invalid Student ID or password.");
+    } catch (err:any) {
+      
+      console.error("LOGIN ERROR:", err);
+      console.error("RESPONSE:", err?.response);
 
+      setError(err?.response?.data?.message || "Login failed");
+    }
 
-    } finally {
+    finally {
+    
       // เพิ่ม delay เพื่อให้ loading เห็นนานขึ้น (ปรับเป็นมิลลิวินาทีตามต้องการ)
       await new Promise((resolve) => setTimeout(resolve, 300));
       setLoading(false);

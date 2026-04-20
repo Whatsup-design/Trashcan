@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ActivityLogTable from "@/components/RouterAdmin/ActivityLog/ActivityLogTable";
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
-import { apiFetch } from "@/lib/api";
+import { ApiError, apiFetch } from "@/lib/api";
 import type { ActivityLog } from "@/lib/mockData/admin/ActivityLog";
 
 const TODAY = new Date().toISOString().split("T")[0];
@@ -14,21 +14,34 @@ export default function ActivityLogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  function getErrorMessage(err: unknown) {
+    if (err instanceof ApiError && err.status === 0) {
+      return "Request timed out or network error. Please try again.";
+    }
+    return "Failed to load activity log data. Please try again.";
+  }
+
+  function loadActivityLog() {
+    setLoading(true);
+    setError("");
     apiFetch("/admin/ActivityLog")
       .then((res: ActivityLog[]) => setData(res))
       .catch((err) => {
         console.error(err);
-        setError("Failed to load activity log data");
+        setError(getErrorMessage(err));
       })
       .finally(() => {
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    loadActivityLog();
   }, []);
 
   return (
     <div className={styles.page}>
-      <DataState loading={loading} error={error} isEmpty={!data || data.length === 0} emptyText="No activity log found">
+      <DataState loading={loading} error={error} onRetry={loadActivityLog} isEmpty={!data || data.length === 0} emptyText="No activity log found">
         {data && (
           <>
             <div className={styles.heading}>

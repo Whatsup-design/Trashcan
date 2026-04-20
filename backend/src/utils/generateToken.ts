@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 type UserPayload = {
     id: string | number;
+    student_id?: string | number;
     role: string;
 };
 
@@ -11,6 +12,7 @@ export const generateToken = (user: UserPayload): string => {
 
     const payload = {
         id: user.id,
+        student_id: user.student_id,
         role: user.role,
     };
 

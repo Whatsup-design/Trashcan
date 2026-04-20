@@ -1,19 +1,81 @@
-const BASE_URL = "http://localhost:3001";
+const BASE_URL ="http://localhost:3001";
 
-export async function apiRequest(path: string, init?: RequestInit) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
-    ...init,
-  });
+type ApiRequestOptions = RequestInit & {
+  redirectOnError?: boolean;
+};
+function getClientToken() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return localStorage.getItem("token");
+}
+
+export class ApiError extends Error {
+  status: number;
+  body: string;
+
+  constructor(status: number, message: string, body = "") {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
+function extractErrorMessage(status: number, statusText: string, body: string) {
+  if (!body) {
+    return `API request failed: ${status} ${statusText}`;
+  }
+
+  try {
+    const parsed = JSON.parse(body) as { message?: string };
+    if (parsed.message) {
+      return parsed.message;
+    }
+  } catch {
+    // Ignore non-JSON bodies and fall back to raw text below.
+  }
+
+  return `API request failed: ${status} ${statusText} - ${body}`;
+}
+
+export async function apiRequest(path: string, init?: ApiRequestOptions) {
+  const { redirectOnError = true, ...requestInit } = init ?? {};
+  const token = getClientToken();
+
+  let res: Response;
+  try {
+    res = await fetch(`${BASE_URL}${path}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(requestInit.headers ?? {}),
+      },
+      ...requestInit,
+    });
+  } catch (cause) {
+    throw new ApiError(
+      0,
+      "Unable to reach server. Please try again.",
+      cause instanceof Error ? cause.message : ""
+    );
+  }
 
   if (!res.ok) {
-    // include response body (if any) to make server error messages visible in frontend
     const body = await res.text();
-    const extra = body ? ` - ${body}` : "";
-    throw new Error(`API request failed: ${res.status} ${res.statusText}${extra}`);
+    const message = extractErrorMessage(res.status, res.statusText, body);
+    const error = new ApiError(
+      res.status,
+      message,
+      body
+    );
+
+    if (redirectOnError && typeof window !== "undefined" && [401, 403, 404].includes(res.status)) {
+      window.location.replace(`/error/${res.status}`);
+    }
+
+    throw error;
   }
 
   return res.json();
@@ -23,8 +85,13 @@ export async function apiFetch(path: string) {
   return apiRequest(path, { method: "GET" });
 }
 
-export async function apiPost(path: string, body: unknown) {
+export async function apiPost(
+  path: string,
+  body: unknown,
+  init?: Omit<ApiRequestOptions, "method" | "body">
+) {
   return apiRequest(path, {
+    ...init,
     method: "POST",
     body: JSON.stringify(body),
   });

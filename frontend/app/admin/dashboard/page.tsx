@@ -7,7 +7,7 @@ import FeedbackCard from "@/components/RouterAdmin/dashboard/FeedbackCard";
 import MobileCarousel from "@/components/RouterAdmin/dashboard/MobileCarousel";
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
-import { apiFetch } from "@/lib/api";
+import { ApiError, apiFetch } from "@/lib/api";
 import { dashboardData, type Test } from "@/lib/mockData/admin/Dashboard";
 
 type DashboardResponse = {
@@ -21,21 +21,34 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  function getErrorMessage(err: unknown) {
+    if (err instanceof ApiError && err.status === 0) {
+      return "Request timed out or network error. Please try again.";
+    }
+    return "Failed to load dashboard data. Please try again.";
+  }
+
+  function loadDashboard() {
+    setLoading(true);
+    setError("");
     apiFetch("/admin/Dashboard")
       .then((res: DashboardResponse) => setData(res))
       .catch((err) => {
         console.error(err);
-        setError("Failed to load dashboard data");
+        setError(getErrorMessage(err));
       })
       .finally(() => {
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    loadDashboard();
   }, []);
 
   return (
     <div className={styles.page}>
-      <DataState loading={loading} error={error} isEmpty={!data} emptyText="No dashboard data">
+      <DataState loading={loading} error={error} onRetry={loadDashboard} isEmpty={!data} emptyText="No dashboard data">
         {data && (
           <>
             <div className={styles.heading}>

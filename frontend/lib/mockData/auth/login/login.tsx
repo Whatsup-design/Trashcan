@@ -1,5 +1,5 @@
 export type PayloadLogin = {
-    Student_ID: number;
+    student_id: number;
     password: string;
-    rememberMe: boolean;
-}
+    remember_me: boolean;
+};

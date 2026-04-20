@@ -1,70 +1,61 @@
-  import express from 'express';
-  import { dashboardController } from '../controller/admin/dashboard.js';
-  import { dataController } from '../controller/admin/data.js';
-  import {activityLogController} from "../controller/admin/activityLog.js";
-  import {overviewController} from "../controller/admin/overview.js";
+import express from "express";
+import { dashboardController } from "../controller/admin/dashboard.js";
+import { dataController } from "../controller/admin/data.js";
+import { activityLogController } from "../controller/admin/activityLog.js";
+import { overviewController } from "../controller/admin/overview.js";
+import {
+  createProductController,
+  deleteProductController,
+  getAllProductsController,
+  getProductByIdController,
+  updateProductController,
+} from "../controller/admin/market.js";
+import {
+  deviceConfirmController,
+  deviceScanController,
+} from "../controller/admin/devices.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import requireRole from "../middleware/roleMiddleware.js";
+import { supabase } from "../lib/supabase.js";
 
-  import { supabase } from "../lib/supabase.js";
+const router = express.Router();
 
+// Public device routes for ESP/hardware flow.
+router.post("/devices/scan", deviceScanController);
+router.post("/devices/confirm", deviceConfirmController);
 
-  import {
-    getAllProductsController,
-    getProductByIdController,
-    createProductController,
-    updateProductController,
-    deleteProductController,
-  } from "../controller/admin/market.js";
+// Admin-protected routes.
+router.use(authMiddleware, requireRole("admin"));
 
-  import {
-    deviceScanController,
-    deviceConfirmController,
-  } from "../controller/admin/devices.js";
+router.get("/Dashboard", dashboardController);
+router.get("/Data", dataController);
+router.get("/ActivityLog", activityLogController);
 
-  
+router.get("/Market", getAllProductsController);
+router.get("/Market/:id", getProductByIdController);
+router.post("/Market", createProductController);
+router.put("/Market/:id", updateProductController);
+router.delete("/Market/:id", deleteProductController);
 
+router.get("/overview", overviewController);
 
-  const router = express.Router();
-  // ── ข้อมูลสำหรับหน้า Dashboard ───────────────────────────────
-  router.get('/Dashboard', dashboardController);
+router.get("/school/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  // ── ข้อมูลสำหรับหน้า Data  ───────────────────────────────
-  router.get('/Data', dataController);
+    const { data, error } = await supabase
+      .from("School_Data")
+      .select("*")
+      .eq("id", id);
 
-  // ── ข้อมูลสำหรับหน้า Activity Log ───────────────────────────────
-  router.get("/ActivityLog", activityLogController);
-
-  // ── ข้อมูลสำหรับหน้า Market ───────────────────────────────
-  router.get("/Market", getAllProductsController);
-  router.get("/Market/:id", getProductByIdController);
-  router.post("/Market", createProductController);
-  router.put("/Market/:id", updateProductController);
-  router.delete("/Market/:id", deleteProductController);
-
-  //-─ ข้อมูลสำหรับหน้า Overview ───────────────────────────────
-  router.get('/overview', overviewController);
-
-  // ── ข้อมูลสำหรับหน้า Devices ───────────────────────────────
-  router.post("/devices/scan", deviceScanController);
-  router.post("/devices/confirm", deviceConfirmController);
-
-  router.get("/school/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      const { data, error } = await supabase
-        .from("School_Data")
-        .select("*")
-        .eq("id", id);
-
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-
-      res.json(data);
-    } catch (error) {
-      res.status(500).json({ error: "Internal server error" });
+    if (error) {
+      return res.status(500).json({ error: error.message });
     }
-  });
-  export default router;
 
+    return res.json(data);
+  } catch {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 
+export default router;

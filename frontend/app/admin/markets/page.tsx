@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CouponList from "@/components/RouterAdmin/Tokens/Coupon/CouponList";
 import DataState from "@/components/Ui/DataState";
 import { type Coupon, type CouponFormData } from "@/lib/mockData/admin/Coupon";
-import { apiDelete, apiFetch, apiPost, apiPut } from "@/lib/api";
+import { ApiError, apiDelete, apiFetch, apiPost, apiPut } from "@/lib/api";
 import styles from "./page.module.css";
 
 export default function TokensPage() {
@@ -12,16 +12,29 @@ export default function TokensPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  function getErrorMessage(err: unknown) {
+    if (err instanceof ApiError && err.status === 0) {
+      return "Request timed out or network error. Please try again.";
+    }
+    return "Failed to load market data. Please try again.";
+  }
+
+  function loadMarket() {
+    setLoading(true);
+    setError("");
     apiFetch("/admin/Market")
       .then((res: Coupon[]) => setCoupons(res))
       .catch((err) => {
         console.error(err);
-        setError("Failed to load market data");
+        setError(getErrorMessage(err));
       })
       .finally(() => {
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    loadMarket();
   }, []);
 
   async function handleAdd(data: CouponFormData) {
@@ -55,7 +68,7 @@ export default function TokensPage() {
 
   return (
     <div className={styles.page}>
-      <DataState loading={loading} error={error} isEmpty={!coupons.length} emptyText="No coupons found">
+      <DataState loading={loading} error={error} onRetry={loadMarket} isEmpty={!coupons.length} emptyText="No coupons found">
         <CouponList
           coupons={coupons}
           onAdd={handleAdd}

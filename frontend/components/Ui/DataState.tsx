@@ -8,6 +8,7 @@ type Props = {
   error?: string;
   isEmpty?: boolean;
   emptyText?: string;
+  onRetry?: () => void;
   children: ReactNode;
 };
 
@@ -16,6 +17,7 @@ export default function DataState({
   error,
   isEmpty = false,
   emptyText = "No data",
+  onRetry,
   children,
 }: Props) {
   if (loading) {
@@ -23,7 +25,12 @@ export default function DataState({
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <div>
+        <p>{error}</p>
+        {onRetry ? <button onClick={onRetry}>Try again</button> : null}
+      </div>
+    );
   }
 
   if (isEmpty) {

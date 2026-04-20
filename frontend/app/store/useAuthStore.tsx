@@ -1,9 +1,10 @@
 
 import { create } from "zustand";
+import { normalizeRole } from "@/lib/auth/normalizeRole";
 
 type User = {
   id: number;
-  student_id: string;
+  student_id: number;
   role: string;
 };
 
@@ -25,12 +26,23 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoaded: false,
 
   setAuth: (user, token) => {
+    const normalizedUser = {
+      ...user,
+      role: normalizeRole(user.role),
+    };
+    const secureFlag =
+      typeof window !== "undefined" && window.location.protocol === "https:"
+        ? "; Secure"
+        : "";
+
     if (typeof window !== "undefined") {
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(normalizedUser));
+      document.cookie = `auth_token=${encodeURIComponent(token)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
+      document.cookie = `auth_role=${encodeURIComponent(normalizedUser.role)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
     }
 
-    set({ user, token });
+    set({ user: normalizedUser, token, isLoaded: true });
   },
 
   loadAuth: () => {
@@ -38,9 +50,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     try {
       const token = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user") || "null");
+      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      const user = storedUser
+        ? { ...storedUser, role: normalizeRole(storedUser.role) }
+        : null;
 
       if (token && user) {
+        const secureFlag = window.location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = `auth_token=${encodeURIComponent(token)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
+        document.cookie = `auth_role=${encodeURIComponent(user.role)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
         set({ user, token, isLoaded: true });
       } else {
         set({ user: null, token: null, isLoaded: true });
@@ -55,9 +73,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window !== "undefined") {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      document.cookie = "auth_token=; Path=/; Max-Age=0; SameSite=Lax";
+      document.cookie = "auth_role=; Path=/; Max-Age=0; SameSite=Lax";
     }
 
-    set({ user: null, token: null });
+    set({ user: null, token: null, isLoaded: true });
 
   },
 }));

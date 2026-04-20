@@ -91,6 +91,18 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
   // 2. Existing RFID user -> update token / weight / bottle
   // --------------------------------------------------
   if (currentUser) {
+    if (
+      typeof student_id === "number" &&
+      student_id !== currentUser.Student_ID
+    ) {
+      console.warn("deviceConfirm RFID/student mismatch", {
+        rfid,
+        scanned_student_id: student_id,
+        bound_student_id: currentUser.Student_ID,
+      });
+      return { status: "RFID_STUDENT_MISMATCH" };
+    }
+
     const nextTokens = (currentUser.Student_Tokens ?? 0) + tokens_earned;
     const nextWeight = (currentUser.Student_weight ?? 0) + storedWeight;
     const nextBottles = (currentUser.Student_Bottles ?? 0) + 1;

@@ -7,7 +7,7 @@ type DeviceConfirmInput = {
   student_id?: number;
   weight: number;
   tokens_earned: number;
-  password?: string;
+  event_id?: string;
 };
 
 type UserRow = {
@@ -18,7 +18,7 @@ type UserRow = {
   Student_weight: number | null;
   Student_Bottles: number | null;
   Password_hash: string | null;
-  
+  updated_at?: string | null;
 };
 
 type SchoolRow = {
@@ -36,6 +36,115 @@ function normalizeWeightForDb(weight: number) {
   }
 
   return Math.round(weight);
+}
+
+const inflightDeviceEvents = new Set<string>();
+
+function buildEventAction(eventId?: string) {
+  if (!eventId) return "DEVICE_CONFIRM";
+  return `DEVICE_CONFIRM:${eventId}`;
+}
+
+async function wasEventProcessed(eventId: string) {
+  const action = buildEventAction(eventId);
+  const { data, error } = await supabase
+    .from("Activity_logs")
+    .select("action")
+    .eq("action", action)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return Boolean(data);
+}
+
+async function writeDeviceActivityLog(params: {
+  studentId: number;
+  studentName: string | null;
+  tokensEarned: number;
+  weight: number;
+  eventId?: string;
+}) {
+  const { studentId, studentName, tokensEarned, weight, eventId } = params;
+
+  const { error } = await supabase.from("Activity_logs").insert({
+    Student_ID: studentId,
+    Student_Name: studentName ?? "Unknown",
+    action: buildEventAction(eventId),
+    tokens: tokensEarned,
+    weight,
+    created_at: new Date().toISOString(),
+  });
+
+  if (error) throw error;
+}
+
+async function updateUserCountersWithRetry(params: {
+  studentId: number;
+  rfid: string;
+  tokensEarned: number;
+  storedWeight: number;
+  now: string;
+  allowBindRfid: boolean;
+}) {
+  const { studentId, rfid, tokensEarned, storedWeight, now, allowBindRfid } = params;
+  const maxRetries = 5;
+
+  for (let attempt = 0; attempt < maxRetries; attempt += 1) {
+    const { data: latestUser, error: readError } = await supabase
+      .from("User")
+      .select(
+        "Student_ID, RFID_ID, Student_FullNameT, Student_Tokens, Student_weight, Student_Bottles, updated_at"
+      )
+      .eq("Student_ID", studentId)
+      .maybeSingle();
+
+    if (readError) throw readError;
+    const user = latestUser as UserRow | null;
+    if (!user) return { status: "INVALID_STUDENT_ID" as const };
+
+    if (user.RFID_ID && user.RFID_ID !== rfid) {
+      return { status: "ALREADY_BOUND" as const };
+    }
+
+    const nextTokens = (user.Student_Tokens ?? 0) + tokensEarned;
+    const nextWeight = (user.Student_weight ?? 0) + storedWeight;
+    const nextBottles = (user.Student_Bottles ?? 0) + 1;
+
+    let query = supabase
+      .from("User")
+      .update({
+        ...(allowBindRfid ? { RFID_ID: rfid } : {}),
+        Student_Tokens: nextTokens,
+        Student_weight: nextWeight,
+        Student_Bottles: nextBottles,
+        updated_at: now,
+      })
+      .eq("Student_ID", studentId);
+
+    if (user.updated_at) {
+      query = query.eq("updated_at", user.updated_at);
+    } else {
+      query = query.is("updated_at", null);
+    }
+
+    const { data: updatedUser, error: updateError } = await query
+      .select("Student_FullNameT, Student_Tokens")
+      .maybeSingle();
+
+    if (updateError) throw updateError;
+
+    if (updatedUser) {
+      const savedUser = updatedUser as Pick<UserRow, "Student_FullNameT" | "Student_Tokens">;
+      return {
+        status: "SUCCESS" as const,
+        name: savedUser.Student_FullNameT,
+        tokens: savedUser.Student_Tokens ?? nextTokens,
+      };
+    }
+  }
+
+  return { status: "RETRY_CONFLICT" as const };
 }
 
 export async function deviceScan(rfid: string) {
@@ -66,9 +175,25 @@ export async function deviceScan(rfid: string) {
 }
 
 export async function deviceConfirm(input: DeviceConfirmInput) {
-  const { rfid, student_id, weight, tokens_earned } = input;
+  const { rfid, student_id, weight, tokens_earned, event_id } = input;
   const storedWeight = normalizeWeightForDb(weight);
   const now = new Date().toISOString();
+  const normalizedEventId = event_id?.trim() || undefined;
+
+  if (normalizedEventId) {
+    if (inflightDeviceEvents.has(normalizedEventId)) {
+      return { status: "DUPLICATE_EVENT" };
+    }
+    inflightDeviceEvents.add(normalizedEventId);
+
+    const alreadyDone = await wasEventProcessed(normalizedEventId);
+    if (alreadyDone) {
+      inflightDeviceEvents.delete(normalizedEventId);
+      return { status: "DUPLICATE_EVENT" };
+    }
+  }
+
+  try {
 
   // --------------------------------------------------
   // 1. Check existing RFID first
@@ -103,37 +228,33 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
       return { status: "RFID_STUDENT_MISMATCH" };
     }
 
-    const nextTokens = (currentUser.Student_Tokens ?? 0) + tokens_earned;
-    const nextWeight = (currentUser.Student_weight ?? 0) + storedWeight;
-    const nextBottles = (currentUser.Student_Bottles ?? 0) + 1;
+    const updated = await updateUserCountersWithRetry({
+      studentId: currentUser.Student_ID,
+      rfid,
+      tokensEarned: tokens_earned,
+      storedWeight,
+      now,
+      allowBindRfid: false,
+    });
 
-    const { data: updatedUser, error: updateError } = await supabase
-      .from("User")
-      .update({
-        Student_Tokens: nextTokens,
-        Student_weight: nextWeight,
-        Student_Bottles: nextBottles,
-        updated_at: now,
-      })
-      .eq("Student_ID", currentUser.Student_ID)
-      .select("Student_FullNameT, Student_Tokens")
-      .single();
-
-    if (updateError) {
-      throw updateError;
+    if (updated.status !== "SUCCESS") {
+      return { status: updated.status };
     }
 
-    const savedUser = updatedUser as Pick<
-      UserRow,
-      "Student_FullNameT" | "Student_Tokens"
-    >;
+    await writeDeviceActivityLog({
+      studentId: currentUser.Student_ID,
+      studentName: updated.name ?? null,
+      tokensEarned: tokens_earned,
+      weight: storedWeight,
+      ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+    });
 
     return {
       status: "SUCCESS",
-      name: savedUser.Student_FullNameT,
+      name: updated.name,
       weight: storedWeight,
       tokens_earned,
-      tokens: savedUser.Student_Tokens ?? nextTokens,
+      tokens: updated.tokens,
     };
   }
 
@@ -169,38 +290,33 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
       return { status: "ALREADY_BOUND" };
     }
 
-    const nextTokens = (bindTargetUser.Student_Tokens ?? 0) + tokens_earned;
-    const nextWeight = (bindTargetUser.Student_weight ?? 0) + storedWeight;
-    const nextBottles = (bindTargetUser.Student_Bottles ?? 0) + 1;
+    const updated = await updateUserCountersWithRetry({
+      studentId: student_id,
+      rfid,
+      tokensEarned: tokens_earned,
+      storedWeight,
+      now,
+      allowBindRfid: true,
+    });
 
-    const { data: updatedStudent, error: bindError } = await supabase
-      .from("User")
-      .update({
-        RFID_ID: rfid,
-        Student_Tokens: nextTokens,
-        Student_weight: nextWeight,
-        Student_Bottles: nextBottles,
-        updated_at: now,
-      })
-      .eq("Student_ID", student_id)
-      .select("Student_FullNameT, Student_Tokens")
-      .single();
-
-    if (bindError) {
-      throw bindError;
+    if (updated.status !== "SUCCESS") {
+      return { status: updated.status };
     }
 
-    const savedStudent = updatedStudent as Pick<
-      UserRow,
-      "Student_FullNameT" | "Student_Tokens"
-    >;
+    await writeDeviceActivityLog({
+      studentId: student_id,
+      studentName: updated.name ?? null,
+      tokensEarned: tokens_earned,
+      weight: storedWeight,
+      ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+    });
 
     return {
       status: "SUCCESS",
-      name: savedStudent.Student_FullNameT,
+      name: updated.name,
       weight: storedWeight,
       tokens_earned,
-      tokens: savedStudent.Student_Tokens ?? nextTokens,
+      tokens: updated.tokens,
     };
   }
 
@@ -269,12 +385,24 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
     "Student_FullNameT" | "Student_Tokens"
   >;
 
+  await writeDeviceActivityLog({
+    studentId: schoolUser.Student_ID,
+    studentName: savedStudent.Student_FullNameT ?? null,
+    tokensEarned: tokens_earned,
+    weight: storedWeight,
+    ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+  });
+
   return {
     status: "SUCCESS",
     name: savedStudent.Student_FullNameT,
     weight: storedWeight,
     tokens_earned,
     tokens: savedStudent.Student_Tokens ?? tokens_earned,
-    password: rawPassword,
   };
+  } finally {
+    if (normalizedEventId) {
+      inflightDeviceEvents.delete(normalizedEventId);
+    }
+  }
 }

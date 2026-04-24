@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { normalizeRole } from "@/lib/auth/normalizeRole";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const token = req.cookies.get("auth_token")?.value;
   const role = normalizeRole(req.cookies.get("auth_role")?.value);
   const { pathname } = req.nextUrl;

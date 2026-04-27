@@ -1,15 +1,51 @@
-import {supabase} from '../../lib/supabase.js';
+import { supabase } from "../../lib/supabase.js";
 
-export async function getUserDashboardData() {
-    const { data: DashboardData, error: DashboardError } = await supabase
-        .from("User")
-        .select("Student_Bottles, Student_Tokens, Student_weight");
+type UserDashboardRow = {
+  Student_ID: number;
+  Student_Bottles: number | null;
+  Student_Tokens: number | null;
+  Student_weight: number | null;
+};
 
-    if (DashboardError) {
-        console.error("Error fetching dashboard data:", DashboardError);
-        throw new Error("Failed to fetch dashboard data");
-    }
+export async function getUserDashboardData(studentId: number) {
+  const { data: userRow, error: userError } = await supabase
+    .from("User")
+    .select("Student_ID, Student_Bottles, Student_Tokens, Student_weight")
+    .eq("Student_ID", studentId)
+    .eq("role", "student")
+    .maybeSingle();
 
-    return DashboardData;
+  if (userError) {
+    console.error("Error fetching user dashboard data:", userError);
+    throw new Error("Failed to fetch dashboard data");
+  }
 
+  const currentUser = userRow as UserDashboardRow | null;
+
+  if (!currentUser) {
+    throw new Error("User dashboard data not found");
+  }
+
+  const currentBottles = currentUser.Student_Bottles ?? 0;
+
+  const { count: usersAboveCount, error: usersAboveError } = await supabase
+    .from("User")
+    .select("*", { count: "exact", head: true })
+    .eq("role", "student")
+    .gt("Student_Bottles", currentBottles);
+
+  if (usersAboveError) {
+    console.error("Error counting current rank:", usersAboveError);
+    throw new Error("Failed to fetch dashboard data");
+  }
+
+  const currentRank = (usersAboveCount ?? 0) + 1;
+
+  return {
+    studentId: currentUser.Student_ID,
+    bottlesThrown: currentBottles,
+    weightGram: currentUser.Student_weight ?? 0,
+    tokensBalance: currentUser.Student_Tokens ?? 0,
+    currentRank,
+  };
 }

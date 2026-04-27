@@ -1,16 +1,42 @@
-// app/user/leaderboard/page.tsx
-import { leaderboardData } from "@/lib/mockData/user/Leaderboard";
-import LeaderboardList     from "@/components/RouterUser/Leaderboard/Leaderboard";
-import styles              from "./page.module.css";
+"use client";
+
+import { useEffect, useState } from "react";
+import LeaderboardList from "@/components/RouterUser/Leaderboard/Leaderboard";
+import { apiFetch, ApiError } from "@/lib/api";
+import type { LeaderboardResponse } from "@/lib/types/user/Leaderboard";
+import styles from "./page.module.css";
 
 export default function LeaderboardPage() {
+  const [data, setData] = useState<LeaderboardResponse | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    apiFetch("/user/Leaderboard")
+      .then((res: LeaderboardResponse) => {
+        setData(res);
+        setError("");
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err instanceof ApiError) {
+          setError(err.message);
+          return;
+        }
+
+        setError("Failed to load leaderboard data");
+      });
+  }, []);
+
   return (
     <div className={styles.page}>
       <div className={styles.heading}>
         <h1 className={styles.title}>Leaderboard</h1>
-        <p className={styles.sub}>Monthly ranking — sorted by tokens</p>
+        <p className={styles.sub}>Monthly ranking - sorted by tokens</p>
       </div>
-      <LeaderboardList data={leaderboardData} />
+
+      {error ? <p>{error}</p> : null}
+      {!data && !error ? <p>Loading...</p> : null}
+      {data ? <LeaderboardList data={data} /> : null}
     </div>
   );
 }

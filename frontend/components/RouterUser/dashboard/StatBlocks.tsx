@@ -7,6 +7,7 @@
 "use client";
 
 import useEmblaCarousel from "embla-carousel-react";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type { UserDashboardData } from "../../../lib/mockData/user/Dashboard";
 import styles from "./StatBlocks.module.css";
@@ -26,6 +27,8 @@ type Block = {
   subtext: string;
   accent: string;
   isRank?: boolean;
+  iconSrc: string;
+  iconAlt: string;
 };
 
 function getBlocks(data: UserDashboardData): Block[] {
@@ -35,25 +38,33 @@ function getBlocks(data: UserDashboardData): Block[] {
       value:   data.bottlesThrown.toLocaleString(),
       subtext: "total bottles",
       accent:  "#1177FE",
+      iconSrc: "/icon/IconBottles.png",
+      iconAlt: "Bottles",
     },
     {
       label:   "Total Weight",
       value:   `${data.weightGram.toLocaleString()}g`,
       subtext: "grams collected",
       accent:  "#48B7FF",
+      iconSrc: "/icon/IconDevices.png",
+      iconAlt: "Weight",
     },
     {
       label:   "Token Balance",
       value:   data.tokensBalance.toLocaleString(),
       subtext: "tokens available",
       accent:  "#22c55e",
+      iconSrc: "/icon/IconTokens.png",
+      iconAlt: "Tokens",
     },
     {
       label:   "Your Rank",
-      value:   `${data.leaderboardRank}${getRankSuffix(data.leaderboardRank)}`,
-      subtext: `of ${data.totalUsers} students`,
+      value:   `${data.currentRank}${getRankSuffix(data.currentRank)}`,
+      subtext: "current position",
       accent:  "#f59e0b",
       isRank:  true,
+      iconSrc: "/icon/IconLeader.png",
+      iconAlt: "Rank",
     },
   ];
 }
@@ -62,7 +73,18 @@ function getBlocks(data: UserDashboardData): Block[] {
 function BlockCard({ block }: { block: Block }) {
   return (
     <div className={styles.card}>
-      <div className={styles.accentBar} style={{ background: block.accent }} />
+      <div className={styles.cardTop}>
+        <div className={styles.cardIconWrap} style={{ background: `${block.accent}14` }}>
+          <Image
+            src={block.iconSrc}
+            alt={block.iconAlt}
+            width={18}
+            height={18}
+            className={styles.cardIcon}
+          />
+        </div>
+        <div className={styles.accentBar} style={{ background: block.accent }} />
+      </div>
       <p className={styles.cardLabel}>{block.label}</p>
       <p className={`${styles.cardValue} ${block.isRank ? styles.rankValue : ""}`}>
         {block.value}

@@ -9,12 +9,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, rgba(17, 119, 254, 0.08), rgba(72, 183, 255, 0.08));
-  border: 1.5px solid rgba(17, 119, 254, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.18), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.14), transparent 32%),
+    linear-gradient(135deg, rgba(17, 119, 254, 0.14), rgba(72, 183, 255, 0.16));
+  border: 1.5px solid rgba(17, 119, 254, 0.24);
   border-radius: 16px;
   padding: 16px 20px;
   box-shadow:
-    0 18px 36px rgba(15, 23, 42, 0.06),
+    0 20px 38px rgba(17, 119, 254, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -43,7 +46,8 @@
 .yourRankBig {
   font-size: 32px;
   font-weight: 800;
-  color: #1177fe;
+  color: #0f6bff;
+  text-shadow: 0 4px 12px rgba(17, 119, 254, 0.18);
   letter-spacing: -1px;
 }
 
@@ -57,7 +61,15 @@
 .yourStat {
   font-size: 14px;
   font-weight: 600;
-  color: #475569;
+  color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 6px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
 }
 
 .monthLabel {
@@ -93,28 +105,31 @@
 
 .row:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.10);
 }
 
 .currentUser {
   border: 2px solid #1177fe !important;
-  background: #ffffff;
-  box-shadow: 0 10px 18px rgba(17, 119, 254, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 248, 255, 0.96));
+  box-shadow:
+    0 12px 22px rgba(17, 119, 254, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .gold {
-  background: rgba(251, 191, 36, 0.05);
-  border-color: rgba(251, 191, 36, 0.3) !important;
+  background: linear-gradient(135deg, rgba(255, 248, 220, 0.9), rgba(255, 237, 181, 0.72));
+  border-color: rgba(245, 158, 11, 0.34) !important;
 }
 
 .silver {
-  background: rgba(72, 183, 255, 0.05);
-  border-color: rgba(72, 183, 255, 0.35) !important;
+  background: linear-gradient(135deg, rgba(240, 249, 255, 0.92), rgba(216, 240, 255, 0.82));
+  border-color: rgba(72, 183, 255, 0.38) !important;
 }
 
 .bronze {
-  background: rgba(180, 83, 9, 0.05);
-  border-color: rgba(180, 83, 9, 0.2) !important;
+  background: linear-gradient(135deg, rgba(255, 244, 235, 0.94), rgba(246, 217, 194, 0.84));
+  border-color: rgba(180, 83, 9, 0.24) !important;
 }
 
 .rankWrap {
@@ -124,8 +139,17 @@
 }
 
 .medal {
-  font-size: 22px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
   line-height: 1;
+  color: #fff;
+  background: #94a3b8;
 }
 
 .rankNum {
@@ -138,24 +162,25 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1177fe, #48b7ff);
+  background: linear-gradient(135deg, #0f6bff, #29b8ff);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
+  box-shadow: 0 10px 16px rgba(17, 119, 254, 0.18);
 }
 
 .gold .avatar {
-  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  background: linear-gradient(135deg, #f59e0b, #ffd54a);
 }
 
 .silver .avatar {
-  background: linear-gradient(135deg, #48b7ff, #93c5fd);
+  background: linear-gradient(135deg, #32b8ff, #9fd6ff);
 }
 
 .bronze .avatar {
-  background: linear-gradient(135deg, #b45309, #d97706);
+  background: linear-gradient(135deg, #c0611a, #ea9144);
 }
 
 .avatarImg {
@@ -191,11 +216,12 @@
 .youBadge {
   font-size: 10px;
   font-weight: 700;
-  background: #1177fe;
+  background: linear-gradient(135deg, #1177fe, #28c3ff);
   color: #fff;
-  padding: 1px 7px;
+  padding: 2px 8px;
   border-radius: 99px;
   flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba(17, 119, 254, 0.18);
 }
 
 .stats {
@@ -207,19 +233,56 @@
 .statItem {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(248, 250, 252, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.statItem:first-child {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.10), rgba(56, 189, 248, 0.12));
+  border-color: rgba(56, 189, 248, 0.20);
+}
+
+.statItem:last-child {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.10), rgba(251, 191, 36, 0.14));
+  border-color: rgba(34, 197, 94, 0.18);
 }
 
 .statIcon {
   font-size: 13px;
 }
 
+.statIconImage {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .statVal {
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
-  min-width: 28px;
+  color: #334155;
+  min-width: 22px;
   text-align: right;
+}
+
+.gold .medal {
+  background: linear-gradient(135deg, #f59e0b, #ffd54a);
+  box-shadow: 0 8px 18px rgba(245, 158, 11, 0.28);
+}
+
+.silver .medal {
+  background: linear-gradient(135deg, #2fb5ff, #9bd8ff);
+  box-shadow: 0 8px 18px rgba(72, 183, 255, 0.24);
+}
+
+.bronze .medal {
+  background: linear-gradient(135deg, #c0611a, #eb9548);
+  box-shadow: 0 8px 18px rgba(180, 83, 9, 0.20);
 }
 
 .floatingSheet {
@@ -247,10 +310,23 @@
 
 .floatingRow {
   border-radius: 14px;
-  background: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 250, 255, 0.98));
   box-shadow:
-    0 18px 38px rgba(15, 23, 42, 0.12),
-    0 8px 16px rgba(15, 23, 42, 0.06);
+    0 20px 42px rgba(17, 119, 254, 0.14),
+    0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.floatingRow .statItem {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.floatingRow .statItem:first-child {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12), rgba(56, 189, 248, 0.16));
+}
+
+.floatingRow .statItem:last-child {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(251, 191, 36, 0.16));
 }
 
 @keyframes rowReveal {

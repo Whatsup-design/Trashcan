@@ -1,11 +1,8 @@
-// components/user/dashboard/types.ts
-
 export type UserDashboardData = {
-  bottlesThrown: number;   // จำนวนขวดที่ทิ้งทั้งหมด
-  weightGram: number;      // น้ำหนักรวมกรัม
-  tokensBalance: number;   // token คงเหลือ
-  leaderboardRank: number; // อันดับ leaderboard
-  totalUsers: number;      // จำนวน user ทั้งหมด (สำหรับแสดง "3rd of 120")
+  bottlesThrown: number;
+  weightGram: number;
+  tokensBalance: number;
+  currentRank: number;
 };
 
 export type Announcement = {
@@ -17,11 +14,10 @@ export type Announcement = {
 };
 
 const mockUserData: UserDashboardData = {
-  bottlesThrown:   142,
-  weightGram:      5840,
-  tokensBalance:   284,
-  leaderboardRank: 3,
-  totalUsers:      120,
+  bottlesThrown: 142,
+  weightGram: 5840,
+  tokensBalance: 284,
+  currentRank: 3,
 };
 
 const mockAnnouncements: Announcement[] = [
@@ -48,4 +44,4 @@ const mockAnnouncements: Announcement[] = [
   },
 ];
 
-export default {mockUserData, mockAnnouncements}
+export default { mockUserData, mockAnnouncements };

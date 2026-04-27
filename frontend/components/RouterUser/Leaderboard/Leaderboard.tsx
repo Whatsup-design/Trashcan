@@ -1,20 +1,21 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type {
-  LeaderboardData,
   LeaderboardEntry,
-} from "@/lib/mockData/user/Leaderboard";
+  LeaderboardResponse,
+} from "@/lib/types/user/Leaderboard";
 import styles from "./Leaderboard.module.css";
 
 type Props = {
-  data: LeaderboardData;
+  data: LeaderboardResponse;
 };
 
 const RANK_CONFIG: Record<number, { label: string; className: string }> = {
-  1: { label: "🥇", className: styles.gold },
-  2: { label: "🥈", className: styles.silver },
-  3: { label: "🥉", className: styles.bronze },
+  1: { label: "1", className: styles.gold },
+  2: { label: "2", className: styles.silver },
+  3: { label: "3", className: styles.bronze },
 };
 
 function getRankDisplay(rank: number) {
@@ -42,6 +43,29 @@ function getRankSuffix(rank: number): string {
   return "th";
 }
 
+function StatPair({
+  iconSrc,
+  iconAlt,
+  value,
+}: {
+  iconSrc: string;
+  iconAlt: string;
+  value: number;
+}) {
+  return (
+    <span className={styles.statItem}>
+      <Image
+        src={iconSrc}
+        alt={iconAlt}
+        width={14}
+        height={14}
+        className={styles.statIconImage}
+      />
+      <span className={styles.statVal}>{value}</span>
+    </span>
+  );
+}
+
 function LeaderRow({
   entry,
   rank,
@@ -67,7 +91,6 @@ function LeaderRow({
 
       <div className={styles.avatar}>
         {entry.avatar ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={entry.avatar} alt={entry.name} className={styles.avatarImg} />
         ) : (
           <span className={styles.initials}>{getInitials(entry.name)}</span>
@@ -82,25 +105,17 @@ function LeaderRow({
       </div>
 
       <div className={styles.stats}>
-        <span className={styles.statItem}>
-          <span className={styles.statIcon}>🍾</span>
-          <span className={styles.statVal}>{entry.bottles}</span>
-        </span>
-        <span className={styles.statItem}>
-          <span className={styles.statIcon}>🪙</span>
-          <span className={styles.statVal}>{entry.tokens}</span>
-        </span>
+        <StatPair iconSrc="/icon/IconBottles.png" iconAlt="Bottles" value={entry.bottles} />
+        <StatPair iconSrc="/icon/IconTokens.png" iconAlt="Tokens" value={entry.tokens} />
       </div>
     </div>
   );
 }
 
 export default function LeaderboardList({ data }: Props) {
-  const sorted = [...data.entries].sort((a, b) => b.tokens - a.tokens);
-  const currentUserRank =
-    sorted.findIndex((entry) => entry.id === data.currentUserId) + 1;
-  const currentUser =
-    sorted.find((entry) => entry.id === data.currentUserId) ?? null;
+  const sorted = [...data.topEntries].sort((a, b) => a.rank - b.rank);
+  const currentUser = data.currentUserEntry ?? null;
+  const currentUserRank = currentUser?.rank ?? 0;
   const currentUserIsTopTen = currentUserRank > 0 && currentUserRank <= 10;
 
   const currentRowRef = useRef<HTMLDivElement | null>(null);
@@ -178,7 +193,8 @@ export default function LeaderboardList({ data }: Props) {
         <div className={styles.yourRankLeft}>
           <p className={styles.yourRankLabel}>Your ranking</p>
           <p className={styles.yourRankNum}>
-            {currentUserRank <= 3 ? RANK_CONFIG[currentUserRank]?.label : null} You are{" "}
+            {currentUserRank <= 3 ? `${RANK_CONFIG[currentUserRank]?.label}. ` : null}
+            You are{" "}
             <span className={styles.yourRankBig}>
               {currentUserRank}
               {getRankSuffix(currentUserRank)}
@@ -186,8 +202,26 @@ export default function LeaderboardList({ data }: Props) {
           </p>
         </div>
         <div className={styles.yourRankRight}>
-          <span className={styles.yourStat}>🍾 {currentUser.bottles}</span>
-          <span className={styles.yourStat}>🪙 {currentUser.tokens}</span>
+          <span className={styles.yourStat}>
+            <Image
+              src="/icon/IconBottles.png"
+              alt="Bottles"
+              width={14}
+              height={14}
+              className={styles.statIconImage}
+            />
+            {currentUser.bottles}
+          </span>
+          <span className={styles.yourStat}>
+            <Image
+              src="/icon/IconTokens.png"
+              alt="Tokens"
+              width={14}
+              height={14}
+              className={styles.statIconImage}
+            />
+            {currentUser.tokens}
+          </span>
         </div>
       </div>
 
@@ -198,9 +232,9 @@ export default function LeaderboardList({ data }: Props) {
           <LeaderRow
             key={entry.id}
             entry={entry}
-            rank={idx + 1}
-            isCurrentUser={entry.id === data.currentUserId}
-            rowRef={entry.id === data.currentUserId ? currentRowRef : undefined}
+            rank={entry.rank || idx + 1}
+            isCurrentUser={entry.id === currentUser.id}
+            rowRef={entry.id === currentUser.id ? currentRowRef : undefined}
             index={idx}
           />
         ))}
@@ -218,7 +252,6 @@ export default function LeaderboardList({ data }: Props) {
 
           <div className={styles.avatar}>
             {currentUser.avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={currentUser.avatar}
                 alt={currentUser.name}
@@ -237,14 +270,16 @@ export default function LeaderboardList({ data }: Props) {
           </div>
 
           <div className={styles.stats}>
-            <span className={styles.statItem}>
-              <span className={styles.statIcon}>🍾</span>
-              <span className={styles.statVal}>{currentUser.bottles}</span>
-            </span>
-            <span className={styles.statItem}>
-              <span className={styles.statIcon}>🪙</span>
-              <span className={styles.statVal}>{currentUser.tokens}</span>
-            </span>
+            <StatPair
+              iconSrc="/icon/IconBottles.png"
+              iconAlt="Bottles"
+              value={currentUser.bottles}
+            />
+            <StatPair
+              iconSrc="/icon/IconTokens.png"
+              iconAlt="Tokens"
+              value={currentUser.tokens}
+            />
           </div>
         </div>
       </div>

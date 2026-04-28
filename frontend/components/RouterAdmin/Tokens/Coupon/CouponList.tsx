@@ -55,7 +55,15 @@ export default function CouponList({ coupons, onAdd, onEdit, onDelete }: Props) 
       </p>
 
       {filtered.length === 0 ? (
-        <div className={styles.empty}><p>No coupons found</p></div>
+        <div className={styles.empty}>
+          <p>No coupons found</p>
+          <button className={`${styles.addBtn} ${styles.emptyAddBtn}`} onClick={() => setShowAdd(true)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Add Coupon
+          </button>
+        </div>
       ) : (
         <div className={styles.grid}>
           {filtered.map((coupon) => (

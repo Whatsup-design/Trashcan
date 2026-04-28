@@ -41,22 +41,29 @@
 /* ── Status badge ────────────────────────────────────────── */
 .statusBadge {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 10px;
+  left: 10px;
   font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 99px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 10px 20px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .permanent {
-  background: rgba(220, 38, 38, 0.12);
-  color: #dc2626;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.82), rgba(220, 38, 38, 0.72));
+  color: #fff7f7;
 }
 
 .temporary {
-  background: rgba(17, 119, 254, 0.12);
-  color: #1177FE;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.84), rgba(14, 116, 244, 0.72));
+  color: #f8fbff;
 }
 
 /* ── Info ────────────────────────────────────────────────── */

@@ -4,19 +4,30 @@ import { useState } from "react";
 import type { Coupon, CouponFormData } from "@/lib/mockData/admin/Coupon";
 import styles from "./CouponForm.module.css";
 
+const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+
 type Props = {
   initialData?: Coupon;
+  formId?: string;
+  submitError?: string;
   onSubmit: (data: CouponFormData) => Promise<void> | void;
   onCancel: () => void;
 };
 
-export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
+export default function CouponForm({
+  initialData,
+  formId,
+  submitError,
+  onSubmit,
+  onCancel,
+}: Props) {
   const [Product_name, setProduct_name] = useState(initialData?.Product_name ?? "");
   const [Product_Description, setProduct_Description] = useState(initialData?.Product_Description ?? "");
   const [Product_Price, setProduct_Price] = useState(initialData?.Product_Price ?? 10);
   const [Product_Status, setProduct_Status] = useState<"Permanent" | "Temporary">(initialData?.Product_Status ?? "Permanent");
   const [Product_limit, setProduct_limit] = useState(initialData?.Product_limit ?? 1);
   const [Product_ImgUrl, setProduct_ImgUrl] = useState(initialData?.Product_ImgUrl ?? "");
+  const [Product_ImgFile, setProduct_ImgFile] = useState<File | null>(null);
   const [Product_StartDate, setProduct_StartDate] = useState(initialData?.Product_StartDate ?? "");
   const [Product_EndDate, setProduct_EndDate] = useState(initialData?.Product_EndDate ?? "");
   const [error, setError] = useState("");
@@ -25,6 +36,23 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
   function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setError("Image size is too large. Please upload an image smaller than 2 MB.");
+      setProduct_ImgFile(null);
+      e.target.value = "";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please upload a valid image file.");
+      setProduct_ImgFile(null);
+      e.target.value = "";
+      return;
+    }
+
+    setError("");
+    setProduct_ImgFile(file);
     const reader = new FileReader();
     reader.onload = () => setProduct_ImgUrl(reader.result as string);
     reader.readAsDataURL(file);
@@ -57,6 +85,7 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
       Product_Status,
       Product_limit,
       Product_ImgUrl: Product_ImgUrl || null,
+      Product_ImgFile,
       Product_StartDate: Product_Status === "Temporary" ? Product_StartDate : undefined,
       Product_EndDate: Product_Status === "Temporary" ? Product_EndDate : undefined,
     });
@@ -66,7 +95,7 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form id={formId} className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.field}>
         <label className={styles.label}>Picture</label>
         <div className={styles.uploadWrap}>
@@ -162,7 +191,7 @@ export default function CouponForm({ initialData, onSubmit, onCancel }: Props) {
         />
       </div>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {(error || submitError) && <p className={styles.error}>{error || submitError}</p>}
 
       <div className={styles.btns}>
         <button type="button" className={styles.cancelBtn} onClick={onCancel}>

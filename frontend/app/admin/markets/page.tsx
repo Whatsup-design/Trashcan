@@ -19,6 +19,24 @@ export default function TokensPage() {
     return "Failed to load market data. Please try again.";
   }
 
+  function getSubmitErrorMessage(err: unknown) {
+    if (err instanceof ApiError) {
+      const message = err.message.trim();
+
+      if (/payload too large|too large|entity too large|file too large|size/i.test(message)) {
+        return "Image size is too large.";
+      }
+
+      if (/validation|invalid|required/i.test(message)) {
+        return "Validation unsuccessful. Please check the form and try again.";
+      }
+
+      return message;
+    }
+
+    return "Failed to save coupon. Please try again.";
+  }
+
   function loadMarket() {
     setLoading(true);
     setError("");
@@ -37,18 +55,53 @@ export default function TokensPage() {
     loadMarket();
   }, []);
 
+  function buildCouponFormData(data: CouponFormData) {
+    const formData = new FormData();
+
+    formData.append("Product_name", data.Product_name);
+    formData.append("Product_Description", data.Product_Description ?? "");
+    formData.append("Product_Price", String(data.Product_Price));
+    formData.append("Product_Status", data.Product_Status);
+    formData.append("Product_limit", String(data.Product_limit));
+
+    if (data.Product_StartDate) {
+      formData.append("Product_StartDate", data.Product_StartDate);
+    }
+
+    if (data.Product_EndDate) {
+      formData.append("Product_EndDate", data.Product_EndDate);
+    }
+
+    if (data.Product_ImgFile) {
+      formData.append("Product_Img", data.Product_ImgFile);
+    }
+
+    if (data.removeImage) {
+      formData.append("removeImage", "true");
+    }
+
+    return formData;
+  }
+
   async function handleAdd(data: CouponFormData) {
     try {
-      const createdCoupon = await apiPost("/admin/Market", data) as Coupon;
+      const createdCoupon = await apiPost(
+        "/admin/Market",
+        buildCouponFormData(data)
+      ) as Coupon;
       setCoupons((prev) => [createdCoupon, ...prev]);
     } catch (error) {
       console.error(error);
+      throw new Error(getSubmitErrorMessage(error));
     }
   }
 
   async function handleEdit(id: number, data: CouponFormData) {
     try {
-      const updatedCoupon = await apiPut(`/admin/Market/${id}`, data) as Coupon;
+      const updatedCoupon = await apiPut(
+        `/admin/Market/${id}`,
+        buildCouponFormData(data)
+      ) as Coupon;
       setCoupons((prev) =>
         prev.map((coupon) => (coupon.Product_ID === id ? updatedCoupon : coupon))
       );
@@ -68,7 +121,7 @@ export default function TokensPage() {
 
   return (
     <div className={styles.page}>
-      <DataState loading={loading} error={error} onRetry={loadMarket} isEmpty={!coupons.length} emptyText="No coupons found">
+      <DataState loading={loading} error={error} onRetry={loadMarket}>
         <CouponList
           coupons={coupons}
           onAdd={handleAdd}

@@ -3,6 +3,7 @@ const BASE_URL = "http://localhost:3001";
 type ApiRequestOptions = RequestInit & {
   redirectOnError?: boolean;
 };
+
 function getClientToken() {
   if (typeof window === "undefined") {
     return null;
@@ -43,15 +44,21 @@ function extractErrorMessage(status: number, statusText: string, body: string) {
 export async function apiRequest(path: string, init?: ApiRequestOptions) {
   const { redirectOnError = true, ...requestInit } = init ?? {};
   const token = getClientToken();
+  const isFormDataBody = typeof FormData !== "undefined" && requestInit.body instanceof FormData;
+  const requestHeaders = new Headers(requestInit.headers ?? {});
+
+  if (!isFormDataBody && !requestHeaders.has("Content-Type")) {
+    requestHeaders.set("Content-Type", "application/json");
+  }
+
+  if (token && !requestHeaders.has("Authorization")) {
+    requestHeaders.set("Authorization", `Bearer ${token}`);
+  }
 
   let res: Response;
   try {
     res = await fetch(`${BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(requestInit.headers ?? {}),
-      },
+      headers: requestHeaders,
       ...requestInit,
     });
   } catch (cause) {
@@ -93,14 +100,14 @@ export async function apiPost(
   return apiRequest(path, {
     ...init,
     method: "POST",
-    body: JSON.stringify(body),
+    body: body instanceof FormData ? body : JSON.stringify(body),
   });
 }
 
 export async function apiPut(path: string, body: unknown) {
   return apiRequest(path, {
     method: "PUT",
-    body: JSON.stringify(body),
+    body: body instanceof FormData ? body : JSON.stringify(body),
   });
 }
 

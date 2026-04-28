@@ -7,12 +7,16 @@ export type Coupon = {
   Product_Price: number;
   Product_Status: ProductStatus;
   Product_limit: number;
+  Product_Img?: string | null;
   Product_ImgUrl: string | null;
   Product_StartDate?: string;
   Product_EndDate?: string;
 };
 
-export type CouponFormData = Omit<Coupon, "Product_ID">;
+export type CouponFormData = Omit<Coupon, "Product_ID"> & {
+  Product_ImgFile?: File | null;
+  removeImage?: boolean;
+};
 
 export const INITIAL_COUPONS: Coupon[] = [
   {

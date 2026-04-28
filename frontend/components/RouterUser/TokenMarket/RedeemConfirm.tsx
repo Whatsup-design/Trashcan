@@ -8,11 +8,11 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import type { Product } from "@/lib/mockData/user/BannerToken";
+import type { UserMarketProduct } from "@/lib/types/user/Market";
 import styles from "./RedeemConfirm.module.css";
 
 type Props = {
-  product: Product;
+  product: UserMarketProduct;
   onConfirm: (id: string) => Promise<void>; // async — จะ handle loading
   onClose: () => void;
 };

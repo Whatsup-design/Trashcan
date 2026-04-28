@@ -46,16 +46,30 @@
 /* ── Badge ───────────────────────────────────────────────── */
 .badge {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 10px;
+  left: 10px;
   font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 99px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 10px 20px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.permanent { background: rgba(34,197,94,0.15);  color: #16a34a; }
-.temporary { background: rgba(249,115,22,0.15); color: #ea580c; }
+.permanent {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.82), rgba(22, 163, 74, 0.72));
+  color: #f3fff7;
+}
+
+.temporary {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.82), rgba(234, 88, 12, 0.72));
+  color: #fff7f2;
+}
 
 /* ── Info ────────────────────────────────────────────────── */
 .info {

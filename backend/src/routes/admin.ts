@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import { dashboardController } from "../controller/admin/dashboard.js";
 import { dataController } from "../controller/admin/data.js";
 import { activityLogController } from "../controller/admin/activityLog.js";
@@ -19,6 +20,7 @@ import requireRole from "../middleware/roleMiddleware.js";
 import { supabase } from "../lib/supabase.js";
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Public device routes for ESP/hardware flow.
 router.post("/devices/scan", deviceScanController);
@@ -33,8 +35,8 @@ router.get("/ActivityLog", activityLogController);
 
 router.get("/Market", getAllProductsController);
 router.get("/Market/:id", getProductByIdController);
-router.post("/Market", createProductController);
-router.put("/Market/:id", updateProductController);
+router.post("/Market", upload.single("Product_Img"), createProductController);
+router.put("/Market/:id", upload.single("Product_Img"), updateProductController);
 router.delete("/Market/:id", deleteProductController);
 
 router.get("/overview", overviewController);

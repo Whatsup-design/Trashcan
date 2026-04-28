@@ -5,12 +5,12 @@
 "use client";
 
 import { useState } from "react";
-import type { Product } from "@/lib/mockData/user/BannerToken";
+import type { UserMarketProduct } from "@/lib/types/user/Market";
 import RedeemConfirm from "./RedeemConfirm";
 import styles from "./ProductCard.module.css";
 
 type Props = {
-  product: Product;
+  product: UserMarketProduct;
   onRedeem: (id: string) => Promise<void>;
 };
 

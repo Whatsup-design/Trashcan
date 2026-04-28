@@ -6,12 +6,12 @@
 // ─────────────────────────────────────────────────────────
 "use client";
 
-import type { Product } from "@/lib/mockData/user/BannerToken";
+import type { UserMarketProduct } from "@/lib/types/user/Market";
 import ProductCard from "./ProductCard";
 import styles from "./ProductGrid.module.css";
 
 type Props = {
-  products: Product[];
+  products: UserMarketProduct[];
 };
 
 export default function ProductGrid({ products }: Props) {

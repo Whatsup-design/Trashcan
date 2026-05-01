@@ -2,6 +2,8 @@ import { supabase } from "../../lib/supabase.js";
 import { hashPassword } from "../../utils/bycryto.js";
 import { formatNameForPassword } from "../../utils/nameFormat.js";
 
+
+//This is type declaration
 type DeviceConfirmInput = {
   rfid: string;
   student_id?: number;
@@ -30,6 +32,7 @@ type SchoolRow = {
   Birth: string | null;
 };
 
+//Validation and normalization for weight input from device
 function normalizeWeightForDb(weight: number) {
   if (!Number.isFinite(weight) || weight < 0) {
     return 0;
@@ -38,8 +41,12 @@ function normalizeWeightForDb(weight: number) {
   return Math.round(weight);
 }
 
+//Activiy Log action part
+
+// In-memory set to track inflight events and prevent duplicate processing
 const inflightDeviceEvents = new Set<string>();
 
+//create Event action for Activity_logs
 function buildEventAction(eventId?: string) {
   if (!eventId) return "DEVICE_CONFIRM";
   return `DEVICE_CONFIRM:${eventId}`;
@@ -79,6 +86,9 @@ async function writeDeviceActivityLog(params: {
   if (error) throw error;
 }
 
+//end of ActivityLog action par
+
+// This function attempts to update the user's counters with optimistic concurrency control.
 async function updateUserCountersWithRetry(params: {
   studentId: number;
   rfid: string;
@@ -146,9 +156,10 @@ async function updateUserCountersWithRetry(params: {
 
   return { status: "RETRY_CONFLICT" as const };
 }
-
+//Device scan main function
 export async function deviceScan(rfid: string) {
   const { data, error } = await supabase
+  
     .from("User")
     .select("Student_ID, RFID_ID, Student_FullNameT, Student_Tokens")
     .eq("RFID_ID", rfid)
@@ -174,6 +185,8 @@ export async function deviceScan(rfid: string) {
   };
 }
 
+
+//Device Confirm main funciton`
 export async function deviceConfirm(input: DeviceConfirmInput) {
   const { rfid, student_id, weight, tokens_earned, event_id } = input;
   const storedWeight = normalizeWeightForDb(weight);

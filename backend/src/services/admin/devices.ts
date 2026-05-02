@@ -8,7 +8,7 @@ type DeviceConfirmInput = {
   rfid: string;
   student_id?: number;
   weight: number;
-  tokens_earned: number;
+  
   event_id?: string;
 };
 
@@ -39,6 +39,14 @@ function normalizeWeightForDb(weight: number) {
   }
 
   return Math.round(weight);
+}
+
+function calculateTokens(weightKg: number) {
+  if (!Number.isFinite(weightKg) || weightKg < 2) {
+    return 0;
+  }
+
+  return Math.min(Math.floor(weightKg / 2), 10);
 }
 
 //Activiy Log action part
@@ -188,8 +196,9 @@ export async function deviceScan(rfid: string) {
 
 //Device Confirm main funciton`
 export async function deviceConfirm(input: DeviceConfirmInput) {
-  const { rfid, student_id, weight, tokens_earned, event_id } = input;
+  const { rfid, student_id, weight, event_id } = input;
   const storedWeight = normalizeWeightForDb(weight);
+  const tokens_earned = calculateTokens(weight);
   const now = new Date().toISOString();
   const normalizedEventId = event_id?.trim() || undefined;
 
@@ -256,6 +265,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
 
     await writeDeviceActivityLog({
       studentId: currentUser.Student_ID,
+      
       studentName: updated.name ?? null,
       tokensEarned: tokens_earned,
       weight: storedWeight,

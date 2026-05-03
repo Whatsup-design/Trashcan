@@ -112,6 +112,22 @@ export default function StudentLoginClient() {
       <div className={styles.shell}>
         <aside className={styles.visualPanel}>
           <Link href="/login" className={styles.back}>
+            <span className={styles.backIcon} aria-hidden="true">
+              <svg
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className={styles.backIconSvg}
+              >
+                <path
+                  d="M11.667 5L6.667 10L11.667 15"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
             Back
           </Link>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -129,8 +145,8 @@ export default function StudentLoginClient() {
             <img
               src="/kajonkietschool_Logo (1).png"
               alt="Student"
-              width={24}
-              style={{ margin: "4.5px" }}
+              width={36}
+              style={{ margin: "2px" }}
               className={styles.headerIcon}
             />
             <div>

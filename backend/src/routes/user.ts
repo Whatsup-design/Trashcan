@@ -4,6 +4,7 @@ import requireRole from "../middleware/roleMiddleware.js";
 
 import { UserDashboardController } from '../controller/user/dashboard.js';
 import { UserLeaderboardController } from '../controller/user/Leaderboard.js';
+import { UserBannerController } from '../controller/user/banner.js';
 import { UserMarketController } from '../controller/user/market.js';
 
 
@@ -15,6 +16,7 @@ router.get('/Dashboard', UserDashboardController);
 
 router.get('/Leaderboard', UserLeaderboardController);
 
+router.get('/Banner', UserBannerController);
 
 router.get('/Market', UserMarketController);
 

@@ -67,6 +67,22 @@
   transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
+.backIcon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
+}
+
+.backIconSvg {
+  width: 14px;
+  height: 14px;
+}
+
 .back:hover {
   color: #fff;
   background: rgba(15, 23, 42, 0.42);
@@ -95,7 +111,7 @@
 
 .title {
   margin: 0;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: #0f172a;

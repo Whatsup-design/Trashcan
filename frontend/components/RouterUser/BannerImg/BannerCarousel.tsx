@@ -11,14 +11,14 @@
 import { useEffect, useCallback, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
-import type { BannerItem } from "../../../lib/mockData/user/BannerToken";
+import type { UserBannerItem } from "@/lib/types/user/Banner";
 import styles from "./BannerCarousel.module.css";
 
 const DESKTOP_SLIDES_VISIBLE = 3;
 const DESKTOP_BREAKPOINT     = 768;
 
 type Props = {
-  banners: BannerItem[];
+  banners: UserBannerItem[];
   autoPlayDelay?: number;
 };
 
@@ -36,9 +36,7 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
 
   // ── ถ้า desktop และรูปน้อยกว่า 4 → ไม่ loop ───────────
   // ถ้า mobile → loop เสมอ
-  const shouldLoop = isMobile
-    ? true
-    : banners.length > DESKTOP_SLIDES_VISIBLE;
+  const shouldLoop = banners.length > 0;
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop:           shouldLoop,
@@ -69,7 +67,6 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
     timerRef.current = setInterval(() => {
       if (!isHoverRef.current && emblaApi) {
         // ถ้าไม่ loop และอยู่ slide สุดท้าย → ไม่เลื่อน
-        if (!shouldLoop && !emblaApi.canScrollNext()) return;
         emblaApi.scrollNext();
       }
     }, autoPlayDelay);
@@ -94,11 +91,7 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
   // ── Dots count ────────────────────────────────────────
   // Desktop: ถ้าไม่ loop แสดง dot ไม่เกิน (total - visible + 1)
   // Mobile: แสดง dot ทุกใบ
-  const dotsCount = isMobile
-    ? banners.length
-    : shouldLoop
-      ? banners.length
-      : Math.max(1, banners.length - DESKTOP_SLIDES_VISIBLE + 1);
+  const dotsCount = banners.length;
 
   return (
     <div

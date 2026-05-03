@@ -6,14 +6,14 @@ import ProductGrid from "@/components/RouterUser/TokenMarket/ProductGrid";
 import LoadingScreen from "@/components/Ui/Loadingscreen";
 import { ApiError, apiFetch } from "@/lib/api";
 import { logDevError } from "@/lib/devLog";
-import BannerToken from "@/lib/mockData/user/BannerToken";
+import type { UserBannerApiRow, UserBannerItem } from "@/lib/types/user/Banner";
 import type {
   UserMarketApiRow,
   UserMarketProduct,
 } from "@/lib/types/user/Market";
 import styles from "./page.module.css";
 
-const { BANNERS } = BannerToken;
+const MIN_BANNER_SLIDES = 4;
 
 function mapMarketProducts(rows: UserMarketApiRow[]): UserMarketProduct[] {
   return rows.map((row) => ({
@@ -29,15 +29,50 @@ function mapMarketProducts(rows: UserMarketApiRow[]): UserMarketProduct[] {
   }));
 }
 
+function ensureMinimumBannerSlides(items: UserBannerItem[]) {
+  if (items.length === 0 || items.length >= MIN_BANNER_SLIDES) {
+    return items;
+  }
+
+  const normalized: UserBannerItem[] = [];
+
+  for (let index = 0; index < MIN_BANNER_SLIDES; index += 1) {
+    const source = items[index % items.length];
+    normalized.push({
+      ...source,
+      id: `${source.id}-clone-${index}`,
+    });
+  }
+
+  return normalized;
+}
+
+function mapBannerItems(rows: UserBannerApiRow[]): UserBannerItem[] {
+  const mappedItems = rows
+    .filter((row) => row.Banner_ImgUrl)
+    .map((row) => ({
+      id: String(row.Banner_ID),
+      image: row.Banner_ImgUrl ?? "",
+      alt: `Banner ${row.Banner_ID}`,
+    }));
+
+  return ensureMinimumBannerSlides(mappedItems);
+}
+
 export default function MarketPage() {
+  const [banners, setBanners] = useState<UserBannerItem[]>([]);
   const [products, setProducts] = useState<UserMarketProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    apiFetch("/user/Market")
-      .then((res: UserMarketApiRow[]) => {
-        setProducts(mapMarketProducts(res));
+    Promise.all([
+      apiFetch("/user/Banner") as Promise<UserBannerApiRow[]>,
+      apiFetch("/user/Market") as Promise<UserMarketApiRow[]>,
+    ])
+      .then(([bannerRes, marketRes]) => {
+        setBanners(mapBannerItems(bannerRes));
+        setProducts(mapMarketProducts(marketRes));
         setError("");
       })
       .catch((err) => {
@@ -61,7 +96,9 @@ export default function MarketPage() {
 
   return (
     <div className={styles.page}>
-      <BannerCarousel banners={BANNERS} autoPlayDelay={6000} />
+      {banners.length > 0 ? (
+        <BannerCarousel banners={banners} autoPlayDelay={6000} />
+      ) : null}
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>

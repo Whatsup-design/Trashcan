@@ -13,8 +13,6 @@ import type {
 } from "@/lib/types/user/Market";
 import styles from "./page.module.css";
 
-const MIN_BANNER_SLIDES = 4;
-
 function mapMarketProducts(rows: UserMarketApiRow[]): UserMarketProduct[] {
   return rows.map((row) => ({
     id: String(row.Product_ID),
@@ -29,34 +27,14 @@ function mapMarketProducts(rows: UserMarketApiRow[]): UserMarketProduct[] {
   }));
 }
 
-function ensureMinimumBannerSlides(items: UserBannerItem[]) {
-  if (items.length === 0 || items.length >= MIN_BANNER_SLIDES) {
-    return items;
-  }
-
-  const normalized: UserBannerItem[] = [];
-
-  for (let index = 0; index < MIN_BANNER_SLIDES; index += 1) {
-    const source = items[index % items.length];
-    normalized.push({
-      ...source,
-      id: `${source.id}-clone-${index}`,
-    });
-  }
-
-  return normalized;
-}
-
 function mapBannerItems(rows: UserBannerApiRow[]): UserBannerItem[] {
-  const mappedItems = rows
+  return rows
     .filter((row) => row.Banner_ImgUrl)
     .map((row) => ({
       id: String(row.Banner_ID),
       image: row.Banner_ImgUrl ?? "",
       alt: `Banner ${row.Banner_ID}`,
     }));
-
-  return ensureMinimumBannerSlides(mappedItems);
 }
 
 export default function MarketPage() {

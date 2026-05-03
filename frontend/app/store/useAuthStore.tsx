@@ -1,5 +1,10 @@
 
 import { create } from "zustand";
+import {
+  clearClientSession,
+  persistClientSession,
+  readStoredSession,
+} from "@/lib/auth/clientSession";
 import { logDevError } from "@/lib/devLog";
 import { normalizeRole } from "@/lib/auth/normalizeRole";
 
@@ -31,17 +36,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       ...user,
       role: normalizeRole(user.role),
     };
-    const secureFlag =
-      typeof window !== "undefined" && window.location.protocol === "https:"
-        ? "; Secure"
-        : "";
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(normalizedUser));
-      document.cookie = `auth_token=${encodeURIComponent(token)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
-      document.cookie = `auth_role=${encodeURIComponent(normalizedUser.role)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
-    }
+    persistClientSession(normalizedUser, token);
 
     set({ user: normalizedUser, token, isLoaded: true });
   },
@@ -50,16 +45,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window === "undefined") return;
 
     try {
-      const token = localStorage.getItem("token");
-      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-      const user = storedUser
-        ? { ...storedUser, role: normalizeRole(storedUser.role) }
-        : null;
+      const { token, user } = readStoredSession();
 
       if (token && user) {
-        const secureFlag = window.location.protocol === "https:" ? "; Secure" : "";
-        document.cookie = `auth_token=${encodeURIComponent(token)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
-        document.cookie = `auth_role=${encodeURIComponent(user.role)}; Path=/; Max-Age=604800; SameSite=Lax${secureFlag}`;
         set({ user, token, isLoaded: true });
       } else {
         set({ user: null, token: null, isLoaded: true });
@@ -71,12 +59,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      document.cookie = "auth_token=; Path=/; Max-Age=0; SameSite=Lax";
-      document.cookie = "auth_role=; Path=/; Max-Age=0; SameSite=Lax";
-    }
+    clearClientSession();
 
     set({ user: null, token: null, isLoaded: true });
 

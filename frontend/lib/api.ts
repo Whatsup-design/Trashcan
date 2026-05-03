@@ -1,3 +1,5 @@
+import { readStoredToken } from "@/lib/auth/clientSession";
+
 const BASE_URL = "http://localhost:3001";
 
 type ApiRequestOptions = RequestInit & {
@@ -5,11 +7,7 @@ type ApiRequestOptions = RequestInit & {
 };
 
 function getClientToken() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return localStorage.getItem("token");
+  return readStoredToken();
 }
 
 export class ApiError extends Error {

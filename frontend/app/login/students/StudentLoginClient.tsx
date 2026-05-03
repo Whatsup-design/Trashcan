@@ -109,99 +109,110 @@ export default function StudentLoginClient() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.card}>
-        <Link href="/login" className={styles.back}>
-          Back
-        </Link>
-
-        <div className={styles.header}>
+      <div className={styles.shell}>
+        <aside className={styles.visualPanel}>
+          <Link href="/login" className={styles.back}>
+            Back
+          </Link>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/kajonkietschool_Logo (1).png"
-            alt="Student"
-            width={24}
-            style={{ margin: "4.5px" }}
-            className={styles.headerIcon}
+            src="/Student_Login_Post.png"
+            alt="Student login poster"
+            className={styles.visualImage}
           />
-          <div>
-            <h1 className={styles.title}>Internal Personnel</h1>
-            <p className={styles.sub}>Sign in with your Student ID</p>
-          </div>
-        </div>
+          <div className={styles.visualOverlay} />
+        </aside>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.field}>
-            <label className={styles.label}>Student ID / Staff ID</label>
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="e.g. 16000"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              required
-              autoComplete="username"
+        <div className={styles.card}>
+          <div className={styles.header}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/kajonkietschool_Logo (1).png"
+              alt="Student"
+              width={24}
+              style={{ margin: "4.5px" }}
+              className={styles.headerIcon}
             />
-          </div>
-
-          <div className={styles.field}>
-            <label className={styles.label}>Password</label>
-            <div className={styles.passwordWrap}>
-              <input
-                className={styles.input}
-                type={showPass ? "text" : "password"}
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className={styles.eyeBtn}
-                onClick={() => setShowPass((s) => !s)}
-                tabIndex={-1}
-                aria-label={showPass ? "Hide password" : "Show password"}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={showPass ? "/LoginIcon/Unseen.png" : "/LoginIcon/Seen.png"}
-                  alt={showPass ? "Hide password" : "Show password"}
-                  width={15}
-                  style={{ display: "block" }}
-                  height={15}
-                  className={styles.eyeIcon}
-                  draggable={false}
-                  aria-hidden="true"
-                />
-              </button>
+            <div>
+              <h1 className={styles.title}>Internal Personnel</h1>
+              <p className={styles.sub}>Sign in with your Student ID</p>
             </div>
           </div>
 
-          <label className={styles.rememberRow}>
-            <input
-              type="checkbox"
-              className={styles.checkbox}
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <span className={styles.rememberLabel}>Remember me</span>
-          </label>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.field}>
+              <label className={styles.label}>Student ID / Staff ID</label>
+              <input
+                className={styles.input}
+                type="text"
+                placeholder="e.g. 16000"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                required
+                autoComplete="username"
+              />
+            </div>
 
-          {error && <p className={styles.error}>{error}</p>}
+            <div className={styles.field}>
+              <label className={styles.label}>Password</label>
+              <div className={styles.passwordWrap}>
+                <input
+                  className={styles.input}
+                  type={showPass ? "text" : "password"}
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className={styles.eyeBtn}
+                  onClick={() => setShowPass((s) => !s)}
+                  tabIndex={-1}
+                  aria-label={showPass ? "Hide password" : "Show password"}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={showPass ? "/LoginIcon/Unseen.png" : "/LoginIcon/Seen.png"}
+                    alt={showPass ? "Hide password" : "Show password"}
+                    width={15}
+                    style={{ display: "block" }}
+                    height={15}
+                    className={styles.eyeIcon}
+                    draggable={false}
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+            </div>
 
-          <button className={styles.submitBtn} type="submit" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+            <label className={styles.rememberRow}>
+              <input
+                type="checkbox"
+                className={styles.checkbox}
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <span className={styles.rememberLabel}>Remember me</span>
+            </label>
 
-        <div className={styles.divider}>
-          <span className={styles.dividerLine} />
-          <span className={styles.dividerText}>or</span>
-          <span className={styles.dividerLine} />
-        </div>
+            {error && <p className={styles.error}>{error}</p>}
 
-        <div className={styles.hint}>
-          <p>Authentication is not enabled in this version.</p>
+            <button className={styles.submitBtn} type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <div className={styles.divider}>
+            <span className={styles.dividerLine} />
+            <span className={styles.dividerText}>or</span>
+            <span className={styles.dividerLine} />
+          </div>
+
+          <div className={styles.hint}>
+            <p>Authentication is not enabled in this version.</p>
+          </div>
         </div>
       </div>
     </div>

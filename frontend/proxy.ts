@@ -1,10 +1,11 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { normalizeRole } from "@/lib/auth/normalizeRole";
+import { AUTH_ROLE_COOKIE, AUTH_TOKEN_COOKIE } from "@/lib/auth/sessionConfig";
 
 export function proxy(req: NextRequest) {
-  const token = req.cookies.get("auth_token")?.value;
-  const role = normalizeRole(req.cookies.get("auth_role")?.value);
+  const token = req.cookies.get(AUTH_TOKEN_COOKIE)?.value;
+  const role = normalizeRole(req.cookies.get(AUTH_ROLE_COOKIE)?.value);
   const { pathname } = req.nextUrl;
 
   const isAdminPath = pathname.startsWith("/admin");

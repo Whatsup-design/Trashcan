@@ -1,126 +1,172 @@
-/* app/login/student/page.module.css */
-
 .page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f0f6ff 0%, #e8f4ff 50%, #f5f0ff 100%);
+  background:
+    radial-gradient(circle at top left, rgba(72, 183, 255, 0.2), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(17, 119, 254, 0.18), transparent 28%),
+    linear-gradient(135deg, #eef6ff 0%, #f5fbff 46%, #f8fafc 100%);
   padding: 20px;
 }
 
-.card {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 8px 40px rgba(17, 119, 254, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.shell {
+  width: min(980px, 90vw);
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(380px, 0.88fr);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(186, 215, 255, 0.7);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(16px);
 }
 
-/* ── Back ────────────────────────────────────────────────── */
+.visualPanel {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.visualImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.visualOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.38) 100%),
+    linear-gradient(135deg, rgba(17, 119, 254, 0.28) 0%, rgba(15, 23, 42, 0.08) 48%, rgba(15, 23, 42, 0.44) 100%);
+}
+
 .back {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  color: #64748b;
-  text-decoration: none;
-  transition: color 0.15s ease;
   width: fit-content;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
-.back:hover { color: #1177FE; }
+.back:hover {
+  color: #fff;
+  background: rgba(15, 23, 42, 0.42);
+  border-color: rgba(255, 255, 255, 0.34);
+}
 
-/* ── Header ──────────────────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding: 34px 36px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+}
+
 .header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
-.headerIcon { font-size: 32px; }
+.headerIcon {
+  flex-shrink: 0;
+}
 
 .title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1e293b;
   margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+  line-height: 1.12;
 }
 
 .sub {
-  font-size: 12px;
-  color: #94a3b8;
-  margin: 0;
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #64748b;
 }
 
-/* ── Form ────────────────────────────────────────────────── */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .label {
   font-size: 13px;
-  font-weight: 600;
-  color: #475569;
-}
-
-/* hint แสดง default password format */
-.passwordHint {
-  font-size: 11px;
-  color: #94a3b8;
-  margin: 0;
-}
-
-.passwordHint code {
-  background: #f1f5f9;
-  padding: 1px 6px;
-  border-radius: 4px;
-  color: #1177FE;
-  font-size: 11px;
+  font-weight: 700;
+  color: #334155;
 }
 
 .input {
   width: 100%;
-  padding: 11px 14px;
-  border: 1px solid #e8edf3;
-  border-radius: 10px;
+  padding: 13px 15px;
+  border: 1px solid #dbe6f3;
+  border-radius: 12px;
   font-size: 14px;
-  color: #1e293b;
-  background: #fff;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.98);
   outline: none;
-  transition: border 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   box-sizing: border-box;
 }
 
-.input:focus {
-  border-color: #1177FE;
-  box-shadow: 0 0 0 3px rgba(17, 119, 254, 0.08);
+.input::placeholder {
+  color: #94a3b8;
 }
 
-.passwordWrap { position: relative; }
-.passwordWrap .input { padding-right: 44px; }
+.input:focus {
+  border-color: #1177fe;
+  box-shadow: 0 0 0 4px rgba(17, 119, 254, 0.1);
+}
+
+.passwordWrap {
+  position: relative;
+}
+
+.passwordWrap .input {
+  padding-right: 46px;
+}
 
 .eyeBtn {
   position: absolute;
-  right: 12px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 14px;
   padding: 0;
 }
 
@@ -134,7 +180,7 @@
 .checkbox {
   width: 16px;
   height: 16px;
-  accent-color: #1177FE;
+  accent-color: #1177fe;
   cursor: pointer;
 }
 
@@ -144,49 +190,50 @@
 }
 
 .error {
-  font-size: 13px;
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.06);
-  border: 1px solid rgba(220, 38, 38, 0.15);
-  border-radius: 8px;
-  padding: 10px 12px;
   margin: 0;
+  font-size: 13px;
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.16);
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .submitBtn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #1177FE, #48B7FF);
+  padding: 14px;
+  background: linear-gradient(135deg, #1177fe, #48b7ff);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
   cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 16px 28px rgba(17, 119, 254, 0.2);
 }
 
 .submitBtn:hover:not(:disabled) {
-  opacity: 0.9;
+  opacity: 0.94;
   transform: translateY(-1px);
 }
 
 .submitBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* ── Divider ─────────────────────────────────────────────── */
 .divider {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .dividerLine {
   flex: 1;
   height: 1px;
-  background: #e8edf3;
+  background: #dbe6f3;
 }
 
 .dividerText {
@@ -194,51 +241,72 @@
   color: #94a3b8;
 }
 
-/* ── QR Button ───────────────────────────────────────────── */
-.qrBtn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 11px 16px;
-  border: 1.5px dashed #e8edf3;
-  border-radius: 10px;
-  background: #f8fafc;
-  font-size: 14px;
-  font-weight: 500;
-  color: #64748b;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.qrComingSoon {
-  font-size: 10px;
-  font-weight: 700;
-  background: #e8edf3;
-  color: #94a3b8;
-  padding: 2px 7px;
-  border-radius: 99px;
-}
-
-/* ── Hint ────────────────────────────────────────────────── */
 .hint {
   text-align: center;
-  padding: 10px;
-  background: #f8fafc;
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: #f8fbff;
+  border: 1px solid #e1edf9;
+  border-radius: 12px;
 }
 
 .hint p {
-  font-size: 12px;
-  color: #94a3b8;
   margin: 0;
+  font-size: 12px;
+  color: #64748b;
 }
 
-.hint code {
-  background: #e8edf3;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  color: #1177FE;
+@media (max-width: 1024px) {
+  .shell {
+    width: min(920px, 94vw);
+    min-height: 580px;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+  }
+
+  .card {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 16px;
+  }
+
+  .shell {
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .visualPanel {
+    min-height: 240px;
+  }
+
+  .back {
+    top: 16px;
+    left: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 12px;
+  }
+
+  .shell {
+    width: 100%;
+    border-radius: 22px;
+  }
+
+  .visualPanel {
+    min-height: 200px;
+  }
+
+  .card {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
 }

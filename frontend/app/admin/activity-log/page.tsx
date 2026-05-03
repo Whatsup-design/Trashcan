@@ -5,6 +5,7 @@ import ActivityLogTable from "@/components/RouterAdmin/ActivityLog/ActivityLogTa
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
 import { ApiError, apiFetch } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import type { ActivityLog } from "@/lib/mockData/admin/ActivityLog";
 
 const TODAY = new Date().toISOString().split("T")[0];
@@ -27,7 +28,7 @@ export default function ActivityLogPage() {
     apiFetch("/admin/ActivityLog")
       .then((res: ActivityLog[]) => setData(res))
       .catch((err) => {
-        console.error(err);
+        logDevError("admin-activity-log", err);
         setError(getErrorMessage(err));
       })
       .finally(() => {

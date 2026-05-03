@@ -7,6 +7,7 @@ import { useAuthStore } from "@/app/store/useAuthStore";
 import { getRedirectPath } from "@/lib/auth/getRedirectPath";
 import { normalizeRole } from "@/lib/auth/normalizeRole";
 import { ApiError, apiPost } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import type { PayloadLogin } from "@/lib/mockData/auth/login/login";
 import styles from "./page.module.css";
 
@@ -91,7 +92,7 @@ export default function StudentLoginClient() {
       navigate.replace("/user/dashboard");
     } catch (err: unknown) {
       logout();
-      console.error("LOGIN ERROR:", err);
+      logDevError("student-login", err);
 
       if (err instanceof ApiError) {
         setError(toUserLoginError(err.message));

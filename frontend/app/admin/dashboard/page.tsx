@@ -8,6 +8,7 @@ import MobileCarousel from "@/components/RouterAdmin/dashboard/MobileCarousel";
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
 import { ApiError, apiFetch } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import { dashboardData, type Test } from "@/lib/mockData/admin/Dashboard";
 
 type DashboardResponse = {
@@ -34,7 +35,7 @@ export default function DashboardPage() {
     apiFetch("/admin/Dashboard")
       .then((res: DashboardResponse) => setData(res))
       .catch((err) => {
-        console.error(err);
+        logDevError("admin-dashboard", err);
         setError(getErrorMessage(err));
       })
       .finally(() => {

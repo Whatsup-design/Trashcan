@@ -5,6 +5,7 @@ import DataTable from "@/components/RouterAdmin/Data/DataTable";
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
 import { ApiError, apiFetch } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import type { DataRow } from "@/lib/mockData/admin/Data";
 
 export default function DataPage() {
@@ -25,7 +26,7 @@ export default function DataPage() {
     apiFetch("/admin/Data")
       .then((res: DataRow[]) => setData(res))
       .catch((err) => {
-        console.error(err);
+        logDevError("admin-data", err);
         setError(getErrorMessage(err));
       })
       .finally(() => {

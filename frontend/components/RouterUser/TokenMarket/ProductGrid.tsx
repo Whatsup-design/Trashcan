@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────
 "use client";
 
+import { logDevInfo } from "@/lib/devLog";
 import type { UserMarketProduct } from "@/lib/types/user/Market";
 import ProductCard from "./ProductCard";
 import styles from "./ProductGrid.module.css";
@@ -20,7 +21,7 @@ export default function ProductGrid({ products }: Props) {
   async function handleRedeem(id: string): Promise<void> {
     // mock loading 1.5 วิ
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Redeemed product:", id);
+    logDevInfo("user-token-market", "Mock redeem completed", { productId: id });
     // ตอนจริง: await redeemApi(id)
   }
 

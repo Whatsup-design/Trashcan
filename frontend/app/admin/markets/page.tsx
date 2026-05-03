@@ -5,6 +5,7 @@ import CouponList from "@/components/RouterAdmin/Tokens/Coupon/CouponList";
 import DataState from "@/components/Ui/DataState";
 import { type Coupon, type CouponFormData } from "@/lib/mockData/admin/Coupon";
 import { ApiError, apiDelete, apiFetch, apiPost, apiPut } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import styles from "./page.module.css";
 
 export default function TokensPage() {
@@ -43,7 +44,7 @@ export default function TokensPage() {
     apiFetch("/admin/Market")
       .then((res: Coupon[]) => setCoupons(res))
       .catch((err) => {
-        console.error(err);
+        logDevError("admin-market-load", err);
         setError(getErrorMessage(err));
       })
       .finally(() => {
@@ -91,7 +92,7 @@ export default function TokensPage() {
       ) as Coupon;
       setCoupons((prev) => [createdCoupon, ...prev]);
     } catch (error) {
-      console.error(error);
+      logDevError("admin-market-add", error);
       throw new Error(getSubmitErrorMessage(error));
     }
   }
@@ -106,7 +107,7 @@ export default function TokensPage() {
         prev.map((coupon) => (coupon.Product_ID === id ? updatedCoupon : coupon))
       );
     } catch (error) {
-      console.error(error);
+      logDevError("admin-market-edit", error);
     }
   }
 
@@ -115,7 +116,7 @@ export default function TokensPage() {
       await apiDelete(`/admin/Market/${id}`);
       setCoupons((prev) => prev.filter((coupon) => coupon.Product_ID !== id));
     } catch (error) {
-      console.error(error);
+      logDevError("admin-market-delete", error);
     }
   }
 

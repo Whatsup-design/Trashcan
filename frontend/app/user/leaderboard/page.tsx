@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import LeaderboardList from "@/components/RouterUser/Leaderboard/Leaderboard";
 import { apiFetch, ApiError } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import type { LeaderboardResponse } from "@/lib/types/user/Leaderboard";
 import styles from "./page.module.css";
 
@@ -17,7 +18,7 @@ export default function LeaderboardPage() {
         setError("");
       })
       .catch((err) => {
-        console.error(err);
+        logDevError("user-leaderboard", err);
         if (err instanceof ApiError) {
           setError(err.message);
           return;

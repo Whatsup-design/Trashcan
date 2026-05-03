@@ -1,5 +1,6 @@
 
 import { create } from "zustand";
+import { logDevError } from "@/lib/devLog";
 import { normalizeRole } from "@/lib/auth/normalizeRole";
 
 type User = {
@@ -64,7 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ user: null, token: null, isLoaded: true });
       }
     } catch (err) {
-      console.error("loadAuth error:", err);
+      logDevError("auth-store-load", err);
       set({ isLoaded: true });
     }
   },

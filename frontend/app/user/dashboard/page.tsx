@@ -8,6 +8,7 @@ import AnnouncementList from "@/components/RouterUser/dashboard/AnnouncementList
 import DataState from "@/components/Ui/DataState";
 
 import { apiFetch } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 
 import DashboardData, {
   type Announcement,
@@ -55,7 +56,7 @@ export default function UserDashboardPage() {
     apiFetch("/user/Dashboard")
       .then((res: unknown) => setData(normalizeDashboardResponse(res)))
       .catch((err) => {
-        console.error(err);
+        logDevError("user-dashboard", err);
         setError("Failed to load dashboard data");
       })
       .finally(() => {

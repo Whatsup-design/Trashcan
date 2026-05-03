@@ -5,6 +5,7 @@ import BannerCarousel from "@/components/RouterUser/BannerImg/BannerCarousel";
 import ProductGrid from "@/components/RouterUser/TokenMarket/ProductGrid";
 import LoadingScreen from "@/components/Ui/Loadingscreen";
 import { ApiError, apiFetch } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
 import BannerToken from "@/lib/mockData/user/BannerToken";
 import type {
   UserMarketApiRow,
@@ -40,7 +41,7 @@ export default function MarketPage() {
         setError("");
       })
       .catch((err) => {
-        console.error(err);
+        logDevError("user-token-market", err);
 
         if (err instanceof ApiError) {
           setError(err.message);

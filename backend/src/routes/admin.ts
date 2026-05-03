@@ -17,6 +17,10 @@ import {
 } from "../controller/admin/devices.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import deviceAuthMiddleware from "../middleware/device/deviceAuthMiddleware.js";
+import {
+  deviceConfirmRateLimit,
+  deviceScanRateLimit,
+} from "../middleware/rateLimit/limits.js";
 import requireRole from "../middleware/roleMiddleware.js";
 import { supabase } from "../lib/supabase.js";
 
@@ -24,8 +28,8 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Public device routes for ESP/hardware flow.
-router.post("/devices/scan", deviceAuthMiddleware, deviceScanController);
-router.post("/devices/confirm", deviceAuthMiddleware, deviceConfirmController);
+router.post("/devices/scan", deviceAuthMiddleware, deviceScanRateLimit, deviceScanController);
+router.post("/devices/confirm", deviceAuthMiddleware, deviceConfirmRateLimit, deviceConfirmController);
 
 // Admin-protected routes.
 router.use(authMiddleware, requireRole("admin"));

@@ -10,6 +10,7 @@ type ProductRow = {
   Product_name: string | null;
   Product_Description: string | null;
   Product_Price: number | null;
+  Product_limit: number | null;
   Product_Img: string | null;
   Product_ImgUrl: string | null;
 };
@@ -23,6 +24,49 @@ type RedeemRow = {
   Product_ImgUrl?: string | null;
   Redeem_Status?: string | null;
 };
+
+function getCurrentMonthRange() {
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+
+  return {
+    start: start.toISOString(),
+    end: end.toISOString(),
+  };
+}
+
+export async function countActiveMonthlyRedeems(
+  studentId: number,
+  productId: number
+) {
+  const { start, end } = getCurrentMonthRange();
+  const { count, error } = await supabase
+    .from(REDEEM_TABLE)
+    .select("*", { count: "exact", head: true })
+    .eq("Student_ID", studentId)
+    .eq("Product_ID", productId)
+    .in("Redeem_Status", ["PENDING", "USED"])
+    .gte("Reedem_Date", start)
+    .lt("Reedem_Date", end);
+
+  if (error) {
+    throw new Error(`Failed to count monthly redeems: ${error.message}`);
+  }
+
+  return count ?? 0;
+}
+
+export function buildRedeemAvailability(productLimit: number, redeemedThisMonth: number) {
+  const safeLimit = Math.max(productLimit, 0);
+  const remainingThisMonth = Math.max(safeLimit - redeemedThisMonth, 0);
+
+  return {
+    redeemedThisMonth,
+    remainingThisMonth,
+    canRedeem: remainingThisMonth > 0,
+  };
+}
 
 export async function getUserRedeem(studentId: number) {
   const { data: redeemRows, error } = await supabase
@@ -48,7 +92,7 @@ export async function getUserRedeem(studentId: number) {
   const { data: productRows, error: productError } = await supabase
     .from("Product")
     .select(
-      "Product_ID, Product_name, Product_Description, Product_Price, Product_Img, Product_ImgUrl"
+      "Product_ID, Product_name, Product_Description, Product_Price, Product_limit, Product_Img, Product_ImgUrl"
     )
     .in("Product_ID", productIds);
 
@@ -98,6 +142,19 @@ export async function putUserRedeem(studentId: number, productId: number) {
 
   if (!productRow) {
     throw new Error("Product not found");
+  }
+
+  const redeemedThisMonth = await countActiveMonthlyRedeems(
+    studentId,
+    productRow.Product_ID
+  );
+  const availability = buildRedeemAvailability(
+    productRow.Product_limit ?? 0,
+    redeemedThisMonth
+  );
+
+  if (!availability.canRedeem) {
+    throw new Error("Redeem limit reached");
   }
 
   const payload = {

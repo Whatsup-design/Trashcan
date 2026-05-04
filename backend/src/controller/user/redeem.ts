@@ -84,6 +84,10 @@ export async function putUserRedeemController(req: Request, res: Response){
             return res.status(404).json({message : "Product not found"})
         }
 
+        if (error instanceof Error && error.message === "Redeem limit reached"){
+            return res.status(409).json({message : "Redeem limit reached"})
+        }
+
         return res.status(500).json({message : "Failed to create redeem"})
     }
 }

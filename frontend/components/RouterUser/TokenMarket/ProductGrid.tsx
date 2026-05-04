@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { apiPut } from "@/lib/api";
 import { logDevError } from "@/lib/devLog";
 import type { UserMarketProduct } from "@/lib/types/user/Market";
@@ -11,16 +12,36 @@ type Props = {
 };
 
 export default function ProductGrid({ products }: Props) {
+  const [visibleProducts, setVisibleProducts] = useState(products);
+
+  useEffect(() => {
+    setVisibleProducts(products);
+  }, [products]);
+
   async function handleRedeem(id: string): Promise<void> {
     try {
       await apiPut("/user/Redeem", { productId: Number(id) });
+      setVisibleProducts((currentProducts) =>
+        currentProducts.map((product) => {
+          if (product.id !== id) return product;
+
+          const remainingThisMonth = Math.max(product.remainingThisMonth - 1, 0);
+
+          return {
+            ...product,
+            redeemedThisMonth: product.redeemedThisMonth + 1,
+            remainingThisMonth,
+            canRedeem: remainingThisMonth > 0,
+          };
+        })
+      );
     } catch (err) {
       logDevError("user-token-market-redeem", err);
       throw err;
     }
   }
 
-  if (products.length === 0) {
+  if (visibleProducts.length === 0) {
     return (
       <div className={styles.empty}>
         <p>No products available</p>
@@ -30,7 +51,7 @@ export default function ProductGrid({ products }: Props) {
 
   return (
     <div className={styles.grid}>
-      {products.map((product) => (
+      {visibleProducts.map((product) => (
         <ProductCard
           key={product.id}
           product={product}

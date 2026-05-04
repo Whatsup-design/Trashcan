@@ -7,6 +7,9 @@ export type UserMarketProduct = {
   dateFrom?: string;
   dateTo?: string;
   claimPerMonth: number;
+  redeemedThisMonth: number;
+  remainingThisMonth: number;
+  canRedeem: boolean;
   price: number;
 };
 
@@ -20,4 +23,7 @@ export type UserMarketApiRow = {
   Product_ImgUrl: string | null;
   Product_StartDate?: string | null;
   Product_EndDate?: string | null;
+  redeemedThisMonth?: number;
+  remainingThisMonth?: number;
+  canRedeem?: boolean;
 };

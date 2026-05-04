@@ -157,3 +157,17 @@
 .redeemBtn:active {
   transform: scale(0.97);
 }
+
+.redeemBtn:disabled,
+.disabledBtn {
+  background: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.redeemBtn:disabled:hover,
+.disabledBtn:hover {
+  transform: none;
+  opacity: 1;
+}

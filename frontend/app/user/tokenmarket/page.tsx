@@ -25,6 +25,9 @@ function mapMarketProducts(rows: UserMarketApiRow[]): UserMarketProduct[] {
     dateFrom: row.Product_StartDate ?? undefined,
     dateTo: row.Product_EndDate ?? undefined,
     claimPerMonth: row.Product_limit,
+    redeemedThisMonth: row.redeemedThisMonth ?? 0,
+    remainingThisMonth: row.remainingThisMonth ?? row.Product_limit,
+    canRedeem: row.canRedeem ?? true,
     price: row.Product_Price,
   }));
 }

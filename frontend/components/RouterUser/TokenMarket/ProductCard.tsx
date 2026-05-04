@@ -16,6 +16,7 @@ type Props = {
 
 export default function ProductCard({ product, onRedeem }: Props) {
   const [showConfirm, setShowConfirm] = useState(false);
+  const redeemLabel = product.canRedeem ? "Redeem" : "Unavailable";
 
   return (
     <>
@@ -46,7 +47,9 @@ export default function ProductCard({ product, onRedeem }: Props) {
             <p className={styles.date}>📅 {product.dateFrom} – {product.dateTo}</p>
           )}
 
-          <p className={styles.claim}>{product.claimPerMonth}x / month</p>
+          <p className={styles.claim}>
+            {product.remainingThisMonth}/{product.claimPerMonth} left this month
+          </p>
         </div>
 
         {/* ── Bottom: price + redeem ─────────────────── */}
@@ -56,17 +59,18 @@ export default function ProductCard({ product, onRedeem }: Props) {
             <span className={styles.priceLabel}> tokens</span>
           </span>
           <button
-            className={styles.redeemBtn}
+            className={`${styles.redeemBtn} ${!product.canRedeem ? styles.disabledBtn : ""}`}
             onClick={() => setShowConfirm(true)}
+            disabled={!product.canRedeem}
           >
-            Redeem
+            {redeemLabel}
           </button>
         </div>
 
       </div>
 
       {/* Confirm popup */}
-      {showConfirm && (
+      {showConfirm && product.canRedeem && (
         <RedeemConfirm
           product={product}
           onConfirm={onRedeem}

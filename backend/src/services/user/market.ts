@@ -1,6 +1,41 @@
-import {supabase} from "../../lib/supabase.js";
+import { supabase } from "../../lib/supabase.js";
+import {
+  buildRedeemAvailability,
+  countActiveMonthlyRedeems,
+} from "./redeem.js";
 
-export async function UserMarketData(_studentId: number) {
+type UserMarketProductRow = {
+  Product_ID: number;
+  Product_name: string;
+  Product_Description: string | null;
+  Product_Price: number;
+  Product_Status: string;
+  Product_limit: number;
+  Product_ImgUrl: string | null;
+  Product_StartDate: string | null;
+  Product_EndDate: string | null;
+};
+
+async function addRedeemAvailability(
+  studentId: number,
+  product: UserMarketProductRow
+) {
+  const redeemedThisMonth = await countActiveMonthlyRedeems(
+    studentId,
+    product.Product_ID
+  );
+  const availability = buildRedeemAvailability(
+    product.Product_limit,
+    redeemedThisMonth
+  );
+
+  return {
+    ...product,
+    ...availability,
+  };
+}
+
+export async function UserMarketData(studentId: number) {
   const { data, error } = await supabase
     .from("Product")
     .select(
@@ -12,5 +47,9 @@ export async function UserMarketData(_studentId: number) {
     throw new Error(`Failed to fetch market data: ${error.message}`);
   }
 
-  return data ?? [];
+  const products = (data as UserMarketProductRow[] | null) ?? [];
+
+  return Promise.all(
+    products.map((product) => addRedeemAvailability(studentId, product))
+  );
 }

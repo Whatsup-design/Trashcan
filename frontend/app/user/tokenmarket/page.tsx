@@ -21,7 +21,7 @@ function mapMarketProducts(rows: UserMarketApiRow[]): UserMarketProduct[] {
     image: row.Product_ImgUrl ?? "",
     name: row.Product_name,
     description: row.Product_Description ?? "",
-    status: row.Product_Status === "Temporary" ? "temporary" : "permanent",
+    isLimited: row.Product_Limited,
     dateFrom: row.Product_StartDate ?? undefined,
     dateTo: row.Product_EndDate ?? undefined,
     claimPerMonth: row.Product_limit,

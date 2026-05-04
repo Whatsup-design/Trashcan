@@ -3,7 +3,7 @@ export type UserMarketProduct = {
   image: string;
   name: string;
   description: string;
-  status: "permanent" | "temporary";
+  isLimited: boolean;
   dateFrom?: string;
   dateTo?: string;
   claimPerMonth: number;
@@ -18,7 +18,7 @@ export type UserMarketApiRow = {
   Product_name: string;
   Product_Description: string | null;
   Product_Price: number;
-  Product_Status: "Permanent" | "Temporary";
+  Product_Limited: boolean;
   Product_limit: number;
   Product_ImgUrl: string | null;
   Product_StartDate?: string | null;

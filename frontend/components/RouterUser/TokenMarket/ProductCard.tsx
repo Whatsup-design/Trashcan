@@ -16,11 +16,12 @@ type Props = {
 
 export default function ProductCard({ product, onRedeem }: Props) {
   const [showConfirm, setShowConfirm] = useState(false);
-  const redeemLabel = product.canRedeem ? "Redeem" : "Unavailable";
+  const redeemLabel = product.canRedeem ? "Redeem" : "Redeemed";
+  const cardClassName = `${styles.card} ${!product.canRedeem ? styles.inactiveCard : ""}`;
 
   return (
     <>
-      <div className={styles.card}>
+      <div className={cardClassName}>
 
         {/* ── Picture 16:10 ─────────────────────────── */}
         <div className={styles.imgWrap}>
@@ -32,9 +33,11 @@ export default function ProductCard({ product, onRedeem }: Props) {
           )}
 
           {/* Status badge */}
-          <span className={`${styles.badge} ${product.status === "permanent" ? styles.permanent : styles.temporary}`}>
-            {product.status === "permanent" ? "Permanent" : "Limited"}
-          </span>
+          {product.isLimited ? (
+            <span className={`${styles.badge} ${styles.temporary}`}>
+              Limited
+            </span>
+          ) : null}
         </div>
 
         {/* ── Info ──────────────────────────────────── */}
@@ -43,7 +46,7 @@ export default function ProductCard({ product, onRedeem }: Props) {
           <p className={styles.desc}>{product.description}</p>
 
           {/* Date range — temporary only */}
-          {product.status === "temporary" && product.dateFrom && product.dateTo && (
+          {product.isLimited && product.dateFrom && product.dateTo && (
             <p className={styles.date}>📅 {product.dateFrom} – {product.dateTo}</p>
           )}
 

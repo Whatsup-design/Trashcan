@@ -9,7 +9,7 @@ type UserMarketProductRow = {
   Product_name: string;
   Product_Description: string | null;
   Product_Price: number;
-  Product_Status: string;
+  Product_Limited: boolean;
   Product_limit: number;
   Product_ImgUrl: string | null;
   Product_StartDate: string | null;
@@ -39,7 +39,7 @@ export async function UserMarketData(studentId: number) {
   const { data, error } = await supabase
     .from("Product")
     .select(
-      "Product_ID, Product_name, Product_Description, Product_Price, Product_Status, Product_limit, Product_ImgUrl, Product_StartDate, Product_EndDate"
+      "Product_ID, Product_name, Product_Description, Product_Price, Product_Limited, Product_limit, Product_ImgUrl, Product_StartDate, Product_EndDate"
     )
     .order("Product_ID", { ascending: true });
 

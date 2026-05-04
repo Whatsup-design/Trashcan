@@ -15,7 +15,7 @@ export type Product = {
   image: string;
   name: string;
   description: string;
-  status: "permanent" | "temporary";
+  isLimited: boolean;
   dateFrom?: string;
   dateTo?: string;
   claimPerMonth: number;
@@ -34,14 +34,14 @@ const BANNERS: BannerItem[] = [
 
 // ── Mockup products ───────────────────────────────────────
 const PRODUCTS: Product[] = [
-  { id: "1", image: "", name: "Free Coffee",      description: "Redeem for 1 free coffee at the school canteen", status: "permanent",  claimPerMonth: 2, price: 20 },
-  { id: "2", image: "", name: "Sports Day Pass",  description: "Free entry to the annual sports day event",      status: "temporary",  dateFrom: "2025-03-01", dateTo: "2025-03-31", claimPerMonth: 1, price: 50 },
-  { id: "3", image: "", name: "Stationery Set",   description: "1 set of school stationery (pen, pencil, ruler)", status: "permanent", claimPerMonth: 1, price: 30 },
-  { id: "4", image: "", name: "Movie Ticket",     description: "1 free movie ticket at the school cinema",        status: "temporary",  dateFrom: "2025-04-01", dateTo: "2025-04-30", claimPerMonth: 1, price: 80 },
-  { id: "5", image: "", name: "Canteen Voucher",  description: "50 baht canteen voucher",                         status: "permanent",  claimPerMonth: 3, price: 40 },
-  { id: "6", image: "", name: "Library Pass",     description: "Priority borrowing pass for 1 week",             status: "permanent",  claimPerMonth: 2, price: 15 },
-  { id: "7", image: "", name: "PE Class Skip",    description: "Skip 1 PE class (with teacher approval)",         status: "temporary",  dateFrom: "2025-03-15", dateTo: "2025-05-15", claimPerMonth: 1, price: 100 },
-  { id: "8", image: "", name: "School Badge",     description: "Exclusive eco-warrior school badge",              status: "permanent",  claimPerMonth: 1, price: 60 },
+  { id: "1", image: "", name: "Free Coffee",      description: "Redeem for 1 free coffee at the school canteen", isLimited: false, claimPerMonth: 2, price: 20 },
+  { id: "2", image: "", name: "Sports Day Pass",  description: "Free entry to the annual sports day event",      isLimited: true,  dateFrom: "2025-03-01", dateTo: "2025-03-31", claimPerMonth: 1, price: 50 },
+  { id: "3", image: "", name: "Stationery Set",   description: "1 set of school stationery (pen, pencil, ruler)", isLimited: false, claimPerMonth: 1, price: 30 },
+  { id: "4", image: "", name: "Movie Ticket",     description: "1 free movie ticket at the school cinema",        isLimited: true,  dateFrom: "2025-04-01", dateTo: "2025-04-30", claimPerMonth: 1, price: 80 },
+  { id: "5", image: "", name: "Canteen Voucher",  description: "50 baht canteen voucher",                         isLimited: false, claimPerMonth: 3, price: 40 },
+  { id: "6", image: "", name: "Library Pass",     description: "Priority borrowing pass for 1 week",             isLimited: false, claimPerMonth: 2, price: 15 },
+  { id: "7", image: "", name: "PE Class Skip",    description: "Skip 1 PE class (with teacher approval)",         isLimited: true,  dateFrom: "2025-03-15", dateTo: "2025-05-15", claimPerMonth: 1, price: 100 },
+  { id: "8", image: "", name: "School Badge",     description: "Exclusive eco-warrior school badge",              isLimited: false, claimPerMonth: 1, price: 60 },
 ];
 
 export default {BANNERS, PRODUCTS}

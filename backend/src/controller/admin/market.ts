@@ -8,11 +8,16 @@ import {
 } from "../../services/admin/market.js";
 
 function normalizeMarketBody(body: Request["body"]) {
+  const productLimited =
+    body.Product_Limited === true ||
+    body.Product_Limited === "true" ||
+    body.Product_Limited === "1";
+
   return {
     Product_name: String(body.Product_name ?? "").trim(),
     Product_Description: String(body.Product_Description ?? "").trim(),
     Product_Price: Number(body.Product_Price),
-    Product_Status: String(body.Product_Status ?? "Permanent"),
+    Product_Limited: productLimited,
     Product_limit: Number(body.Product_limit),
     removeImage:
       body.removeImage === true ||

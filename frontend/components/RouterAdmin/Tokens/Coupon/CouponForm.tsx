@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Coupon, CouponFormData } from "@/lib/mockData/admin/Coupon";
 import styles from "./CouponForm.module.css";
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
 
 type Props = {
-  initialData?: Coupon;
+  initialData?: Partial<CouponFormData> | Coupon;
   formId?: string;
   submitError?: string;
   onSubmit: (data: CouponFormData) => Promise<void> | void;
   onCancel: () => void;
+  onDraftChange?: (data: CouponFormData) => void;
 };
 
 export default function CouponForm({
@@ -20,11 +21,12 @@ export default function CouponForm({
   submitError,
   onSubmit,
   onCancel,
+  onDraftChange,
 }: Props) {
   const [Product_name, setProduct_name] = useState(initialData?.Product_name ?? "");
   const [Product_Description, setProduct_Description] = useState(initialData?.Product_Description ?? "");
   const [Product_Price, setProduct_Price] = useState(initialData?.Product_Price ?? 10);
-  const [Product_Status, setProduct_Status] = useState<"Permanent" | "Temporary">(initialData?.Product_Status ?? "Permanent");
+  const [Product_Limited, setProduct_Limited] = useState(initialData?.Product_Limited ?? false);
   const [Product_limit, setProduct_limit] = useState(initialData?.Product_limit ?? 1);
   const [Product_ImgUrl, setProduct_ImgUrl] = useState(initialData?.Product_ImgUrl ?? "");
   const [Product_ImgFile, setProduct_ImgFile] = useState<File | null>(null);
@@ -32,6 +34,31 @@ export default function CouponForm({
   const [Product_EndDate, setProduct_EndDate] = useState(initialData?.Product_EndDate ?? "");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    onDraftChange?.({
+      Product_name,
+      Product_Description,
+      Product_Price,
+      Product_Limited,
+      Product_limit,
+      Product_ImgUrl: Product_ImgUrl || null,
+      Product_ImgFile,
+      Product_StartDate: Product_Limited ? Product_StartDate : undefined,
+      Product_EndDate: Product_Limited ? Product_EndDate : undefined,
+    });
+  }, [
+    Product_name,
+    Product_Description,
+    Product_Price,
+    Product_Limited,
+    Product_limit,
+    Product_ImgUrl,
+    Product_ImgFile,
+    Product_StartDate,
+    Product_EndDate,
+    onDraftChange,
+  ]);
 
   function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -67,12 +94,12 @@ export default function CouponForm({
       return;
     }
 
-    if (Product_Status === "Temporary" && (!Product_StartDate || !Product_EndDate)) {
-      setError("Date range is required for temporary coupons");
+    if (Product_Limited && (!Product_StartDate || !Product_EndDate)) {
+      setError("Date range is required for limited coupons");
       return;
     }
 
-    if (Product_Status === "Temporary" && Product_StartDate > Product_EndDate) {
+    if (Product_Limited && Product_StartDate > Product_EndDate) {
       setError("End date must be after start date");
       return;
     }
@@ -82,12 +109,12 @@ export default function CouponForm({
       Product_name: Product_name.trim(),
       Product_Description: Product_Description.trim(),
       Product_Price,
-      Product_Status,
+      Product_Limited,
       Product_limit,
       Product_ImgUrl: Product_ImgUrl || null,
       Product_ImgFile,
-      Product_StartDate: Product_Status === "Temporary" ? Product_StartDate : undefined,
-      Product_EndDate: Product_Status === "Temporary" ? Product_EndDate : undefined,
+      Product_StartDate: Product_Limited ? Product_StartDate : undefined,
+      Product_EndDate: Product_Limited ? Product_EndDate : undefined,
     });
     setTimeout(() => {
       setIsSubmitting(false);
@@ -137,25 +164,28 @@ export default function CouponForm({
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label}>Status</label>
+        <label className={styles.label}>Limited</label>
         <div className={styles.radioGroup}>
-          {(["Permanent", "Temporary"] as const).map((status) => (
-            <label key={status} className={`${styles.radioLabel} ${Product_Status === status ? styles.radioActive : ""}`}>
+          {[
+            { label: "False", value: false },
+            { label: "True", value: true },
+          ].map((option) => (
+            <label key={option.label} className={`${styles.radioLabel} ${Product_Limited === option.value ? styles.radioActive : ""}`}>
               <input
                 type="radio"
-                name="status"
-                value={status}
-                checked={Product_Status === status}
-                onChange={() => setProduct_Status(status)}
+                name="limited"
+                value={String(option.value)}
+                checked={Product_Limited === option.value}
+                onChange={() => setProduct_Limited(option.value)}
                 className={styles.radioInput}
               />
-              {status}
+              {option.label}
             </label>
           ))}
         </div>
       </div>
 
-      {Product_Status === "Temporary" && (
+      {Product_Limited && (
         <div className={styles.dateRow}>
           <div className={styles.field}>
             <label className={styles.label}>From <span className={styles.required}>*</span></label>

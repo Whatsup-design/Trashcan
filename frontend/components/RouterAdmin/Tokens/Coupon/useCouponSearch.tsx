@@ -18,7 +18,7 @@ export function useCouponSearch(coupons: Coupon[]) {
       (coupon) =>
         coupon.Product_name.toLowerCase().includes(q) ||
         coupon.Product_Description.toLowerCase().includes(q) ||
-        coupon.Product_Status.toLowerCase().includes(q)
+        (coupon.Product_Limited ? "limited true" : "unlimited false").includes(q)
     );
   }, [coupons, deferredQuery]);
 

@@ -61,13 +61,11 @@ export default function RedeemConfirm({ product, onConfirm, onClose }: Props) {
                 <p className={styles.productName}>{product.name}</p>
                 <p className={styles.productDesc}>{product.description}</p>
 
-                <span
-                  className={`${styles.badge} ${
-                    product.status === "permanent" ? styles.permanent : styles.temporary
-                  }`}
-                >
-                  {product.status === "permanent" ? "Permanent" : `Until ${product.dateTo}`}
-                </span>
+                {product.isLimited ? (
+                  <span className={`${styles.badge} ${styles.temporary}`}>
+                    {product.dateTo ? `Until ${product.dateTo}` : "Limited"}
+                  </span>
+                ) : null}
 
                 <p className={styles.price}>
                   <span className={styles.priceNum}>{product.price}</span>

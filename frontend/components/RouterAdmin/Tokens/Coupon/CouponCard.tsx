@@ -30,16 +30,18 @@ export default function CouponCard({ coupon, onDelete, onEdit }: Props) {
               </svg>
             </div>
           )}
-          <span className={`${styles.statusBadge} ${coupon.Product_Status === "Permanent" ? styles.permanent : styles.temporary}`}>
-            {coupon.Product_Status}
-          </span>
+          {coupon.Product_Limited ? (
+            <span className={`${styles.statusBadge} ${styles.temporary}`}>
+              Limited
+            </span>
+          ) : null}
         </div>
 
         <div className={styles.info}>
           <p className={styles.name}>{coupon.Product_name}</p>
           <p className={styles.desc}>{coupon.Product_Description}</p>
           <div className={styles.dateSlot}>
-            {coupon.Product_Status === "Temporary" && coupon.Product_StartDate && coupon.Product_EndDate ? (
+            {coupon.Product_Limited && coupon.Product_StartDate && coupon.Product_EndDate ? (
               <p className={styles.dateRange}>{coupon.Product_StartDate} - {coupon.Product_EndDate}</p>
             ) : (
               <p className={styles.dateRangePlaceholder}>No active date</p>

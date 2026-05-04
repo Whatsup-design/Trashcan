@@ -62,7 +62,7 @@ export default function TokensPage() {
     formData.append("Product_name", data.Product_name);
     formData.append("Product_Description", data.Product_Description ?? "");
     formData.append("Product_Price", String(data.Product_Price));
-    formData.append("Product_Status", data.Product_Status);
+    formData.append("Product_Limited", String(data.Product_Limited));
     formData.append("Product_limit", String(data.Product_limit));
 
     if (data.Product_StartDate) {

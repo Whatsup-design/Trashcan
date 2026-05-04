@@ -6,10 +6,11 @@ import styles from "./CloseConfirm.module.css";
 type Props = {
   formId: string;
   onDiscard: () => void;
+  onSaveDraft: () => void;
   onClose: () => void;
 };
 
-export default function CloseConfirm({ formId, onDiscard, onClose }: Props) {
+export default function CloseConfirm({ onDiscard, onSaveDraft, onClose }: Props) {
   if (typeof document === "undefined") {
     return null;
   }
@@ -38,15 +39,16 @@ export default function CloseConfirm({ formId, onDiscard, onClose }: Props) {
         </div>
 
         <p className={styles.sub}>
-          You have changes in this panel. Save them before leaving, or discard them.
+          You have unsaved changes in this panel. Save them as a temporary draft,
+          or discard them.
         </p>
 
         <div className={styles.btns}>
           <button className={styles.discardBtn} onClick={onDiscard}>
             Discard
           </button>
-          <button className={styles.saveBtn} type="submit" form={formId} onClick={onClose}>
-            Save
+          <button className={styles.saveBtn} type="button" onClick={onSaveDraft}>
+            Save Draft
           </button>
         </div>
       </div>

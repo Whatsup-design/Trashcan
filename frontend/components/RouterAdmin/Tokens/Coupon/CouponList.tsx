@@ -17,6 +17,7 @@ type Props = {
 
 export default function CouponList({ coupons, onAdd, onEdit, onDelete }: Props) {
   const [showAdd, setShowAdd] = useState(false);
+  const [addDraft, setAddDraft] = useState<CouponFormData | null>(null);
   const [editCoupon, setEditCoupon] = useState<Coupon | null>(null);
 
   const { query, setQuery, filtered, loading } = useCouponSearch(coupons);
@@ -79,12 +80,16 @@ export default function CouponList({ coupons, onAdd, onEdit, onDelete }: Props) 
 
       {showAdd && (
         <CouponAddPanel
+          initialDraft={addDraft}
           onSubmit={(data) => {
             onAdd(data);
+            setAddDraft(null);
             setTimeout(() => {
               setShowAdd(false);
             }, 1000);
           }}
+          onSaveDraft={(data) => setAddDraft(data)}
+          onDiscardDraft={() => setAddDraft(null)}
           onClose={() => setShowAdd(false)}
         />
       )}

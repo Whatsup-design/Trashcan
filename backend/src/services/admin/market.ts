@@ -7,7 +7,7 @@ type ProductRow = {
   Product_name: string;
   Product_Description: string | null;
   Product_Price: number;
-  Product_Status: string;
+  Product_Limited: boolean;
   Product_limit: number;
   Product_Img: string | null;
   Product_ImgUrl: string | null;
@@ -19,7 +19,7 @@ type ProductPayload = {
   Product_name: string;
   Product_Description?: string;
   Product_Price: number;
-  Product_Status: string;
+  Product_Limited: boolean;
   Product_limit: number;
   Product_StartDate?: string;
   Product_EndDate?: string;
@@ -89,10 +89,10 @@ function normalizeCreatePayload(input: CreateProductInput, imageData?: { storage
     Product_name: input.Product_name,
     Product_Description: input.Product_Description ?? "",
     Product_Price: input.Product_Price,
-    Product_Status: input.Product_Status,
+    Product_Limited: input.Product_Limited,
     Product_limit: input.Product_limit,
-    Product_StartDate: input.Product_StartDate || null,
-    Product_EndDate: input.Product_EndDate || null,
+    Product_StartDate: input.Product_Limited ? input.Product_StartDate || null : null,
+    Product_EndDate: input.Product_Limited ? input.Product_EndDate || null : null,
     Product_Img: imageData?.storagePath ?? null,
     Product_ImgUrl: imageData?.publicUrl ?? null,
   };
@@ -110,13 +110,13 @@ function normalizeUpdatePayload(
   if (input.Product_name !== undefined) payload.Product_name = input.Product_name;
   if (input.Product_Description !== undefined) payload.Product_Description = input.Product_Description;
   if (input.Product_Price !== undefined) payload.Product_Price = input.Product_Price;
-  if (input.Product_Status !== undefined) payload.Product_Status = input.Product_Status;
+  if (input.Product_Limited !== undefined) payload.Product_Limited = input.Product_Limited;
   if (input.Product_limit !== undefined) payload.Product_limit = input.Product_limit;
 
-  if (input.Product_Status === "Temporary") {
+  if (input.Product_Limited === true) {
     payload.Product_StartDate = input.Product_StartDate || null;
     payload.Product_EndDate = input.Product_EndDate || null;
-  } else if (input.Product_Status !== undefined) {
+  } else if (input.Product_Limited !== undefined) {
     payload.Product_StartDate = null;
     payload.Product_EndDate = null;
   }

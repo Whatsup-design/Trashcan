@@ -109,6 +109,13 @@ export async function apiPut(path: string, body: unknown) {
   });
 }
 
+export async function apiPatch(path: string, body: unknown) {
+  return apiRequest(path, {
+    method: "PATCH",
+    body: body instanceof FormData ? body : JSON.stringify(body),
+  });
+}
+
 export async function apiDelete(path: string) {
   return apiRequest(path, {
     method: "DELETE",

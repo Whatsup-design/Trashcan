@@ -1,7 +1,10 @@
 import {
     getUserRedeem,
     putUserRedeem,
-    deleteUserRedeem
+    deleteUserRedeem,
+    patchUserRedeemStatus,
+    REDEEM_STATUSES,
+    type RedeemStatus
 } from '../../services/user/redeem.js'
 import type { Response, Request } from 'express'
 
@@ -13,6 +16,20 @@ function getStudentId(req: Request) {
     }
 
     return studentId;
+}
+
+function normalizeRedeemStatus(value: unknown): RedeemStatus | null {
+    if (typeof value !== "string") {
+        return null;
+    }
+
+    const normalized = value.trim().toUpperCase();
+
+    if (REDEEM_STATUSES.includes(normalized as RedeemStatus)) {
+        return normalized as RedeemStatus;
+    }
+
+    return null;
 }
 
 export async function getUserRedeemController(req: Request, res: Response){
@@ -99,4 +116,41 @@ export async function deleteUserRedeemController(req: Request, res: Response){
         return res.status(500).json({message : "Failed to delete redeem"})
     }
 
+}
+
+export async function patchUserRedeemStatusController(req: Request, res: Response){
+    try {
+        const studentId = getStudentId(req);
+
+        if(studentId === null){
+            return res.status(401).json({message:"Invalid token payload"})
+        }
+
+        const redeemId = Number(req.params.id);
+
+        if(!Number.isFinite(redeemId) || redeemId <= 0){
+            return res.status(400).json({message:"Invalid redeem id"})
+        }
+
+        const status = normalizeRedeemStatus(req.body?.status ?? req.body?.Redeem_Status);
+
+        if(status === null){
+            return res.status(400).json({
+                message:"Invalid redeem status",
+                allowedStatuses: REDEEM_STATUSES
+            })
+        }
+
+        const updatedRedeem = await patchUserRedeemStatus(studentId, redeemId, status);
+        return res.json(updatedRedeem);
+
+    } catch(error) {
+        console.error("Error updating redeem status:", error)
+
+        if (error instanceof Error && error.message === "Redeem not found"){
+            return res.status(404).json({message : "Redeem not found"})
+        }
+
+        return res.status(500).json({message : "Failed to update redeem status"})
+    }
 }

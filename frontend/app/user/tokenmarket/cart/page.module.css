@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 0 8px 32px;
+  padding: 0 12px 36px;
 }
 
 .backButton {
@@ -18,7 +18,7 @@
   background: #ffffff;
   color: #2563eb;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
   transition:
@@ -48,15 +48,16 @@
 
 .header {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .title {
   margin: 0;
   color: #1e293b;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.4px;
 }
 
@@ -68,6 +69,39 @@
   line-height: 1.7;
 }
 
+.filterWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.filterLabel {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.filterSelect {
+  min-width: 142px;
+  height: 38px;
+  padding: 0 34px 0 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.07);
+}
+
+.filterSelect:focus {
+  outline: 3px solid rgba(59, 130, 246, 0.2);
+  outline-offset: 2px;
+  border-color: #3b82f6;
+}
+
 .list {
   display: flex;
   flex-direction: column;
@@ -75,8 +109,34 @@
   width: 100%;
 }
 
+.error,
+.empty {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.error {
+  color: #dc2626;
+}
+
 @media (max-width: 767px) {
   .page {
-    padding: 0 4px 28px;
+    padding: 0 8px 30px;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .filterWrap {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filterSelect {
+    flex: 1;
   }
 }

@@ -10,7 +10,8 @@ import { UserMarketController } from '../controller/user/market.js';
 import {
     getUserRedeemController,
     putUserRedeemController,
-    deleteUserRedeemController
+    deleteUserRedeemController,
+    patchUserRedeemStatusController
 
 } from '../controller/user/redeem.js'
 
@@ -29,6 +30,7 @@ router.get('/Market', UserMarketController);
 
 router.get('/Redeem', getUserRedeemController)
 router.put('/Redeem', putUserRedeemController)
+router.patch('/Redeem/:id', patchUserRedeemStatusController)
 router.delete('/Redeem/:id', deleteUserRedeemController)
 
 

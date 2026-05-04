@@ -1,6 +1,9 @@
 import { supabase } from "../../lib/supabase.js";
 
 const REDEEM_TABLE = "Redeem";
+export const REDEEM_STATUSES = ["PENDING", "USED", "CANCELLED", "EXPIRED"] as const;
+
+export type RedeemStatus = (typeof REDEEM_STATUSES)[number];
 
 type ProductRow = {
   Product_ID: number;
@@ -11,8 +14,18 @@ type ProductRow = {
   Product_ImgUrl: string | null;
 };
 
+type RedeemRow = {
+  Reedeem_ID: number;
+  Reedem_Date: string;
+  Student_ID: number;
+  Product_ID: number;
+  Product_Img?: string | null;
+  Product_ImgUrl?: string | null;
+  Redeem_Status?: string | null;
+};
+
 export async function getUserRedeem(studentId: number) {
-  const { data, error } = await supabase
+  const { data: redeemRows, error } = await supabase
     .from(REDEEM_TABLE)
     .select("*")
     .eq("Student_ID", studentId)
@@ -22,7 +35,50 @@ export async function getUserRedeem(studentId: number) {
     throw new Error(`Failed to fetch redeem data: ${error.message}`);
   }
 
-  return data ?? [];
+  const redeems = (redeemRows as RedeemRow[] | null) ?? [];
+
+  if (redeems.length === 0) {
+    return [];
+  }
+
+  const productIds = Array.from(
+    new Set(redeems.map((redeem) => redeem.Product_ID))
+  );
+
+  const { data: productRows, error: productError } = await supabase
+    .from("Product")
+    .select(
+      "Product_ID, Product_name, Product_Description, Product_Price, Product_Img, Product_ImgUrl"
+    )
+    .in("Product_ID", productIds);
+
+  if (productError) {
+    throw new Error(`Failed to fetch redeem products: ${productError.message}`);
+  }
+
+  const productMap = new Map(
+    ((productRows as ProductRow[] | null) ?? []).map((product) => [
+      product.Product_ID,
+      product,
+    ])
+  );
+
+  return redeems.map((redeem) => {
+    const product = productMap.get(redeem.Product_ID);
+
+    return {
+      Reedeem_ID: redeem.Reedeem_ID,
+      Reedem_Date: redeem.Reedem_Date,
+      Student_ID: redeem.Student_ID,
+      Product_ID: redeem.Product_ID,
+      Product_name: product?.Product_name ?? "Unknown reward",
+      Product_Description: product?.Product_Description ?? "",
+      Product_Price: product?.Product_Price ?? 0,
+      Product_Img: redeem.Product_Img ?? product?.Product_Img ?? null,
+      Product_ImgUrl: redeem.Product_ImgUrl ?? product?.Product_ImgUrl ?? null,
+      Redeem_Status: redeem.Redeem_Status ?? "PENDING",
+    };
+  });
 }
 
 export async function putUserRedeem(studentId: number, productId: number) {
@@ -50,6 +106,7 @@ export async function putUserRedeem(studentId: number, productId: number) {
     Product_ID: productRow.Product_ID,
     Product_Img: productRow.Product_Img,
     Product_ImgUrl: productRow.Product_ImgUrl,
+    Redeem_Status: "PENDING",
   };
 
   const { data, error } = await supabase
@@ -87,6 +144,30 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
 
   if (error) {
     throw new Error(`Failed to delete redeem: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error("Redeem not found");
+  }
+
+  return data;
+}
+
+export async function patchUserRedeemStatus(
+  studentId: number,
+  redeemId: number,
+  status: RedeemStatus
+) {
+  const { data, error } = await supabase
+    .from(REDEEM_TABLE)
+    .update({ Redeem_Status: status })
+    .eq("Reedeem_ID", redeemId)
+    .eq("Student_ID", studentId)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to update redeem status: ${error.message}`);
   }
 
   if (!data) {

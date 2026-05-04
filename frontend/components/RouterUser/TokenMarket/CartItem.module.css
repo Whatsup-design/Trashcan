@@ -1,13 +1,13 @@
 .card {
   display: flex;
   align-items: stretch;
-  gap: 24px;
+  gap: 28px;
   width: 100%;
-  padding: 18px;
+  padding: 26px 36px 26px 24px;
   border: 1px solid #e0ecff;
   border-radius: 22px;
   background: #ffffff;
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -16,14 +16,41 @@
 
 .card:hover {
   transform: translateY(-2px);
-  border-color: #bfdbfe;
-  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.12);
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.inactiveCard {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+  opacity: 0.72;
+}
+
+.inactiveCard:hover {
+  transform: none;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+.inactiveCard .image {
+  filter: grayscale(0.85);
+}
+
+.inactiveCard .name,
+.inactiveCard .description,
+.inactiveCard .timeLeft {
+  color: #64748b;
+}
+
+.inactiveCard .metaRow span {
+  background: #f1f5f9;
+  color: #64748b;
 }
 
 .imageWrap {
-  flex: 0 0 188px;
-  width: 188px;
-  min-height: 136px;
+  flex: 0 0 220px;
+  width: 220px;
+  height: 158px;
   border-radius: 16px;
   background: #eff6ff;
   overflow: hidden;
@@ -41,11 +68,10 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
-  min-height: 136px;
+  height: 158px;
   color: #2563eb;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .info {
@@ -53,15 +79,15 @@
   flex: 1 1 auto;
   min-width: 0;
   flex-direction: column;
-  justify-content: center;
-  gap: 7px;
+  justify-content: flex-start;
+  gap: 10px;
 }
 
 .name {
   margin: 0;
   color: #172554;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
@@ -81,9 +107,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: auto;
   color: #2563eb;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .metaRow span {
@@ -92,13 +119,40 @@
   background: #eff6ff;
 }
 
+.statusBadge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusPENDING {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.statusUSED {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.statusCANCELLED {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.statusEXPIRED {
+  background: #f8fafc;
+  color: #64748b;
+}
+
 .actions {
   display: flex;
   flex: 0 0 156px;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
   margin-left: auto;
 }
 
@@ -106,7 +160,7 @@
   margin: 0 0 2px;
   color: #0f766e;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .primaryButton,
@@ -115,7 +169,7 @@
   height: 36px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition:
     transform 160ms ease,
@@ -124,17 +178,25 @@
     box-shadow 160ms ease;
 }
 
+.primaryButton:disabled,
+.cancelButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  transform: none;
+}
+
 .primaryButton {
   border: 1px solid #2563eb;
   background: #2563eb;
   color: #ffffff;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
 }
 
-.primaryButton:hover {
+.primaryButton:hover:not(:disabled) {
   transform: translateY(-1px);
   background: #1d4ed8;
   border-color: #1d4ed8;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
 }
 
 .cancelButton {
@@ -143,7 +205,7 @@
   color: #64748b;
 }
 
-.cancelButton:hover {
+.cancelButton:hover:not(:disabled) {
   transform: translateY(-1px);
   border-color: #ef4444;
   color: #dc2626;
@@ -152,14 +214,14 @@
 @media (max-width: 767px) {
   .card {
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: 14px;
+    padding: 18px;
   }
 
   .imageWrap {
     flex-basis: auto;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 220px;
   }
 
   .actions {

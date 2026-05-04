@@ -20,7 +20,7 @@ export default async function LoginPage() {
       <div className={styles.card}>
         <div className={styles.logoWrap}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/Icon.png" alt="Trashcan Smart" className={styles.logo} />
+          <img src="/icon.png" alt="Trashcan Smart" className={styles.logo} />
           <div>
             <p className={styles.appName}>Trashcan Smart</p>
             <p className={styles.appSub}>Please select your account type</p>

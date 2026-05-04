@@ -83,7 +83,7 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
         }}
         className={styles.swiperRoot}
       >
-        {renderedBanners.map((banner) => (
+        {renderedBanners.map((banner, index) => (
           <SwiperSlide key={banner.id} className={styles.swiperSlide}>
             <div className={styles.imgWrap}>
               <Image
@@ -92,7 +92,7 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
                 fill
                 className={styles.img}
                 sizes="(max-width: 768px) 100vw, 33vw"
-                priority={banner.id === renderedBanners[0]?.id}
+                loading={index === 0 ? "eager" : "lazy"}
               />
               {banner.title && (
                 <div className={styles.overlay}>

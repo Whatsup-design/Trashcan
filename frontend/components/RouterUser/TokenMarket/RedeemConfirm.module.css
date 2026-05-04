@@ -136,6 +136,18 @@
 }
 
 /* ── Buttons ─────────────────────────────────────────────── */
+.errorText {
+  margin: -4px 0 0;
+  padding: 9px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
 .btns {
   display: flex;
   gap: 10px;

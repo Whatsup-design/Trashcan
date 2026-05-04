@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import BannerCarousel from "@/components/RouterUser/BannerImg/BannerCarousel";
 import ProductGrid from "@/components/RouterUser/TokenMarket/ProductGrid";
 import LoadingScreen from "@/components/Ui/Loadingscreen";
@@ -80,8 +81,20 @@ export default function MarketPage() {
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Available Rewards</h2>
-          <p className={styles.sectionSub}>{`${products.length} items available`}</p>
+          <div className={styles.sectionTitleGroup}>
+            <h2 className={styles.sectionTitle}>Available Rewards</h2>
+            <p className={styles.sectionSub}>{`${products.length} items available`}</p>
+          </div>
+
+          <button className={styles.cartButton} type="button" aria-label="Open redeemed rewards">
+            <Image
+              src="/icon/IconCart.jpg"
+              alt=""
+              width={22}
+              height={22}
+              className={styles.cartIcon}
+            />
+          </button>
         </div>
 
         {error ? <p className={styles.error}>{error}</p> : null}

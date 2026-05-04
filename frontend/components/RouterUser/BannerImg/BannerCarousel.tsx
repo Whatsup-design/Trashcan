@@ -18,6 +18,14 @@ type Props = {
   autoPlayDelay?: number;
 };
 
+function getRealBannerIndex(index: number, bannerCount: number) {
+  if (bannerCount <= 0) {
+    return 0;
+  }
+
+  return index % bannerCount;
+}
+
 function buildLoopableBanners(items: UserBannerItem[]) {
   if (items.length === 0) {
     return [];
@@ -40,6 +48,7 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
   const swiperRef = useRef<SwiperInstance | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const renderedBanners = useMemo(() => buildLoopableBanners(banners), [banners]);
+  const bannerCount = banners.length;
 
   if (renderedBanners.length === 0) {
     return null;
@@ -51,9 +60,11 @@ export default function BannerCarousel({ banners, autoPlayDelay = 6000 }: Props)
         modules={[Autoplay]}
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
-          setActiveIndex(swiper.realIndex);
+          setActiveIndex(getRealBannerIndex(swiper.realIndex, bannerCount));
         }}
-        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+        onSlideChange={(swiper) => {
+          setActiveIndex(getRealBannerIndex(swiper.realIndex, bannerCount));
+        }}
         loop={renderedBanners.length > 1}
         autoplay={{
           delay: autoPlayDelay,

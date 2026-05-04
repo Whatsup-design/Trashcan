@@ -27,12 +27,13 @@ export async function getUserDashboardData(studentId: number) {
   }
 
   const currentBottles = currentUser.Student_Bottles ?? 0;
+  const currentTokens = currentUser.Student_Tokens ?? 0;
 
   const { count: usersAboveCount, error: usersAboveError } = await supabase
     .from("User")
     .select("*", { count: "exact", head: true })
     .eq("role", "student")
-    .gt("Student_Bottles", currentBottles);
+    .gt("Student_Tokens", currentTokens);
 
   if (usersAboveError) {
     console.error("Error counting current rank:", usersAboveError);
@@ -45,7 +46,7 @@ export async function getUserDashboardData(studentId: number) {
     studentId: currentUser.Student_ID,
     bottlesThrown: currentBottles,
     weightGram: currentUser.Student_weight ?? 0,
-    tokensBalance: currentUser.Student_Tokens ?? 0,
+    tokensBalance: currentTokens,
     currentRank,
   };
 }

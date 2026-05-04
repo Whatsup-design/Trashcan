@@ -27,6 +27,10 @@ function mapLeaderboardEntry(row: LeaderboardRow, rank: number) {
   };
 }
 
+function getRankByTokens(rows: LeaderboardRow[], tokens: number) {
+  return rows.filter((row) => (row.Student_Tokens ?? 0) > tokens).length + 1;
+}
+
 export async function getUserLeaderboardData(studentId: number) {
   const { data: topRows, error: topRowsError } = await supabase
     .from("User")
@@ -83,8 +87,11 @@ export async function getUserLeaderboardData(studentId: number) {
       month: "long",
       year: "numeric",
     }),
-    topEntries: normalizedTopRows.map((row, index) =>
-      mapLeaderboardEntry(row, index + 1)
+    topEntries: normalizedTopRows.map((row) =>
+      mapLeaderboardEntry(
+        row,
+        getRankByTokens(normalizedTopRows, row.Student_Tokens ?? 0)
+      )
     ),
     currentUserEntry: mapLeaderboardEntry(currentUser, currentUserRank),
   };

@@ -1,7 +1,31 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import CartItem, {
+  type UserCartItem,
+} from "@/components/RouterUser/TokenMarket/CartItem";
 import styles from "./page.module.css";
+
+const mockCartItems: UserCartItem[] = [
+  {
+    id: "redeem-1",
+    image: "/template.jpg",
+    name: "Shimon Chocolate Snack",
+    description: "Redeemed reward waiting for staff confirmation at the counter.",
+    tokenPrice: 50,
+    redeemedAt: "Redeemed today",
+    timeLeft: "23h 45m",
+  },
+  {
+    id: "redeem-2",
+    image: "/BannerImg/imgTest_1.jpg",
+    name: "School Store Coupon",
+    description: "Show this item to redeem your coupon before the timer expires.",
+    tokenPrice: 25,
+    redeemedAt: "Redeemed yesterday",
+    timeLeft: "8h 10m",
+  },
+];
 
 export default function TokenMarketCartPage() {
   const router = useRouter();
@@ -31,13 +55,17 @@ export default function TokenMarketCartPage() {
         <span>Back</span>
       </button>
 
-      <section className={styles.card}>
-        <p className={styles.eyebrow}>Redeemed Rewards</p>
+      <header className={styles.header}>
         <h1 className={styles.title}>Your Cart</h1>
         <p className={styles.description}>
-          This page is ready for redeemed reward data. The next step is fetching
-          the user cart by student ID from the JWT token.
+          Rewards you have redeemed will appear here.
         </p>
+      </header>
+
+      <section className={styles.list} aria-label="Redeemed reward list">
+        {mockCartItems.map((item) => (
+          <CartItem key={item.id} item={item} />
+        ))}
       </section>
     </div>
   );

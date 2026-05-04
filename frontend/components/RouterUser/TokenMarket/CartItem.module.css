@@ -1,0 +1,181 @@
+.card {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+  padding: 18px;
+  border: 1px solid #e0ecff;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: #bfdbfe;
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.12);
+}
+
+.imageWrap {
+  flex: 0 0 188px;
+  width: 188px;
+  min-height: 136px;
+  border-radius: 16px;
+  background: #eff6ff;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imageFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 136px;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.info {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+}
+
+.name {
+  margin: 0;
+  color: #172554;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  max-width: 720px;
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.metaRow span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eff6ff;
+}
+
+.actions {
+  display: flex;
+  flex: 0 0 156px;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.timeLeft {
+  margin: 0 0 2px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.primaryButton,
+.cancelButton {
+  width: 120px;
+  height: 36px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.primaryButton {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+}
+
+.primaryButton:hover {
+  transform: translateY(-1px);
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.cancelButton {
+  border: 1px solid #dbeafe;
+  background: #ffffff;
+  color: #64748b;
+}
+
+.cancelButton:hover {
+  transform: translateY(-1px);
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+@media (max-width: 767px) {
+  .card {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .imageWrap {
+    flex-basis: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .actions {
+    flex: none;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .timeLeft {
+    margin: 0;
+  }
+
+  .primaryButton,
+  .cancelButton {
+    width: 88px;
+  }
+}

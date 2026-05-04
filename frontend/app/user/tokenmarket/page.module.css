@@ -1,6 +1,14 @@
 /* app/user/market/page.module.css */
 
 .page {
+  --market-blue-50: #eff6ff;
+  --market-blue-100: #dbeafe;
+  --market-blue-300: #93c5fd;
+  --market-blue-500: #3b82f6;
+  --market-blue-600: #2563eb;
+  --market-blue-700: #1d4ed8;
+  --market-blue-glow: rgba(37, 99, 235, 0.18);
+
   display: flex;
   flex-direction: column;
   /* ไม่มี gap บนสุด banner ชิดขอบ */
@@ -33,7 +41,7 @@
 .sectionTitle {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: #172554;
   margin: 0;
 }
 
@@ -50,27 +58,57 @@
   flex: 0 0 auto;
   width: 42px;
   height: 42px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--market-blue-100);
   border-radius: 14px;
   background: #ffffff;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  box-shadow:
+    0 10px 26px rgba(37, 99, 235, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transition:
     transform 160ms ease,
+    background 160ms ease,
     border-color 160ms ease,
     box-shadow 160ms ease;
 }
 
 .cartButton:hover {
-  transform: translateY(-1px);
-  border-color: #bfdbfe;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+  transform: translateY(-2px);
+  border-color: var(--market-blue-600);
+  background: #ffffff;
+  box-shadow:
+    0 12px 26px rgba(37, 99, 235, 0.12),
+    inset 0 0 0 2px var(--market-blue-600);
+}
+
+.cartButton:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.28);
+  outline-offset: 3px;
+  border-color: var(--market-blue-500);
+}
+
+.cartButton:active {
+  transform: translateY(0);
+  border-color: var(--market-blue-600);
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.14),
+    inset 0 2px 6px rgba(29, 78, 216, 0.12);
 }
 
 .cartIcon {
   width: 22px;
   height: 22px;
   object-fit: contain;
+  transition:
+    filter 180ms ease,
+    transform 180ms ease;
+}
+
+.cartButton:hover .cartIcon,
+.cartButton:focus-visible .cartIcon {
+  filter: none;
+  transform: scale(1.08);
 }
 
 .error {

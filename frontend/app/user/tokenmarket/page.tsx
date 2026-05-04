@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import BannerCarousel from "@/components/RouterUser/BannerImg/BannerCarousel";
 import ProductGrid from "@/components/RouterUser/TokenMarket/ProductGrid";
 import LoadingScreen from "@/components/Ui/Loadingscreen";
@@ -39,6 +40,7 @@ function mapBannerItems(rows: UserBannerApiRow[]): UserBannerItem[] {
 }
 
 export default function MarketPage() {
+  const router = useRouter();
   const [banners, setBanners] = useState<UserBannerItem[]>([]);
   const [products, setProducts] = useState<UserMarketProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +88,12 @@ export default function MarketPage() {
             <p className={styles.sectionSub}>{`${products.length} items available`}</p>
           </div>
 
-          <button className={styles.cartButton} type="button" aria-label="Open redeemed rewards">
+          <button
+            className={styles.cartButton}
+            type="button"
+            aria-label="Open redeemed rewards"
+            onClick={() => router.push("/user/tokenmarket/cart")}
+          >
             <Image
               src="/icon/IconCart.jpg"
               alt=""

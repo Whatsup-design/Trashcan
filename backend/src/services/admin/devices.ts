@@ -1,6 +1,7 @@
 import { supabase } from "../../lib/supabase.js";
 import { hashPassword } from "../../utils/bycryto.js";
 import { formatNameForPassword } from "../../utils/nameFormat.js";
+import { createNotification } from "../shared/notification.js";
 
 
 //This is type declaration
@@ -95,6 +96,30 @@ async function writeDeviceActivityLog(params: {
 }
 
 //end of ActivityLog action par
+
+async function createDeviceNotificationSafe(params: {
+  studentId: number;
+  type: "WELCOME" | "TOKEN_ADDED";
+  title: string;
+  message: string;
+  metadata?: Record<string, unknown>;
+}) {
+  try {
+    await createNotification({
+      studentId: params.studentId,
+      type: params.type,
+      title: params.title,
+      message: params.message,
+      metadata: params.metadata ?? null,
+    });
+  } catch (error) {
+    console.error("Failed to create device notification:", error);
+  }
+}
+
+function buildTokenAddedMessage(tokensEarned: number, weight: number) {
+  return `You earned ${tokensEarned} token${tokensEarned === 1 ? "" : "s"} from ${weight} kg.`;
+}
 
 // This function attempts to update the user's counters with optimistic concurrency control.
 async function updateUserCountersWithRetry(params: {
@@ -272,6 +297,18 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
       ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
     });
 
+    await createDeviceNotificationSafe({
+      studentId: currentUser.Student_ID,
+      type: "TOKEN_ADDED",
+      title: "Token added",
+      message: buildTokenAddedMessage(tokens_earned, storedWeight),
+      metadata: {
+        tokensEarned: tokens_earned,
+        weight: storedWeight,
+        eventId: normalizedEventId ?? null,
+      },
+    });
+
     return {
       status: "SUCCESS",
       name: updated.name,
@@ -332,6 +369,29 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
       tokensEarned: tokens_earned,
       weight: storedWeight,
       ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+    });
+
+    await createDeviceNotificationSafe({
+      studentId: student_id,
+      type: "WELCOME",
+      title: "Welcome to Smart Trashcan",
+      message: "Your RFID has been registered successfully.",
+      metadata: {
+        rfid,
+        eventId: normalizedEventId ?? null,
+      },
+    });
+
+    await createDeviceNotificationSafe({
+      studentId: student_id,
+      type: "TOKEN_ADDED",
+      title: "Token added",
+      message: buildTokenAddedMessage(tokens_earned, storedWeight),
+      metadata: {
+        tokensEarned: tokens_earned,
+        weight: storedWeight,
+        eventId: normalizedEventId ?? null,
+      },
     });
 
     return {
@@ -414,6 +474,29 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
     tokensEarned: tokens_earned,
     weight: storedWeight,
     ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+  });
+
+  await createDeviceNotificationSafe({
+    studentId: schoolUser.Student_ID,
+    type: "WELCOME",
+    title: "Welcome to Smart Trashcan",
+    message: "Your account has been created and your RFID is ready to use.",
+    metadata: {
+      rfid,
+      eventId: normalizedEventId ?? null,
+    },
+  });
+
+  await createDeviceNotificationSafe({
+    studentId: schoolUser.Student_ID,
+    type: "TOKEN_ADDED",
+    title: "Token added",
+    message: buildTokenAddedMessage(tokens_earned, storedWeight),
+    metadata: {
+      tokensEarned: tokens_earned,
+      weight: storedWeight,
+      eventId: normalizedEventId ?? null,
+    },
   });
 
   return {

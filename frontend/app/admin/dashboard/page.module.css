@@ -37,11 +37,11 @@
 .bottomRow {
   display: flex;
   gap: 16px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
-.wide   { flex: 2; min-width: 0; }
-.narrow { flex: 1; min-width: 0; }
+.wide   { flex: 2; min-width: 0; display: flex; }
+.narrow { flex: 1; min-width: 0; display: flex; }
 .narrow     { width: 100%; }
 
 /* ── Responsive ──────────────────────────────────────────── */

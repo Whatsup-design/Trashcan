@@ -1,4 +1,4 @@
-import { supabase } from "../../lib/supabase.js";
+import { createNotification } from "../shared/notification.js";
 
 type CreateSystemNotificationInput = {
   title: string;
@@ -7,31 +7,11 @@ type CreateSystemNotificationInput = {
 };
 
 export async function createSystemNotification(input: CreateSystemNotificationInput) {
-  const title = input.title.trim();
-  const message = input.message.trim();
-
-  if (!title || !message) {
-    throw new Error("Notification title and message are required");
-  }
-
-  const { data, error } = await supabase
-    .from("Notification")
-    .insert({
-      Student_ID: null,
-      Notification_Title: title,
-      Notification_Message: message,
-      Notification_Type: "SYSTEM",
-      Notification_IsRead: false,
-      Notification_Metadata: input.metadata ?? null,
-    })
-    .select(
-      "Notification_ID, Student_ID, Notification_Title, Notification_Message, Notification_Type, Notification_IsRead, Notification_Metadata, created_at, read_at"
-    )
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  return createNotification({
+    studentId: null,
+    title: input.title,
+    message: input.message,
+    type: "SYSTEM",
+    metadata: input.metadata ?? null,
+  });
 }

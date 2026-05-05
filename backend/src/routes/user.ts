@@ -6,6 +6,7 @@ import { UserDashboardController } from '../controller/user/dashboard.js';
 import { UserLeaderboardController } from '../controller/user/Leaderboard.js';
 import { UserBannerController } from '../controller/user/banner.js';
 import { UserMarketController } from '../controller/user/market.js';
+import { UserNotificationController } from '../controller/user/notification.js';
 
 import {
     getUserRedeemController,
@@ -27,6 +28,8 @@ router.get('/Leaderboard', UserLeaderboardController);
 router.get('/Banner', UserBannerController);
 
 router.get('/Market', UserMarketController);
+
+router.get('/Notifications', UserNotificationController);
 
 router.get('/Redeem', getUserRedeemController)
 router.put('/Redeem', putUserRedeemController)

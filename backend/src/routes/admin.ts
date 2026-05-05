@@ -4,6 +4,7 @@ import { dashboardController } from "../controller/admin/dashboard.js";
 import { dataController } from "../controller/admin/data.js";
 import { activityLogController } from "../controller/admin/activityLog.js";
 import { overviewController } from "../controller/admin/overview.js";
+import { createSystemNotificationController } from "../controller/admin/notification.js";
 import {
   createProductController,
   deleteProductController,
@@ -45,6 +46,8 @@ router.put("/Market/:id", upload.single("Product_Img"), updateProductController)
 router.delete("/Market/:id", deleteProductController);
 
 router.get("/overview", overviewController);
+
+router.post("/Notification/System", createSystemNotificationController);
 
 router.get("/school/:id", async (req, res) => {
   try {

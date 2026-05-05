@@ -150,7 +150,7 @@ export async function putUserRedeem(studentId: number, productId: number) {
   const { data: product, error: productError } = await supabase
     .from("Product")
     .select(
-      "Product_ID, Product_name, Product_Description, Product_Price, Product_Img, Product_ImgUrl"
+      "Product_ID, Product_name, Product_Description, Product_Price, Product_limit, Product_Img, Product_ImgUrl"
     )
     .eq("Product_ID", productId)
     .maybeSingle();
@@ -241,23 +241,6 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
     throw new Error("Redeem not found");
   }
 
-  if (status === "USED" || status === "EXPIRED") {
-    await createRedeemNotificationSafe({
-      studentId,
-      type: status === "USED" ? "REDEEM_USED" : "REDEEM_EXPIRED",
-      title: status === "USED" ? "Reward used" : "Reward expired",
-      message:
-        status === "USED"
-          ? "Your redeemed reward has been marked as used."
-          : "Your redeemed reward has expired.",
-      metadata: {
-        redeemId,
-        status,
-        productId: (data as RedeemRow).Product_ID,
-      },
-    });
-  }
-
   return data;
 }
 
@@ -280,6 +263,23 @@ export async function patchUserRedeemStatus(
 
   if (!data) {
     throw new Error("Redeem not found");
+  }
+
+  if (status === "USED" || status === "EXPIRED") {
+    await createRedeemNotificationSafe({
+      studentId,
+      type: status === "USED" ? "REDEEM_USED" : "REDEEM_EXPIRED",
+      title: status === "USED" ? "Reward used" : "Reward expired",
+      message:
+        status === "USED"
+          ? "Your redeemed reward has been marked as used."
+          : "Your redeemed reward has expired.",
+      metadata: {
+        redeemId,
+        status,
+        productId: (data as RedeemRow).Product_ID,
+      },
+    });
   }
 
   return data;

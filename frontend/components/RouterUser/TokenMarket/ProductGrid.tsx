@@ -21,6 +21,7 @@ export default function ProductGrid({ products }: Props) {
   async function handleRedeem(id: string): Promise<void> {
     try {
       await apiPut("/user/Redeem", { productId: Number(id) });
+      window.dispatchEvent(new Event("notifications:refresh"));
       setVisibleProducts((currentProducts) =>
         currentProducts.map((product) => {
           if (product.id !== id) return product;

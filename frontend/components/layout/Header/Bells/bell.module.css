@@ -58,11 +58,14 @@
   position: fixed;
   z-index: 101;
   width: 320px;
+  max-height: min(420px, calc(100vh - 88px));
   background: #fff;
   border: 1px solid #e8edf3;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── Dropdown header ─────────────────────────────────────── */
@@ -96,12 +99,30 @@
 
 /* ── Notification list ───────────────────────────────────── */
 .list {
+  flex: 1;
+  min-height: 0;
   max-height: 360px;
   overflow-y: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
-.list::-webkit-scrollbar { display: none; }
+.list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 
 /* ── Notification item ───────────────────────────────────── */
 .item {
@@ -175,6 +196,35 @@
   color: #94a3b8;
   font-size: 13px;
   margin: 0;
+}
+
+.loadingState {
+  min-height: 118px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 28px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.loadingState p {
+  margin: 0;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #dbeafe;
+  border-top-color: #1177FE;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Mobile — full width ─────────────────────────────────── */

@@ -232,7 +232,7 @@ export default function LeaderboardList({ data }: Props) {
           <LeaderRow
             key={entry.id}
             entry={entry}
-            rank={entry.rank || idx + 1}
+            rank={idx + 1}
             isCurrentUser={entry.id === currentUser.id}
             rowRef={entry.id === currentUser.id ? currentRowRef : undefined}
             index={idx}

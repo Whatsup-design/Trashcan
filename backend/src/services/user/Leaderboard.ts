@@ -6,6 +6,8 @@ type LeaderboardRow = {
   Student_FullNameT: string | null;
   Student_Tokens: number | null;
   Student_Bottles: number | null;
+  Student_weight: number | null;
+  updated_at: string | null;
 };
 
 function getDisplayName(row: LeaderboardRow) {
@@ -27,72 +29,65 @@ function mapLeaderboardEntry(row: LeaderboardRow, rank: number) {
   };
 }
 
-function getRankByTokens(rows: LeaderboardRow[], tokens: number) {
-  return rows.filter((row) => (row.Student_Tokens ?? 0) > tokens).length + 1;
+function compareLeaderboardRows(a: LeaderboardRow, b: LeaderboardRow) {
+  const tokenDiff = (b.Student_Tokens ?? 0) - (a.Student_Tokens ?? 0);
+  if (tokenDiff !== 0) return tokenDiff;
+
+  const weightDiff = (b.Student_weight ?? 0) - (a.Student_weight ?? 0);
+  if (weightDiff !== 0) return weightDiff;
+
+  const bUpdatedAt = new Date(b.updated_at ?? 0).getTime();
+  const aUpdatedAt = new Date(a.updated_at ?? 0).getTime();
+  const recentDiff = bUpdatedAt - aUpdatedAt;
+  if (recentDiff !== 0) return recentDiff;
+
+  return a.Student_ID - b.Student_ID;
+}
+
+function getUniqueStudentRows(rows: LeaderboardRow[]) {
+  const byStudentId = new Map<number, LeaderboardRow>();
+
+  for (const row of rows) {
+    const current = byStudentId.get(row.Student_ID);
+    if (!current || compareLeaderboardRows(row, current) < 0) {
+      byStudentId.set(row.Student_ID, row);
+    }
+  }
+
+  return Array.from(byStudentId.values());
 }
 
 export async function getUserLeaderboardData(studentId: number) {
-  const { data: topRows, error: topRowsError } = await supabase
+  const { data: rows, error: rowsError } = await supabase
     .from("User")
     .select(
-      "Student_ID, Student_FullNameE, Student_FullNameT, Student_Tokens, Student_Bottles"
+      "Student_ID, Student_FullNameE, Student_FullNameT, Student_Tokens, Student_Bottles, Student_weight, updated_at"
     )
-    .eq("role", "student")
-    .order("Student_Tokens", { ascending: false })
-    .limit(10);
+    .eq("role", "student");
 
-  if (topRowsError) {
-    console.error("Error fetching top leaderboard rows:", topRowsError);
+  if (rowsError) {
+    console.error("Error fetching leaderboard rows:", rowsError);
     throw new Error("Failed to fetch leaderboard data");
   }
 
-  const { data: currentUserRow, error: currentUserError } = await supabase
-    .from("User")
-    .select(
-      "Student_ID, Student_FullNameE, Student_FullNameT, Student_Tokens, Student_Bottles"
-    )
-    .eq("Student_ID", studentId)
-    .eq("role", "student")
-    .maybeSingle();
-
-  if (currentUserError) {
-    console.error("Error fetching current leaderboard user:", currentUserError);
-    throw new Error("Failed to fetch leaderboard data");
-  }
-
-  const currentUser = currentUserRow as LeaderboardRow | null;
+  const sortedRows = getUniqueStudentRows((rows as LeaderboardRow[] | null) ?? [])
+    .sort(compareLeaderboardRows);
+  const currentUserIndex = sortedRows.findIndex((row) => row.Student_ID === studentId);
+  const currentUser = currentUserIndex >= 0 ? sortedRows[currentUserIndex] : null;
 
   if (!currentUser) {
     throw new Error("Leaderboard user not found");
   }
 
-  const currentUserTokens = currentUser.Student_Tokens ?? 0;
-
-  const { count: usersAboveCount, error: rankError } = await supabase
-    .from("User")
-    .select("*", { count: "exact", head: true })
-    .eq("role", "student")
-    .gt("Student_Tokens", currentUserTokens);
-
-  if (rankError) {
-    console.error("Error calculating leaderboard rank:", rankError);
-    throw new Error("Failed to fetch leaderboard data");
-  }
-
-  const currentUserRank = (usersAboveCount ?? 0) + 1;
-  const normalizedTopRows = (topRows as LeaderboardRow[] | null) ?? [];
+  const currentUserRank = currentUserIndex + 1;
+  const topRows = sortedRows.slice(0, 10);
 
   return {
     month: new Date().toLocaleString("en-US", {
       month: "long",
       year: "numeric",
     }),
-    topEntries: normalizedTopRows.map((row) =>
-      mapLeaderboardEntry(
-        row,
-        getRankByTokens(normalizedTopRows, row.Student_Tokens ?? 0)
-      )
-    ),
+    topEntries: topRows.map((row, index) => mapLeaderboardEntry(row, index + 1)),
     currentUserEntry: mapLeaderboardEntry(currentUser, currentUserRank),
   };
 }

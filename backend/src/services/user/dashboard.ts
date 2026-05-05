@@ -5,12 +5,28 @@ type UserDashboardRow = {
   Student_Bottles: number | null;
   Student_Tokens: number | null;
   Student_weight: number | null;
+  updated_at: string | null;
 };
+
+function compareDashboardRankRows(a: UserDashboardRow, b: UserDashboardRow) {
+  const tokenDiff = (b.Student_Tokens ?? 0) - (a.Student_Tokens ?? 0);
+  if (tokenDiff !== 0) return tokenDiff;
+
+  const weightDiff = (b.Student_weight ?? 0) - (a.Student_weight ?? 0);
+  if (weightDiff !== 0) return weightDiff;
+
+  const bUpdatedAt = new Date(b.updated_at ?? 0).getTime();
+  const aUpdatedAt = new Date(a.updated_at ?? 0).getTime();
+  const recentDiff = bUpdatedAt - aUpdatedAt;
+  if (recentDiff !== 0) return recentDiff;
+
+  return a.Student_ID - b.Student_ID;
+}
 
 export async function getUserDashboardData(studentId: number) {
   const { data: userRow, error: userError } = await supabase
     .from("User")
-    .select("Student_ID, Student_Bottles, Student_Tokens, Student_weight")
+    .select("Student_ID, Student_Bottles, Student_Tokens, Student_weight, updated_at")
     .eq("Student_ID", studentId)
     .eq("role", "student")
     .maybeSingle();
@@ -29,18 +45,20 @@ export async function getUserDashboardData(studentId: number) {
   const currentBottles = currentUser.Student_Bottles ?? 0;
   const currentTokens = currentUser.Student_Tokens ?? 0;
 
-  const { count: usersAboveCount, error: usersAboveError } = await supabase
+  const { data: rankRows, error: rankRowsError } = await supabase
     .from("User")
-    .select("*", { count: "exact", head: true })
-    .eq("role", "student")
-    .gt("Student_Tokens", currentTokens);
+    .select("Student_ID, Student_Bottles, Student_Tokens, Student_weight, updated_at")
+    .eq("role", "student");
 
-  if (usersAboveError) {
-    console.error("Error counting current rank:", usersAboveError);
+  if (rankRowsError) {
+    console.error("Error counting current rank:", rankRowsError);
     throw new Error("Failed to fetch dashboard data");
   }
 
-  const currentRank = (usersAboveCount ?? 0) + 1;
+  const sortedRows = ((rankRows as UserDashboardRow[] | null) ?? [])
+    .sort(compareDashboardRankRows);
+  const currentRank =
+    sortedRows.findIndex((row) => row.Student_ID === studentId) + 1;
 
   return {
     studentId: currentUser.Student_ID,

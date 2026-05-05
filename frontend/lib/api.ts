@@ -1,6 +1,7 @@
 import { readStoredToken } from "@/lib/auth/clientSession";
 
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = process.env.NODE_PUBLIC_API_URL || "http://localhost:3001";
+
 
 type ApiRequestOptions = RequestInit & {
   redirectOnError?: boolean;

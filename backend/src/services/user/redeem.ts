@@ -241,6 +241,23 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
     throw new Error("Redeem not found");
   }
 
+  if (status === "USED" || status === "EXPIRED") {
+    await createRedeemNotificationSafe({
+      studentId,
+      type: status === "USED" ? "REDEEM_USED" : "REDEEM_EXPIRED",
+      title: status === "USED" ? "Reward used" : "Reward expired",
+      message:
+        status === "USED"
+          ? "Your redeemed reward has been marked as used."
+          : "Your redeemed reward has expired.",
+      metadata: {
+        redeemId,
+        status,
+        productId: (data as RedeemRow).Product_ID,
+      },
+    });
+  }
+
   return data;
 }
 

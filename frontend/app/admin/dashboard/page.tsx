@@ -5,6 +5,7 @@ import StatCard from "@/components/RouterAdmin/dashboard/StatCard";
 import ActivityTable from "@/components/RouterAdmin/dashboard/ActivityTable";
 import FeedbackCard from "@/components/RouterAdmin/dashboard/FeedbackCard";
 import MobileCarousel from "@/components/RouterAdmin/dashboard/MobileCarousel";
+import SystemNotificationPanel from "@/components/RouterAdmin/dashboard/SystemNotificationPanel";
 import DataState from "@/components/Ui/DataState";
 import styles from "./page.module.css";
 import { ApiError, apiFetch } from "@/lib/api";
@@ -69,6 +70,8 @@ export default function DashboardPage() {
             <div className={styles.mobileOnly}>
               <MobileCarousel data={dashboardData} />
             </div>
+
+            <SystemNotificationPanel />
 
             <div className={styles.bottomRow}>
               <div className={styles.wide}>

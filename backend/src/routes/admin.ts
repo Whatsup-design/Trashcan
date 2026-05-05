@@ -4,7 +4,10 @@ import { dashboardController } from "../controller/admin/dashboard.js";
 import { dataController } from "../controller/admin/data.js";
 import { activityLogController } from "../controller/admin/activityLog.js";
 import { overviewController } from "../controller/admin/overview.js";
-import { createSystemNotificationController } from "../controller/admin/notification.js";
+import {
+  createSystemNotificationController,
+  getSystemNotificationsController,
+} from "../controller/admin/notification.js";
 import {
   createProductController,
   deleteProductController,
@@ -47,6 +50,7 @@ router.delete("/Market/:id", deleteProductController);
 
 router.get("/overview", overviewController);
 
+router.get("/Notification/System", getSystemNotificationsController);
 router.post("/Notification/System", createSystemNotificationController);
 
 router.get("/school/:id", async (req, res) => {

@@ -1,7 +1,7 @@
 import { supabase } from "../../lib/supabase.js";
 import { NOTIFICATION_SELECT } from "../shared/notification.js";
 
-const NOTIFICATION_LIST_LIMIT = 20;
+const NOTIFICATION_LIST_LIMIT = 10;
 
 export type UserNotificationRow = {
   Notification_ID: number;
@@ -28,18 +28,4 @@ export async function getUserNotifications(studentId: number) {
   }
 
   return (data as UserNotificationRow[] | null) ?? [];
-}
-
-export async function getUserNotificationCount(studentId: number) {
-  const { count, error } = await supabase
-    .from("Notification")
-    .select("*", { count: "exact", head: true })
-    .or(`Student_ID.eq.${studentId},Student_ID.is.null`)
-    .eq("Notification_IsRead", false);
-
-  if (error) {
-    throw error;
-  }
-
-  return count ?? 0;
 }

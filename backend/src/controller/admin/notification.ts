@@ -1,5 +1,18 @@
 import type { Request, Response } from "express";
-import { createSystemNotification } from "../../services/admin/notification.js";
+import {
+  createSystemNotification,
+  getSystemNotifications,
+} from "../../services/admin/notification.js";
+
+export async function getSystemNotificationsController(_req: Request, res: Response) {
+  try {
+    const notifications = await getSystemNotifications();
+    return res.status(200).json(notifications);
+  } catch (error) {
+    console.error("Error fetching system notifications:", error);
+    return res.status(500).json({ message: "Failed to fetch system notifications" });
+  }
+}
 
 export async function createSystemNotificationController(req: Request, res: Response) {
   try {

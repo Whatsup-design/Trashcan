@@ -4,10 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { apiFetch } from "@/lib/api";
 import { logDevError } from "@/lib/devLog";
-import type {
-  UserNotificationCountResponse,
-  UserNotificationResponse,
-} from "@/lib/types/user/Notification";
+import type { UserNotificationResponse } from "@/lib/types/user/Notification";
 import styles from "./bell.module.css";
 
 type Notification = {
@@ -61,16 +58,6 @@ export default function Bell() {
   const [error, setError] = useState("");
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
-
-  function loadNotificationCount() {
-    apiFetch("/user/Notifications/Count")
-      .then((res: UserNotificationCountResponse) => {
-        setUnreadCount(Number(res.unreadCount ?? 0));
-      })
-      .catch((err) => {
-        logDevError("user-notifications-count", err);
-      });
-  }
 
   function loadNotifications() {
     setLoading(true);

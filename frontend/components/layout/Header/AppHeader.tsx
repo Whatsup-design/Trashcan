@@ -30,6 +30,7 @@ function getPageTitle(pathname: string) {
 export default function AppHeader() {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
+  const showUserNotifications = pathname.startsWith("/user");
 
   return (
     <header className={styles.header}>
@@ -40,7 +41,7 @@ export default function AppHeader() {
 
       <div className={styles.headerRight}>
         <Searchbar />
-        <Bell />
+        {showUserNotifications ? <Bell /> : null}
         
         <Logout />
       </div>

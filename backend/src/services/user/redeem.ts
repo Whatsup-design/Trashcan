@@ -1,4 +1,5 @@
 import { supabase } from "../../lib/supabase.js";
+import { createNotification } from "../shared/notification.js";
 
 const REDEEM_TABLE = "Redeem";
 export const REDEEM_STATUSES = ["PENDING", "USED", "CANCELLED", "EXPIRED"] as const;
@@ -34,6 +35,26 @@ function getCurrentMonthRange() {
     start: start.toISOString(),
     end: end.toISOString(),
   };
+}
+
+async function createRedeemNotificationSafe(params: {
+  studentId: number;
+  type: "TOKEN_EXCHANGED" | "REDEEM_USED" | "REDEEM_EXPIRED";
+  title: string;
+  message: string;
+  metadata?: Record<string, unknown>;
+}) {
+  try {
+    await createNotification({
+      studentId: params.studentId,
+      type: params.type,
+      title: params.title,
+      message: params.message,
+      metadata: params.metadata ?? null,
+    });
+  } catch (error) {
+    console.error("Failed to create redeem notification:", error);
+  }
 }
 
 export async function countActiveMonthlyRedeems(
@@ -176,6 +197,19 @@ export async function putUserRedeem(studentId: number, productId: number) {
     throw new Error(`Failed to create redeem: ${error.message}`);
   }
 
+  await createRedeemNotificationSafe({
+    studentId,
+    type: "TOKEN_EXCHANGED",
+    title: "Reward redeemed",
+    message: `${productRow.Product_name ?? "Your reward"} has been added to your redeem cart.`,
+    metadata: {
+      productId: productRow.Product_ID,
+      redeemId: (data as RedeemRow).Reedeem_ID,
+      productName: productRow.Product_name,
+      tokenCost: productRow.Product_Price,
+    },
+  });
+
   return {
     ...data,
     product: {
@@ -205,6 +239,23 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
 
   if (!data) {
     throw new Error("Redeem not found");
+  }
+
+  if (status === "USED" || status === "EXPIRED") {
+    await createRedeemNotificationSafe({
+      studentId,
+      type: status === "USED" ? "REDEEM_USED" : "REDEEM_EXPIRED",
+      title: status === "USED" ? "Reward used" : "Reward expired",
+      message:
+        status === "USED"
+          ? "Your redeemed reward has been marked as used."
+          : "Your redeemed reward has expired.",
+      metadata: {
+        redeemId,
+        status,
+        productId: (data as RedeemRow).Product_ID,
+      },
+    });
   }
 
   return data;

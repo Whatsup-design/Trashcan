@@ -1,4 +1,5 @@
 import { supabase } from "../../lib/supabase.js";
+import { NOTIFICATION_SELECT } from "../shared/notification.js";
 
 export type UserNotificationRow = {
   Notification_ID: number;
@@ -15,9 +16,7 @@ export type UserNotificationRow = {
 export async function getUserNotifications(studentId: number) {
   const { data, error } = await supabase
     .from("Notification")
-    .select(
-      "Notification_ID, Student_ID, Notification_Title, Notification_Message, Notification_Type, Notification_IsRead, Notification_Metadata, created_at, read_at"
-    )
+    .select(NOTIFICATION_SELECT)
     .or(`Student_ID.eq.${studentId},Student_ID.is.null`)
     .order("created_at", { ascending: false });
 

@@ -10,6 +10,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { apiFetch } from "@/lib/api";
+import { logDevError } from "@/lib/devLog";
+import type { UserNotificationResponse } from "@/lib/types/user/Notification";
 import styles from "./bell.module.css";
 
 // ── Type ──────────────────────────────────────────────────
@@ -21,24 +24,78 @@ type Notification = {
   read: boolean;       // อ่านแล้วหรือยัง
 };
 
-// ── Mockup notifications ──────────────────────────────────
-// ตอน connect Supabase แก้ตรงนี้เลย
-const MOCK_NOTIFICATIONS: Notification[] = [
-  { id: "1", title: "Bottle collected",    message: "Device A-01 collected 3 bottles", time: "2m ago",  read: false },
-  { id: "2", title: "Token redeemed",      message: "User 64010001 redeemed 10 tokens", time: "5m ago",  read: false },
-  { id: "3", title: "Low storage warning", message: "Device A-02 is almost full",       time: "12m ago", read: false },
-  { id: "4", title: "Device offline",      message: "Device C-01 is not responding",    time: "1h ago",  read: true  },
-  { id: "5", title: "New registration",    message: "Student 65010011 just registered", time: "2h ago",  read: true  },
-];
+function formatNotificationTime(value: string) {
+  const createdAt = new Date(value).getTime();
+
+  if (!Number.isFinite(createdAt)) {
+    return "";
+  }
+
+  const diffMs = Date.now() - createdAt;
+  const diffMinutes = Math.max(Math.floor(diffMs / 60000), 0);
+
+  if (diffMinutes < 1) return "Just now";
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+  }).format(new Date(value));
+}
+
+function mapNotification(row: UserNotificationResponse): Notification {
+  return {
+    id: String(row.Notification_ID),
+    title: row.Notification_Title,
+    message: row.Notification_Message,
+    time: formatNotificationTime(row.created_at),
+    read: row.Notification_IsRead,
+  };
+}
 
 export default function Bell() {
   const [open, setOpen]                     = useState(false);
-  const [notifications, setNotifications]   = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications]   = useState<Notification[]>([]);
+  const [loading, setLoading]               = useState(true);
+  const [error, setError]                   = useState("");
   const [dropdownPos, setDropdownPos]       = useState({ top: 0, right: 0 });
   const btnRef                              = useRef<HTMLButtonElement>(null);
 
   // จำนวน unread
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setLoading(true);
+    setError("");
+
+    apiFetch("/user/Notifications")
+      .then((rows: UserNotificationResponse[]) => {
+        if (cancelled) return;
+        setNotifications(rows.map(mapNotification));
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        logDevError("user-notifications", err);
+        setError("Failed to load notifications");
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // ── คำนวณตำแหน่ง dropdown ตาม bell button ─────────────
   // ทำให้ dropdown อยู่ใต้ bell พอดีทุก screen size
@@ -141,7 +198,11 @@ export default function Bell() {
 
             {/* Notification list */}
             <div className={styles.list}>
-              {notifications.length === 0 ? (
+              {loading ? (
+                <p className={styles.empty}>Loading notifications...</p>
+              ) : error ? (
+                <p className={styles.empty}>{error}</p>
+              ) : notifications.length === 0 ? (
                 <p className={styles.empty}>No notifications</p>
               ) : (
                 notifications.map((n) => (

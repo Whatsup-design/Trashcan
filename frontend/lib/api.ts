@@ -1,4 +1,4 @@
-import { readStoredToken } from "@/lib/auth/clientSession";
+import { clearClientSession, readStoredToken } from "@/lib/auth/clientSession";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -40,6 +40,19 @@ function extractErrorMessage(status: number, statusText: string, body: string) {
   return `API request failed: ${status} ${statusText} - ${body}`;
 }
 
+function isAuthFailure(status: number, message: string) {
+  if (status === 401) {
+    return true;
+  }
+
+  if (status === 403) {
+    const normalizedMessage = message.toLowerCase();
+    return normalizedMessage.includes("token") || normalizedMessage.includes("unauthorized");
+  }
+
+  return false;
+}
+
 export async function apiRequest(path: string, init?: ApiRequestOptions) {
   const { redirectOnError = true, ...requestInit } = init ?? {};
   const token = getClientToken();
@@ -77,8 +90,15 @@ export async function apiRequest(path: string, init?: ApiRequestOptions) {
       body
     );
 
-    if (redirectOnError && typeof window !== "undefined" && [401, 403, 404].includes(res.status)) {
-      window.location.replace(`/error/${res.status}`);
+    if (redirectOnError && typeof window !== "undefined") {
+      if (isAuthFailure(res.status, message)) {
+        clearClientSession();
+        window.location.replace("/login");
+      } else if (res.status === 404) {
+        window.location.replace("/error/404");
+      } else if (res.status === 403) {
+        window.location.replace("/error/403");
+      }
     }
 
     throw error;

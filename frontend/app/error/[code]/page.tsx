@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 
 type Props = {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 };
 
 const CONTENT: Record<
@@ -29,8 +29,8 @@ const CONTENT: Record<
   },
 };
 
-export default function ErrorCodePage({ params }: Props) {
-  const { code } = params;
+export default async function ErrorCodePage({ params }: Props) {
+  const { code } = await params;
   const item = CONTENT[code] ?? CONTENT["500"];
   const safeCode = CONTENT[code] ? code : "500";
 

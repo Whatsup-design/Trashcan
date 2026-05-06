@@ -1,0 +1,16 @@
+.peopleStage {
+  display: flex;
+  justify-content: center;
+  padding: 0 0 40px;
+}
+
+.peopleGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.personStage {
+  display: flex;
+  justify-content: center;
+}

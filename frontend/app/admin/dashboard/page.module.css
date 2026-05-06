@@ -33,6 +33,13 @@
 /* ── Mobile only ─────────────────────────────────────────── */
 .mobileOnly { display: none; }
 
+.announcementRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
 /* ── Bottom row — Activity + Feedback ───────────────────── */
 .bottomRow {
   display: flex;
@@ -48,5 +55,6 @@
 @media (max-width: 767px) {
   .statsGrid  { display: none; }
   .mobileOnly { display: block; }
+  .announcementRow { grid-template-columns: 1fr; }
   .bottomRow  { flex-direction: column; }
 }

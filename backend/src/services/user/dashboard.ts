@@ -2,6 +2,7 @@ import { supabase } from "../../lib/supabase.js";
 
 type UserDashboardRow = {
   Student_ID: number;
+  Student_NickNameE: string | null;
   Student_Bottles: number | null;
   Student_Tokens: number | null;
   Student_weight: number | null;
@@ -26,7 +27,7 @@ function compareDashboardRankRows(a: UserDashboardRow, b: UserDashboardRow) {
 export async function getUserDashboardData(studentId: number) {
   const { data: userRow, error: userError } = await supabase
     .from("User")
-    .select("Student_ID, Student_Bottles, Student_Tokens, Student_weight, updated_at")
+    .select("Student_ID, Student_NickNameE, Student_Bottles, Student_Tokens, Student_weight, updated_at")
     .eq("Student_ID", studentId)
     .eq("role", "student")
     .maybeSingle();
@@ -62,6 +63,7 @@ export async function getUserDashboardData(studentId: number) {
 
   return {
     studentId: currentUser.Student_ID,
+    studentNicknameE: currentUser.Student_NickNameE ?? "",
     bottlesThrown: currentBottles,
     weightGram: currentUser.Student_weight ?? 0,
     tokensBalance: currentTokens,

@@ -83,6 +83,13 @@
   font-weight: 620;
 }
 
+.inlineIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+}
+
 .itemTop span {
   flex: 0 0 auto;
   color: #1177FE;
@@ -171,7 +178,8 @@
 }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   width: 100%;
   border: 1px solid #dbe5f0;
   border-radius: 14px;
@@ -179,6 +187,11 @@
   font: inherit;
   font-size: 13px;
   outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .field input {
@@ -190,6 +203,47 @@
   min-height: 120px;
   padding: 12px 13px;
   resize: vertical;
+}
+
+.field select {
+  height: 42px;
+  padding: 0 42px 0 14px;
+  border-color: #cfe0f5;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%),
+    linear-gradient(135deg, #1177FE 0%, #4ea1ff 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%, 10px 10px;
+  background-position: 0 0, calc(100% - 16px) 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  font-weight: 560;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 24px rgba(17, 119, 254, 0.06);
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: rgba(17, 119, 254, 0.7);
+  box-shadow: 0 0 0 4px rgba(17, 119, 254, 0.12);
+}
+
+.field select:hover {
+  border-color: #9ec5fb;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%),
+    linear-gradient(135deg, #1177FE 0%, #4ea1ff 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%, 10px 10px;
+  background-position: 0 0, calc(100% - 16px) 50%;
+}
+
+.field select option {
+  color: #1e293b;
+  background: #ffffff;
 }
 
 .errorText {

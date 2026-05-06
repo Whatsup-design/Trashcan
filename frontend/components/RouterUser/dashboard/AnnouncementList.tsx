@@ -1,26 +1,29 @@
-// components/user/dashboard/AnnouncementList.tsx
-// ─────────────────────────────────────────────────────────
-// แสดง announcement จาก admin
-// Server Component — ไม่มี state
-// ─────────────────────────────────────────────────────────
-
-import type { Announcement } from "../../../lib/mockData/user/Dashboard";
 import styles from "./AnnouncementList.module.css";
 
-type Props = { data: Announcement[] };
+type AnnouncementHeaderType = "ANNOUNCEMENT" | "WARNING" | "NEW_REWARD";
 
-// icon ตาม type
-const typeIcon = {
-  info:    "📢",
-  warning: "⚠️",
-  success: "✅",
+export type UserAnnouncement = {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  type: AnnouncementHeaderType;
 };
 
-// color ตาม type
-const typeClass = {
-  info:    "info",
-  warning: "warning",
-  success: "success",
+type Props = {
+  data: UserAnnouncement[];
+};
+
+const typeIcon: Record<AnnouncementHeaderType, string> = {
+  ANNOUNCEMENT: "📢",
+  WARNING: "⚠️",
+  NEW_REWARD: "🎁",
+};
+
+const typeClass: Record<AnnouncementHeaderType, string> = {
+  ANNOUNCEMENT: "announcement",
+  WARNING: "warning",
+  NEW_REWARD: "reward",
 };
 
 export default function AnnouncementList({ data }: Props) {
@@ -38,7 +41,7 @@ export default function AnnouncementList({ data }: Props) {
               <div className={styles.content}>
                 <p className={styles.itemTitle}>{item.title}</p>
                 <p className={styles.itemMsg}>{item.message}</p>
-                <p className={styles.itemDate}>{item.date}</p>
+                <p className={styles.itemDate}>{item.time}</p>
               </div>
             </div>
           ))}

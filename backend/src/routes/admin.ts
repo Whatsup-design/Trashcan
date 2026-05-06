@@ -9,6 +9,10 @@ import {
   getSystemNotificationsController,
 } from "../controller/admin/notification.js";
 import {
+  createAnnouncementController,
+  getAnnouncementsController,
+} from "../controller/admin/announcement.js";
+import {
   createProductController,
   deleteProductController,
   getAllProductsController,
@@ -52,6 +56,8 @@ router.get("/overview", overviewController);
 
 router.get("/Notification/System", getSystemNotificationsController);
 router.post("/Notification/System", createSystemNotificationController);
+router.get("/Announcement", getAnnouncementsController);
+router.post("/Announcement", createAnnouncementController);
 
 router.get("/school/:id", async (req, res) => {
   try {

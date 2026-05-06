@@ -1,24 +1,52 @@
 import PersonAvatar from "./PersonAvatar";
 import styles from "./PeoplePreview.module.css";
+import type { CSSProperties } from "react";
 
-const peoplePreview = [
-  {
-    id: "sonson",
-    image: "/aboutpic/Sonson.png",
-    alt: "Sonson portrait",
-  },
-];
+export type PersonPreviewItem = {
+  id: string;
+  name: string;
+  image: string;
+  alt: string;
+  bgColor?: string;
+};
 
-export default function PeoplePreview() {
+type Props = {
+  title: string;
+  people: PersonPreviewItem[];
+  desktopColumns?: number;
+  desktopGap?: number;
+  avatarWidth?: number;
+};
+
+export default function PeoplePreview({
+  title,
+  people,
+  desktopColumns = 4,
+  desktopGap = 2,
+  avatarWidth = 218,
+}: Props) {
   return (
-    <section className={styles.peopleStage}>
+    <section
+      className={styles.peopleStage}
+      style={
+        {
+          "--desktop-cols": desktopColumns,
+          "--desktop-gap": `${desktopGap}px`,
+          "--avatar-width": `${avatarWidth}px`,
+        } as CSSProperties
+      }
+    >
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+      </div>
+
       <div className={styles.peopleGrid}>
-        {peoplePreview.map((person) => (
+        {people.map((person) => (
           <div key={person.id} className={styles.personStage}>
             <PersonAvatar
               src={person.image}
               alt={person.alt}
-              bgColor="linear-gradient(0deg, #7db27f 0%, #7db27f 74%, rgba(125, 178, 127, 0) 100%)"
+              bgColor={person.bgColor}
             />
           </div>
         ))}

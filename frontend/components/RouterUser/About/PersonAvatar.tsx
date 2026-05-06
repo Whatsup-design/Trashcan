@@ -8,7 +8,7 @@ type Props = {
 
 export default function PersonAvatar({ src, alt, bgColor }: Props) {
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} tabIndex={0}>
       <div
         className={styles.bg}
         style={bgColor ? { background: bgColor } : undefined}
@@ -20,6 +20,10 @@ export default function PersonAvatar({ src, alt, bgColor }: Props) {
         alt={alt}
         className={styles.person}
         draggable={false}
+        loading="lazy"
+        decoding="async"
+        width={204}
+        height={258}
       />
     </div>
   );

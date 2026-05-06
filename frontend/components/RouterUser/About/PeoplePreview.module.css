@@ -1,16 +1,82 @@
 .peopleStage {
   display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 48px 40px;
+  align-items: center;
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
+}
+
+.sectionHeader {
+  width: 100%;
   justify-content: center;
-  padding: 0 0 40px;
+  display: flex;
+}
+
+.sectionTitle {
+  width: min(100%, 1220px);
+  margin: 0;
+  padding: 8px 28px;
+  text-align: center;
+  color: #f7fff6;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  border-radius: 0;
+  background: linear-gradient(90deg, #4f8f5e 0%, #7cc07c 52%, #b6dda6 100%);
+  box-shadow: 0 18px 40px rgba(68, 125, 77, 0.16);
 }
 
 .peopleGrid {
-  width: 100%;
+  width: min(
+    100%,
+    calc(
+      var(--desktop-cols, 4) * var(--avatar-width, 218px) +
+      (var(--desktop-cols, 4) - 1) * var(--desktop-gap, 2px)
+    )
+  );
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: flex-end;
+  gap: var(--desktop-gap, 2px);
 }
 
 .personStage {
   display: flex;
   justify-content: center;
+  width: var(--avatar-width, 218px);
+  min-width: 0;
+}
+
+@media (max-width: 1023px) {
+  .peopleGrid {
+    width: 100%;
+  }
+
+  .personStage {
+    width: calc((100% - 48px) / 3);
+  }
+}
+
+@media (max-width: 767px) {
+  .peopleStage {
+    padding: 0 20px 32px;
+    gap: 18px;
+  }
+
+  .sectionTitle {
+    font-size: 22px;
+    padding: 7px 18px;
+  }
+
+  .peopleGrid {
+    gap: 5px;
+  }
+
+  .personStage {
+    width: calc((100% - 16px) / 2);
+  }
 }

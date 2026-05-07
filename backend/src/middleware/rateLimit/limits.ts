@@ -28,6 +28,18 @@ export const deviceScanRateLimit = rateLimit({
   },
 });
 
+export const deviceRegisterRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: getDeviceKey,
+  message: {
+    status: "ERROR",
+    message: "Too many device register requests. Please slow down.",
+  },
+});
+
 export const deviceConfirmRateLimit = rateLimit({
   windowMs: 60 * 1000,
   limit: 20,

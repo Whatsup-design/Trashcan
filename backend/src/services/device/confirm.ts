@@ -1,5 +1,4 @@
 import { supabase } from "../../lib/supabase.js";
-import { registerOrBindStudentForConfirm } from "./register.js";
 import {
   buildTokenAddedMessage,
   calculateTokens,
@@ -15,22 +14,21 @@ import {
 } from "./shared.js";
 
 export async function deviceConfirm(input: DeviceConfirmInput) {
-  const { rfid, student_id, weight, event_id } = input;
+  const { rfid, weight, event_id, bottle_count } = input;
   const storedWeight = normalizeWeightForDb(weight);
-  const tokens_earned = calculateTokens(weight);
+  const tokens_earned = calculateTokens(storedWeight);
+  const bottleCount = bottle_count ?? 1;
   const now = new Date().toISOString();
-  const normalizedEventId = event_id?.trim() || undefined;
+  const normalizedEventId = event_id.trim();
 
-  if (normalizedEventId) {
-    if (!markInflightDeviceEvent(normalizedEventId)) {
-      return { status: "DUPLICATE_EVENT" as const };
-    }
+  if (!markInflightDeviceEvent(normalizedEventId)) {
+    return { status: "DUPLICATE_EVENT" as const };
+  }
 
-    const alreadyDone = await wasEventProcessed(normalizedEventId);
-    if (alreadyDone) {
-      releaseInflightDeviceEvent(normalizedEventId);
-      return { status: "DUPLICATE_EVENT" as const };
-    }
+  const alreadyDone = await wasEventProcessed(normalizedEventId);
+  if (alreadyDone) {
+    releaseInflightDeviceEvent(normalizedEventId);
+    return { status: "DUPLICATE_EVENT" as const };
   }
 
   try {
@@ -49,20 +47,12 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
     const currentUser = existingRfidUser as UserRow | null;
 
     if (currentUser) {
-      if (typeof student_id === "number" && student_id !== currentUser.Student_ID) {
-        console.warn("deviceConfirm RFID/student mismatch", {
-          rfid,
-          scanned_student_id: student_id,
-          bound_student_id: currentUser.Student_ID,
-        });
-        return { status: "RFID_STUDENT_MISMATCH" as const };
-      }
-
       const updated = await updateUserCountersWithRetry({
         studentId: currentUser.Student_ID,
         rfid,
         tokensEarned: tokens_earned,
         storedWeight,
+        bottleCount,
         now,
         allowBindRfid: false,
       });
@@ -76,7 +66,7 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
         studentName: updated.name ?? null,
         tokensEarned: tokens_earned,
         weight: storedWeight,
-        ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+        eventId: normalizedEventId,
       });
 
       await createDeviceNotificationSafe({
@@ -87,7 +77,8 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
         metadata: {
           tokensEarned: tokens_earned,
           weight: storedWeight,
-          eventId: normalizedEventId ?? null,
+          bottleCount,
+          eventId: normalizedEventId,
         },
       });
 
@@ -95,23 +86,13 @@ export async function deviceConfirm(input: DeviceConfirmInput) {
         status: "SUCCESS" as const,
         name: updated.name,
         weight: storedWeight,
+        bottle_count: bottleCount,
         tokens_earned,
         tokens: updated.tokens,
       };
     }
 
-    if (typeof student_id !== "number") {
-      return { status: "INVALID_STUDENT_ID" as const };
-    }
-
-    return registerOrBindStudentForConfirm({
-      rfid,
-      studentId: student_id,
-      tokensEarned: tokens_earned,
-      storedWeight,
-      now,
-      ...(normalizedEventId ? { normalizedEventId } : {}),
-    });
+    return { status: "RFID_NOT_REGISTERED" as const };
   } finally {
     releaseInflightDeviceEvent(normalizedEventId);
   }

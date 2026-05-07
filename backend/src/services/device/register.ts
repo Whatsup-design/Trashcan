@@ -2,95 +2,144 @@ import { supabase } from "../../lib/supabase.js";
 import { hashPassword } from "../../utils/bycryto.js";
 import { formatNameForPassword } from "../../utils/nameFormat.js";
 import {
-  buildTokenAddedMessage,
   createDeviceNotificationSafe,
   type SchoolRow,
   type UserRow,
-  updateUserCountersWithRetry,
-  writeDeviceActivityLog,
 } from "./shared.js";
 
-type RegisterForConfirmInput = {
+type DeviceRegisterInput = {
   rfid: string;
-  studentId: number;
-  tokensEarned: number;
-  storedWeight: number;
-  now: string;
-  normalizedEventId?: string;
+  student_id: number;
 };
 
-export async function registerOrBindStudentForConfirm(input: RegisterForConfirmInput) {
-  const { rfid, studentId, tokensEarned, storedWeight, now, normalizedEventId } = input;
+async function writeDeviceRegisterActivityLog(params: {
+  studentId: number;
+  studentName: string | null;
+}) {
+  const { studentId, studentName } = params;
 
-  const { data: studentUser, error: studentUserError } = await supabase
+  const { error } = await supabase.from("Activity_logs").insert({
+    Student_ID: studentId,
+    Student_Name: studentName ?? "Unknown",
+    action: "DEVICE_REGISTER",
+    tokens: 0,
+    weight: 0,
+    created_at: new Date().toISOString(),
+  });
+
+  if (error) throw error;
+}
+
+async function writeDeviceRegisterActivityLogSafe(params: {
+  studentId: number;
+  studentName: string | null;
+}) {
+  try {
+    await writeDeviceRegisterActivityLog(params);
+  } catch (error) {
+    console.error("Failed to write device register activity log:", {
+      studentId: params.studentId,
+      message: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+async function createWelcomeNotification(studentId: number, rfid: string) {
+  await createDeviceNotificationSafe({
+    studentId,
+    type: "WELCOME",
+    title: "Welcome to Smart Trashcan",
+    message: "Your RFID has been registered successfully.",
+    metadata: {
+      rfid,
+    },
+  });
+}
+
+export async function deviceRegister(input: DeviceRegisterInput) {
+  const { rfid, student_id } = input;
+  const now = new Date().toISOString();
+
+  const { data: existingRfidUser, error: existingRfidError } = await supabase
     .from("User")
-    .select(
-      "Student_ID, RFID_ID, Student_FullNameT, Student_Tokens, Student_weight, Student_Bottles"
-    )
-    .eq("Student_ID", studentId)
+    .select("Student_ID, RFID_ID, Student_FullNameT, Student_Tokens")
+    .eq("RFID_ID", rfid)
     .maybeSingle();
 
-  if (studentUserError) {
-    throw studentUserError;
+  if (existingRfidError) {
+    throw existingRfidError;
   }
 
-  const bindTargetUser = studentUser as UserRow | null;
+  if (existingRfidUser) {
+    const user = existingRfidUser as Pick<
+      UserRow,
+      "Student_ID" | "RFID_ID" | "Student_FullNameT" | "Student_Tokens"
+    >;
 
-  if (bindTargetUser) {
-    if (bindTargetUser.RFID_ID && bindTargetUser.RFID_ID !== rfid) {
+    return {
+      status: "RFID_ALREADY_REGISTERED" as const,
+      student_id: user.Student_ID,
+      name: user.Student_FullNameT,
+      tokens: user.Student_Tokens ?? 0,
+    };
+  }
+
+  const { data: existingStudentUser, error: existingStudentError } = await supabase
+    .from("User")
+    .select("Student_ID, RFID_ID, Student_FullNameT, Student_Tokens")
+    .eq("Student_ID", student_id)
+    .maybeSingle();
+
+  if (existingStudentError) {
+    throw existingStudentError;
+  }
+
+  const studentUser = existingStudentUser as Pick<
+    UserRow,
+    "Student_ID" | "RFID_ID" | "Student_FullNameT" | "Student_Tokens"
+  > | null;
+
+  if (studentUser) {
+    if (studentUser.RFID_ID && studentUser.RFID_ID !== rfid) {
       return { status: "ALREADY_BOUND" as const };
     }
 
-    const updated = await updateUserCountersWithRetry({
-      studentId,
-      rfid,
-      tokensEarned,
-      storedWeight,
-      now,
-      allowBindRfid: true,
-    });
+    const { data: updatedUser, error: updateError } = await supabase
+      .from("User")
+      .update({
+        RFID_ID: rfid,
+        updated_at: now,
+      })
+      .eq("Student_ID", student_id)
+      .is("RFID_ID", null)
+      .select("Student_ID, Student_FullNameT, Student_Tokens")
+      .maybeSingle();
 
-    if (updated.status !== "SUCCESS") {
-      return { status: updated.status };
+    if (updateError) {
+      throw updateError;
     }
 
-    await writeDeviceActivityLog({
-      studentId,
-      studentName: updated.name ?? null,
-      tokensEarned,
-      weight: storedWeight,
-      ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+    if (!updatedUser) {
+      return { status: "ALREADY_BOUND" as const };
+    }
+
+    const savedUser = updatedUser as Pick<
+      UserRow,
+      "Student_ID" | "Student_FullNameT" | "Student_Tokens"
+    >;
+
+    await writeDeviceRegisterActivityLogSafe({
+      studentId: savedUser.Student_ID,
+      studentName: savedUser.Student_FullNameT,
     });
 
-    await createDeviceNotificationSafe({
-      studentId,
-      type: "WELCOME",
-      title: "Welcome to Smart Trashcan",
-      message: "Your RFID has been registered successfully.",
-      metadata: {
-        rfid,
-        eventId: normalizedEventId ?? null,
-      },
-    });
-
-    await createDeviceNotificationSafe({
-      studentId,
-      type: "TOKEN_ADDED",
-      title: "Token added",
-      message: buildTokenAddedMessage(tokensEarned, storedWeight),
-      metadata: {
-        tokensEarned,
-        weight: storedWeight,
-        eventId: normalizedEventId ?? null,
-      },
-    });
+    await createWelcomeNotification(savedUser.Student_ID, rfid);
 
     return {
       status: "SUCCESS" as const,
-      name: updated.name,
-      weight: storedWeight,
-      tokens_earned: tokensEarned,
-      tokens: updated.tokens,
+      student_id: savedUser.Student_ID,
+      name: savedUser.Student_FullNameT,
+      tokens: savedUser.Student_Tokens ?? 0,
     };
   }
 
@@ -99,7 +148,7 @@ export async function registerOrBindStudentForConfirm(input: RegisterForConfirmI
     .select(
       "Student_ID, Student_FullNameT, Student_FullNameE, Student_NickNameT, Student_NickNameE, Birth"
     )
-    .eq("Student_ID", studentId)
+    .eq("Student_ID", student_id)
     .maybeSingle();
 
   if (schoolError) {
@@ -127,9 +176,9 @@ export async function registerOrBindStudentForConfirm(input: RegisterForConfirmI
       Student_NickNameE: schoolUser.Student_NickNameE,
       birth: schoolUser.Birth,
       Student_Email: null,
-      Student_Tokens: tokensEarned,
-      Student_Bottles: 1,
-      Student_weight: storedWeight,
+      Student_Tokens: 0,
+      Student_Bottles: 0,
+      Student_weight: 0,
       password_hash: passwordHash,
       role: "student",
       status: "active",
@@ -137,51 +186,29 @@ export async function registerOrBindStudentForConfirm(input: RegisterForConfirmI
       updated_at: now,
       last_login_at: null,
     })
-    .select("Student_FullNameT, Student_Tokens")
+    .select("Student_ID, Student_FullNameT, Student_Tokens")
     .single();
 
   if (insertError) {
     throw insertError;
   }
 
-  const savedStudent = insertedUser as Pick<UserRow, "Student_FullNameT" | "Student_Tokens">;
+  const savedStudent = insertedUser as Pick<
+    UserRow,
+    "Student_ID" | "Student_FullNameT" | "Student_Tokens"
+  >;
 
-  await writeDeviceActivityLog({
-    studentId: schoolUser.Student_ID,
-    studentName: savedStudent.Student_FullNameT ?? null,
-    tokensEarned,
-    weight: storedWeight,
-    ...(normalizedEventId ? { eventId: normalizedEventId } : {}),
+  await writeDeviceRegisterActivityLogSafe({
+    studentId: savedStudent.Student_ID,
+    studentName: savedStudent.Student_FullNameT,
   });
 
-  await createDeviceNotificationSafe({
-    studentId: schoolUser.Student_ID,
-    type: "WELCOME",
-    title: "Welcome to Smart Trashcan",
-    message: "Your account has been created and your RFID is ready to use.",
-    metadata: {
-      rfid,
-      eventId: normalizedEventId ?? null,
-    },
-  });
-
-  await createDeviceNotificationSafe({
-    studentId: schoolUser.Student_ID,
-    type: "TOKEN_ADDED",
-    title: "Token added",
-    message: buildTokenAddedMessage(tokensEarned, storedWeight),
-    metadata: {
-      tokensEarned,
-      weight: storedWeight,
-      eventId: normalizedEventId ?? null,
-    },
-  });
+  await createWelcomeNotification(savedStudent.Student_ID, rfid);
 
   return {
     status: "SUCCESS" as const,
+    student_id: savedStudent.Student_ID,
     name: savedStudent.Student_FullNameT,
-    weight: storedWeight,
-    tokens_earned: tokensEarned,
-    tokens: savedStudent.Student_Tokens ?? tokensEarned,
+    tokens: savedStudent.Student_Tokens ?? 0,
   };
 }

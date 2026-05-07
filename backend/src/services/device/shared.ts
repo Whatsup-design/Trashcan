@@ -3,9 +3,9 @@ import { createNotification } from "../shared/notification.js";
 
 export type DeviceConfirmInput = {
   rfid: string;
-  student_id?: number;
   weight: number;
-  event_id?: string;
+  event_id: string;
+  bottle_count?: number;
 };
 
 export type UserRow = {
@@ -129,10 +129,12 @@ export async function updateUserCountersWithRetry(params: {
   rfid: string;
   tokensEarned: number;
   storedWeight: number;
+  bottleCount: number;
   now: string;
   allowBindRfid: boolean;
 }) {
-  const { studentId, rfid, tokensEarned, storedWeight, now, allowBindRfid } = params;
+  const { studentId, rfid, tokensEarned, storedWeight, bottleCount, now, allowBindRfid } =
+    params;
   const maxRetries = 5;
 
   for (let attempt = 0; attempt < maxRetries; attempt += 1) {
@@ -154,7 +156,7 @@ export async function updateUserCountersWithRetry(params: {
 
     const nextTokens = (user.Student_Tokens ?? 0) + tokensEarned;
     const nextWeight = (user.Student_weight ?? 0) + storedWeight;
-    const nextBottles = (user.Student_Bottles ?? 0) + 1;
+    const nextBottles = (user.Student_Bottles ?? 0) + bottleCount;
 
     let query = supabase
       .from("User")

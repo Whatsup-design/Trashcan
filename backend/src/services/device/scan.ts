@@ -27,7 +27,3 @@ export async function deviceScan(rfid: string) {
     tokens: user.Student_Tokens ?? 0,
   };
 }
-
-export async function deviceAuthentication(rfid: string) {
-  return deviceScan(rfid);
-}

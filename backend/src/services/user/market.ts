@@ -16,6 +16,10 @@ type UserMarketProductRow = {
   Product_EndDate: string | null;
 };
 
+type UserMarketProfileRow = {
+  Student_Tokens: number | null;
+};
+
 async function addRedeemAvailability(
   studentId: number,
   product: UserMarketProductRow
@@ -36,6 +40,22 @@ async function addRedeemAvailability(
 }
 
 export async function UserMarketData(studentId: number) {
+  const { data: userData, error: userError } = await supabase
+    .from("User")
+    .select("Student_Tokens")
+    .eq("Student_ID", studentId)
+    .maybeSingle();
+
+  if (userError) {
+    throw new Error(`Failed to fetch user token data: ${userError.message}`);
+  }
+
+  const user = userData as UserMarketProfileRow | null;
+
+  if (!user) {
+    throw new Error("User market profile not found");
+  }
+
   const { data, error } = await supabase
     .from("Product")
     .select(
@@ -48,8 +68,12 @@ export async function UserMarketData(studentId: number) {
   }
 
   const products = (data as UserMarketProductRow[] | null) ?? [];
-
-  return Promise.all(
+  const productsWithAvailability = await Promise.all(
     products.map((product) => addRedeemAvailability(studentId, product))
   );
+
+  return {
+    tokens: user.Student_Tokens ?? 0,
+    products: productsWithAvailability,
+  };
 }

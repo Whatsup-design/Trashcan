@@ -29,6 +29,16 @@
   box-shadow: 0 18px 40px rgba(68, 125, 77, 0.16);
 }
 
+.sectionHeader[data-variant="blue"] .sectionTitle {
+  color: #f5fbff;
+  background:
+    linear-gradient(90deg, #173a67 0%, #2f77ba 46%, #9dd8ff 100%),
+    radial-gradient(circle at 18% 50%, rgba(255, 255, 255, 0.26), transparent 34%);
+  box-shadow:
+    0 18px 42px rgba(35, 100, 171, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
 .peopleGrid {
   width: min(
     100%,
@@ -42,6 +52,12 @@
   justify-content: center;
   align-items: flex-end;
   gap: var(--desktop-gap, 2px);
+}
+
+.featuredRow {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .personStage {

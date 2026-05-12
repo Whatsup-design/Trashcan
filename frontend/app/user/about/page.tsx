@@ -5,6 +5,39 @@ import PeoplePreview, {
 } from "@/components/RouterUser/About/PeoplePreview";
 import styles from "./page.module.css";
 
+const mentorPeople: PersonPreviewItem[] = [
+  {
+    id: "yai",
+    name: "Yai",
+    image: "/AboutPic/Mentor/Yai.png",
+    alt: "Yai mentor portrait",
+  },
+  {
+    id: "nhing",
+    name: "Nhing",
+    image: "/AboutPic/Mentor/Nhing.png",
+    alt: "Nhing mentor portrait",
+  },
+  {
+    id: "nhuch",
+    name: "Nhuch",
+    image: "/AboutPic/Mentor/Nhuch.png",
+    alt: "Nhuch mentor portrait",
+  },
+  {
+    id: "paul",
+    name: "Paul",
+    image: "/AboutPic/Mentor/Paul.png",
+    alt: "Paul mentor portrait",
+  },
+  {
+    id: "yohan",
+    name: "Yohan",
+    image: "/AboutPic/Mentor/Yohan.png",
+    alt: "Yohan mentor portrait",
+  },
+];
+
 const gen15People: PersonPreviewItem[] = [
   {
     id: "1",
@@ -110,6 +143,13 @@ export default function AboutPage() {
         </div>
       </section>
       <div className={styles.generations}>
+        <PeoplePreview
+          title="MENTOR"
+          people={mentorPeople}
+          desktopColumns={4}
+          featuredFirstId="yai"
+          variant="blue"
+        />
         <PeoplePreview title="GEN15" people={gen15People} desktopColumns={4} />
         <PeoplePreview title="GEN16" people={gen16People} desktopColumns={3} desktopGap={5} />
       </div>

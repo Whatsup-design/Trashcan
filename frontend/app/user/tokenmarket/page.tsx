@@ -11,6 +11,7 @@ import { logDevError } from "@/lib/devLog";
 import type { UserBannerApiRow, UserBannerItem } from "@/lib/types/user/Banner";
 import type {
   UserMarketApiRow,
+  UserMarketApiResponse,
   UserMarketProduct,
 } from "@/lib/types/user/Market";
 import styles from "./page.module.css";
@@ -46,17 +47,19 @@ export default function MarketPage() {
   const router = useRouter();
   const [banners, setBanners] = useState<UserBannerItem[]>([]);
   const [products, setProducts] = useState<UserMarketProduct[]>([]);
+  const [tokens, setTokens] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     Promise.all([
       apiFetch("/user/Banner") as Promise<UserBannerApiRow[]>,
-      apiFetch("/user/Market") as Promise<UserMarketApiRow[]>,
+      apiFetch("/user/Market") as Promise<UserMarketApiResponse>,
     ])
       .then(([bannerRes, marketRes]) => {
         setBanners(mapBannerItems(bannerRes));
-        setProducts(mapMarketProducts(marketRes));
+        setTokens(marketRes.tokens);
+        setProducts(mapMarketProducts(marketRes.products));
         setError("");
       })
       .catch((err) => {
@@ -91,20 +94,33 @@ export default function MarketPage() {
             <p className={styles.sectionSub}>{`${products.length} items available`}</p>
           </div>
 
-          <button
-            className={styles.cartButton}
-            type="button"
-            aria-label="Open redeemed rewards"
-            onClick={() => router.push("/user/tokenmarket/cart")}
-          >
-            <Image
-              src="/icon/IconCart.jpg"
-              alt=""
-              width={22}
-              height={22}
-              className={styles.cartIcon}
-            />
-          </button>
+          <div className={styles.headerActions}>
+            <div className={styles.tokenPill} aria-label={`${tokens} tokens`}>
+              <span className={styles.tokenValue}>{tokens}</span>
+              <Image
+                src="/icon/IconTokens.png"
+                alt=""
+                width={22}
+                height={22}
+                className={styles.tokenIcon}
+              />
+            </div>
+
+            <button
+              className={styles.cartButton}
+              type="button"
+              aria-label="Open redeemed rewards"
+              onClick={() => router.push("/user/tokenmarket/cart")}
+            >
+              <Image
+                src="/icon/IconCart.jpg"
+                alt=""
+                width={22}
+                height={22}
+                className={styles.cartIcon}
+              />
+            </button>
+          </div>
         </div>
 
         {error ? <p className={styles.error}>{error}</p> : null}

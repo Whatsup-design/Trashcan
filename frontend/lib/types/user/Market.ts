@@ -27,3 +27,8 @@ export type UserMarketApiRow = {
   remainingThisMonth?: number;
   canRedeem?: boolean;
 };
+
+export type UserMarketApiResponse = {
+  tokens: number;
+  products: UserMarketApiRow[];
+};

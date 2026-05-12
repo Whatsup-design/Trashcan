@@ -14,6 +14,10 @@ export async function UserMarketController (req: Request, res: Response) {
     return res.json(marketData);
   } catch (error) {
     console.error("Error fetching market data:", error);
+    if (error instanceof Error && error.message === "User market profile not found") {
+      return res.status(404).json({ message: "User market profile not found" });
+    }
+
     return res.status(500).json({ message: "Failed to fetch market data" });
   }
 }

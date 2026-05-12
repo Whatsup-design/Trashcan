@@ -16,6 +16,8 @@ type Props = {
   desktopColumns?: number;
   desktopGap?: number;
   avatarWidth?: number;
+  featuredFirstId?: string;
+  variant?: "green" | "blue";
 };
 
 export default function PeoplePreview({
@@ -24,7 +26,16 @@ export default function PeoplePreview({
   desktopColumns = 4,
   desktopGap = 2,
   avatarWidth = 218,
+  featuredFirstId,
+  variant = "green",
 }: Props) {
+  const featuredPerson = featuredFirstId
+    ? people.find((person) => person.id === featuredFirstId)
+    : undefined;
+  const gridPeople = featuredPerson
+    ? people.filter((person) => person.id !== featuredPerson.id)
+    : people;
+
   return (
     <section
       className={styles.peopleStage}
@@ -36,12 +47,24 @@ export default function PeoplePreview({
         } as CSSProperties
       }
     >
-      <div className={styles.sectionHeader}>
+      <div className={styles.sectionHeader} data-variant={variant}>
         <h2 className={styles.sectionTitle}>{title}</h2>
       </div>
 
+      {featuredPerson && (
+        <div className={styles.featuredRow}>
+          <div className={styles.personStage}>
+            <PersonAvatar
+              src={featuredPerson.image}
+              alt={featuredPerson.alt}
+              bgColor={featuredPerson.bgColor}
+            />
+          </div>
+        </div>
+      )}
+
       <div className={styles.peopleGrid}>
-        {people.map((person) => (
+        {gridPeople.map((person) => (
           <div key={person.id} className={styles.personStage}>
             <PersonAvatar
               src={person.image}

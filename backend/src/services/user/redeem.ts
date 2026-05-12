@@ -26,6 +26,12 @@ type RedeemRow = {
   Redeem_Status?: string | null;
 };
 
+type RedeemUserRow = {
+  Student_ID: number;
+  Student_Tokens: number | null;
+  updated_at: string | null;
+};
+
 function getCurrentMonthRange() {
   const now = new Date();
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
@@ -87,6 +93,65 @@ export function buildRedeemAvailability(productLimit: number, redeemedThisMonth:
     remainingThisMonth,
     canRedeem: remainingThisMonth > 0,
   };
+}
+
+async function subtractUserTokensWithRetry(params: {
+  studentId: number;
+  tokenCost: number;
+  maxRetries?: number;
+}) {
+  const maxRetries = params.maxRetries ?? 3;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+    const { data: userData, error: userError } = await supabase
+      .from("User")
+      .select("Student_ID, Student_Tokens, updated_at")
+      .eq("Student_ID", params.studentId)
+      .maybeSingle();
+
+    if (userError) {
+      throw new Error(`Failed to fetch user token balance: ${userError.message}`);
+    }
+
+    const user = userData as RedeemUserRow | null;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const currentTokens = user.Student_Tokens ?? 0;
+
+    if (currentTokens < params.tokenCost) {
+      throw new Error("Not enough tokens");
+    }
+
+    const nextTokens = currentTokens - params.tokenCost;
+    let updateQuery = supabase
+      .from("User")
+      .update({ Student_Tokens: nextTokens })
+      .eq("Student_ID", params.studentId);
+
+    if (user.updated_at) {
+      updateQuery = updateQuery.eq("updated_at", user.updated_at);
+    }
+
+    const { data: updatedUser, error: updateError } = await updateQuery
+      .select("Student_Tokens")
+      .maybeSingle();
+
+    if (updateError) {
+      throw new Error(`Failed to update user token balance: ${updateError.message}`);
+    }
+
+    if (updatedUser) {
+      return {
+        previousTokens: currentTokens,
+        currentTokens: Number((updatedUser as Pick<RedeemUserRow, "Student_Tokens">).Student_Tokens ?? nextTokens),
+      };
+    }
+  }
+
+  throw new Error("RETRY_CONFLICT");
 }
 
 export async function getUserRedeem(studentId: number) {
@@ -178,6 +243,12 @@ export async function putUserRedeem(studentId: number, productId: number) {
     throw new Error("Redeem limit reached");
   }
 
+  const tokenCost = productRow.Product_Price ?? 0;
+  const tokenUpdate = await subtractUserTokensWithRetry({
+    studentId,
+    tokenCost,
+  });
+
   const payload = {
     Reedem_Date: new Date().toISOString(),
     Student_ID: studentId,
@@ -220,6 +291,9 @@ export async function putUserRedeem(studentId: number, productId: number) {
       image: productRow.Product_Img,
       imageUrl: productRow.Product_ImgUrl,
     },
+    currentTokens: tokenUpdate.currentTokens,
+    previousTokens: tokenUpdate.previousTokens,
+    tokensSpent: tokenCost,
   };
 }
 

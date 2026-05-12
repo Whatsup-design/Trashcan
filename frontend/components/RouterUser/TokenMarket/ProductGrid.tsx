@@ -9,9 +9,14 @@ import styles from "./ProductGrid.module.css";
 
 type Props = {
   products: UserMarketProduct[];
+  onTokensChange?: (tokens: number) => void;
 };
 
-export default function ProductGrid({ products }: Props) {
+type RedeemResponse = {
+  currentTokens?: number;
+};
+
+export default function ProductGrid({ products, onTokensChange }: Props) {
   const [visibleProducts, setVisibleProducts] = useState(products);
 
   useEffect(() => {
@@ -20,7 +25,14 @@ export default function ProductGrid({ products }: Props) {
 
   async function handleRedeem(id: string): Promise<void> {
     try {
-      await apiPut("/user/Redeem", { productId: Number(id) });
+      const response = (await apiPut("/user/Redeem", {
+        productId: Number(id),
+      })) as RedeemResponse;
+
+      if (typeof response.currentTokens === "number") {
+        onTokensChange?.(response.currentTokens);
+      }
+
       window.dispatchEvent(new Event("notifications:refresh"));
       setVisibleProducts((currentProducts) =>
         currentProducts.map((product) => {

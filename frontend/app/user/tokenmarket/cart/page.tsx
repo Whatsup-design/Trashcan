@@ -88,7 +88,7 @@ export default function TokenMarketCartPage() {
     filter === "ALL" ? items : items.filter((item) => item.status === filter);
 
   useEffect(() => {
-    apiFetch("/user/Redeem")
+    apiFetch("/user/cart")
       .then((res: unknown) => {
         setItems(mapRedeemRows((res as UserRedeemApiRow[] | null) ?? []));
         setError("");
@@ -97,7 +97,7 @@ export default function TokenMarketCartPage() {
         logDevError("user-token-market-cart", err);
 
         if (err instanceof ApiError) {
-          setError(err.message);
+          setError("Failed to load redeemed rewards. Please try again.");
           return;
         }
 

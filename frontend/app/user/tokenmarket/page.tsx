@@ -124,7 +124,9 @@ export default function MarketPage() {
         </div>
 
         {error ? <p className={styles.error}>{error}</p> : null}
-        {!error ? <ProductGrid products={products} /> : null}
+        {!error ? (
+          <ProductGrid products={products} onTokensChange={setTokens} />
+        ) : null}
       </div>
     </div>
   );

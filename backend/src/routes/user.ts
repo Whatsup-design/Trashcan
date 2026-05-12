@@ -6,6 +6,7 @@ import { UserDashboardController } from '../controller/user/dashboard.js';
 import { UserLeaderboardController } from '../controller/user/Leaderboard.js';
 import { UserBannerController } from '../controller/user/banner.js';
 import { UserMarketController } from '../controller/user/market.js';
+import { UserCartController } from '../controller/user/cart.js';
 import { UserNotificationController } from '../controller/user/notification.js';
 import { UserAnnouncementController } from '../controller/user/announcement.js';
 
@@ -29,6 +30,7 @@ router.get('/Leaderboard', UserLeaderboardController);
 router.get('/Banner', UserBannerController);
 
 router.get('/Market', UserMarketController);
+router.get('/cart', UserCartController);
 
 router.get('/Notifications', UserNotificationController);
 router.get('/Announcement', UserAnnouncementController);

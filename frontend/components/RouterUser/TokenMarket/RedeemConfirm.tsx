@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { ApiError } from "@/lib/api";
 import type { UserMarketProduct } from "@/lib/types/user/Market";
 import styles from "./RedeemConfirm.module.css";
 
@@ -24,8 +25,12 @@ export default function RedeemConfirm({ product, onConfirm, onClose }: Props) {
     try {
       await onConfirm(product.id);
       setStage("success");
-    } catch {
-      setError("Could not redeem this reward. Please try again.");
+    } catch (err) {
+      if (err instanceof ApiError && err.message === "Not enough tokens") {
+        setError("Not enough tokens");
+      } else {
+        setError("Could not redeem this reward. Please try again.");
+      }
       setStage("confirm");
     }
   }

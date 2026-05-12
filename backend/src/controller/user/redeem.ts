@@ -88,6 +88,14 @@ export async function putUserRedeemController(req: Request, res: Response){
             return res.status(409).json({message : "Redeem limit reached"})
         }
 
+        if (error instanceof Error && error.message === "Not enough tokens"){
+            return res.status(409).json({message : "Not enough tokens"})
+        }
+
+        if (error instanceof Error && error.message === "RETRY_CONFLICT"){
+            return res.status(409).json({message : "Please try again"})
+        }
+
         return res.status(500).json({message : "Failed to create redeem"})
     }
 }

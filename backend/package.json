@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@line/bot-sdk": "^11.0.0",
     "@supabase/supabase-js": "^2.100.1",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",

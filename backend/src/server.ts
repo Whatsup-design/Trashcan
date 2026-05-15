@@ -5,14 +5,15 @@ import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
 import authRoutes from './routes/auth.js';
 import deviceRoutes from "./routes/device.js";
-import lineWebhookRoutes from "./routes/line.webhook.js";
+import lineTestRoutes from "./routes/line.test.routes.js";
+import lineWebhookRoutes from "./routes/line.webhook.routes.js";
 import { errorMiddleware, notFoundMiddleware } from "./middleware/errorMiddleware.js";
 
 const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(cors());
-app.use("/webhook/line", lineWebhookRoutes);
+app.use("/line/webhook", lineWebhookRoutes);
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
@@ -23,6 +24,7 @@ app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use("/device", deviceRoutes);
+app.use("/line", lineTestRoutes);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 

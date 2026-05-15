@@ -7,11 +7,13 @@ type LineWebhookBody = {
 };
 
 function logGroupIdForSetup(event: webhook.Event) {
-  if (event.type !== "message" || event.source?.type !== "group") {
+  const source = event.source;
+
+  if (event.type !== "message" || !source || source.type !== "group") {
     return;
   }
 
-  console.log("[LINE] groupId for approval setup:", event.source.groupId);
+  console.log("[LINE] groupId for approval setup:", source.groupId);
 }
 
 export async function lineWebhookController(req: Request, res: Response) {
@@ -21,8 +23,9 @@ export async function lineWebhookController(req: Request, res: Response) {
   try {
     await Promise.all(
       events.map(async (event) => {
-        console.log("[LINE] incoming event:", event.type);
-        logGroupIdForSetup(event);
+        if (event.type === "message") {
+          logGroupIdForSetup(event);
+        }
 
         if (event.type === "postback") {
           await handleLinePostback(event);

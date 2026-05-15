@@ -5,7 +5,6 @@ import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
 import authRoutes from './routes/auth.js';
 import deviceRoutes from "./routes/device.js";
-import lineTestRoutes from "./routes/line.test.routes.js";
 import lineWebhookRoutes from "./routes/line.webhook.routes.js";
 import { errorMiddleware, notFoundMiddleware } from "./middleware/errorMiddleware.js";
 
@@ -24,7 +23,6 @@ app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use("/device", deviceRoutes);
-app.use("/line", lineTestRoutes);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 

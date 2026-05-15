@@ -56,7 +56,7 @@ export async function getUserRedeemController(req: Request, res: Response){
         
     }
 
-    return res.status(500).json({message : "Failed to fetch redeeem"})
+    return res.status(500).json({message : "Failed to fetch redeem"})
 }
 
 

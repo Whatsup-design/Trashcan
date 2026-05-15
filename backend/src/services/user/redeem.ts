@@ -1,5 +1,6 @@
 import { supabase } from "../../lib/supabase.js";
 import { createNotification } from "../shared/notification.js";
+import { sendRedeemApprovalCard } from "../line/sendRedeemApprovalCard.js";
 
 const REDEEM_TABLE = "Redeem";
 export const REDEEM_STATUSES = ["PENDING", "USED", "CANCELLED", "EXPIRED"] as const;
@@ -17,8 +18,8 @@ type ProductRow = {
 };
 
 type RedeemRow = {
-  Reedeem_ID: number;
-  Reedem_Date: string;
+  Redeem_ID: number;
+  Redeem_Date: string;
   Student_ID: number;
   Product_ID: number;
   Product_Img?: string | null;
@@ -30,6 +31,12 @@ type RedeemUserRow = {
   Student_ID: number;
   Student_Tokens: number | null;
   updated_at: string | null;
+};
+
+type RedeemApprovalUserRow = {
+  Student_ID: number;
+  Student_FullNameE: string | null;
+  Student_NickNameE: string | null;
 };
 
 function getCurrentMonthRange() {
@@ -63,6 +70,56 @@ async function createRedeemNotificationSafe(params: {
   }
 }
 
+function getRedeemApprovalDisplayName(user: RedeemApprovalUserRow) {
+  return (
+    user.Student_FullNameE?.trim() ||
+    user.Student_NickNameE?.trim() ||
+    `Student ${user.Student_ID}`
+  );
+}
+
+async function getRedeemApprovalUser(studentId: number) {
+  const { data, error } = await supabase
+    .from("User")
+    .select("Student_ID, Student_FullNameE, Student_NickNameE")
+    .eq("Student_ID", studentId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch redeem user data: ${error.message}`);
+  }
+
+  const user = data as RedeemApprovalUserRow | null;
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
+}
+
+async function sendRedeemApprovalCardSafe(params: {
+  requestId: string;
+  studentId: number;
+  studentName: string;
+  productName: string;
+  price: number;
+  imageUrl?: string | null;
+}) {
+  try {
+    await sendRedeemApprovalCard({
+      requestId: params.requestId,
+      studentId: params.studentId,
+      name: params.studentName,
+      productName: params.productName,
+      price: params.price,
+      ...(params.imageUrl !== undefined ? { imageUrl: params.imageUrl } : {}),
+    });
+  } catch (error) {
+    console.error("[LINE] failed to send redeem approval card:", error);
+  }
+}
+
 export async function countActiveMonthlyRedeems(
   studentId: number,
   productId: number
@@ -74,8 +131,8 @@ export async function countActiveMonthlyRedeems(
     .eq("Student_ID", studentId)
     .eq("Product_ID", productId)
     .in("Redeem_Status", ["PENDING", "USED"])
-    .gte("Reedem_Date", start)
-    .lt("Reedem_Date", end);
+    .gte("Redeem_Date", start)
+    .lt("Redeem_Date", end);
 
   if (error) {
     throw new Error(`Failed to count monthly redeems: ${error.message}`);
@@ -159,7 +216,7 @@ export async function getUserRedeem(studentId: number) {
     .from(REDEEM_TABLE)
     .select("*")
     .eq("Student_ID", studentId)
-    .order("Reedem_Date", { ascending: false });
+    .order("Redeem_Date", { ascending: false });
 
   if (error) {
     throw new Error(`Failed to fetch redeem data: ${error.message}`);
@@ -197,8 +254,8 @@ export async function getUserRedeem(studentId: number) {
     const product = productMap.get(redeem.Product_ID);
 
     return {
-      Reedeem_ID: redeem.Reedeem_ID,
-      Reedem_Date: redeem.Reedem_Date,
+      Redeem_ID: redeem.Redeem_ID,
+      Redeem_Date: redeem.Redeem_Date,
       Student_ID: redeem.Student_ID,
       Product_ID: redeem.Product_ID,
       Product_name: product?.Product_name ?? "Unknown reward",
@@ -212,6 +269,7 @@ export async function getUserRedeem(studentId: number) {
 }
 
 export async function putUserRedeem(studentId: number, productId: number) {
+  const approvalUser = await getRedeemApprovalUser(studentId);
   const { data: product, error: productError } = await supabase
     .from("Product")
     .select(
@@ -250,7 +308,7 @@ export async function putUserRedeem(studentId: number, productId: number) {
   });
 
   const payload = {
-    Reedem_Date: new Date().toISOString(),
+    Redeem_Date: new Date().toISOString(),
     Student_ID: studentId,
     Product_ID: productRow.Product_ID,
     Product_Img: productRow.Product_Img,
@@ -275,10 +333,19 @@ export async function putUserRedeem(studentId: number, productId: number) {
     message: `${productRow.Product_name ?? "Your reward"} has been added to your redeem cart.`,
     metadata: {
       productId: productRow.Product_ID,
-      redeemId: (data as RedeemRow).Reedeem_ID,
+      redeemId: (data as RedeemRow).Redeem_ID,
       productName: productRow.Product_name,
       tokenCost: productRow.Product_Price,
     },
+  });
+
+  await sendRedeemApprovalCardSafe({
+    requestId: String((data as RedeemRow).Redeem_ID),
+    studentId,
+    studentName: getRedeemApprovalDisplayName(approvalUser),
+    productName: productRow.Product_name ?? "Unknown reward",
+    price: productRow.Product_Price ?? 0,
+    imageUrl: productRow.Product_ImgUrl,
   });
 
   return {
@@ -302,7 +369,7 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
   const { data, error } = await supabase
     .from(REDEEM_TABLE)
     .delete()
-    .eq("Reedeem_ID", redeemId)
+    .eq("Redeem_ID", redeemId)
     .eq("Student_ID", studentId)
     .select()
     .maybeSingle();
@@ -343,7 +410,7 @@ export async function patchUserRedeemStatus(
   const { data, error } = await supabase
     .from(REDEEM_TABLE)
     .update({ Redeem_Status: status })
-    .eq("Reedeem_ID", redeemId)
+    .eq("Redeem_ID", redeemId)
     .eq("Student_ID", studentId)
     .select()
     .maybeSingle();

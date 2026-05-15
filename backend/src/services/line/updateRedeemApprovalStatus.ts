@@ -5,7 +5,7 @@ const PENDING_STATUS = "PENDING";
 const APPROVED_STATUS = "USED";
 
 type RedeemStatusRow = {
-  Reedeem_ID: number;
+  Redeem_ID: number;
   Redeem_Status: string | null;
 };
 
@@ -33,8 +33,8 @@ export async function approveRedeemFromLine(
 
   const { data: existingRedeem, error: readError } = await supabase
     .from(REDEEM_TABLE)
-    .select("Reedeem_ID, Redeem_Status")
-    .eq("Reedeem_ID", redeemId)
+    .select("Redeem_ID, Redeem_Status")
+    .eq("Redeem_ID", redeemId)
     .maybeSingle();
 
   if (readError) {
@@ -59,9 +59,9 @@ export async function approveRedeemFromLine(
   const { data: updatedRedeem, error: updateError } = await supabase
     .from(REDEEM_TABLE)
     .update({ Redeem_Status: APPROVED_STATUS })
-    .eq("Reedeem_ID", redeemId)
+    .eq("Redeem_ID", redeemId)
     .eq("Redeem_Status", PENDING_STATUS)
-    .select("Reedeem_ID")
+    .select("Redeem_ID")
     .maybeSingle();
 
   if (updateError) {

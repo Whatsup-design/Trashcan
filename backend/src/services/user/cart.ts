@@ -3,8 +3,8 @@ import { supabase } from "../../lib/supabase.js";
 const REDEEM_TABLE = "Redeem";
 
 type CartRedeemRow = {
-  Reedeem_ID: number;
-  Reedem_Date: string;
+  Redeem_ID: number;
+  Redeem_Date: string;
   Student_ID: number;
   Product_ID: number;
   Product_Img?: string | null;
@@ -28,8 +28,8 @@ function mapCartRows(
     const product = productMap.get(redeem.Product_ID);
 
     return {
-      Reedeem_ID: redeem.Reedeem_ID,
-      Reedem_Date: redeem.Reedem_Date,
+      Redeem_ID: redeem.Redeem_ID,
+      Redeem_Date: redeem.Redeem_Date,
       Student_ID: redeem.Student_ID,
       Product_ID: redeem.Product_ID,
       Product_name: product?.Product_name ?? "Unknown reward",
@@ -47,7 +47,7 @@ export async function getUserCart(studentId: number) {
     .from(REDEEM_TABLE)
     .select("*")
     .eq("Student_ID", studentId)
-    .order("Reedem_Date", { ascending: false });
+    .order("Redeem_Date", { ascending: false });
 
   if (error) {
     throw new Error(`Failed to fetch cart data: ${error.message}`);

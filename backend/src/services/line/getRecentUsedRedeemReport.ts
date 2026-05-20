@@ -24,6 +24,16 @@ type ProductRow = {
   Product_Price: number | null;
 };
 
+export type RecentUsedRedeemReportItem = {
+  redeemId: number;
+  redeemDate: string;
+  studentId: number | null;
+  studentName: string;
+  productId: number | null;
+  productName: string;
+  tokenPrice: number;
+};
+
 function getReportStartDate() {
   const start = new Date();
   start.setUTCDate(start.getUTCDate() - REPORT_DAYS);
@@ -38,7 +48,7 @@ function formatName(user: UserRow | undefined, studentId: number) {
   );
 }
 
-function formatDate(value: string) {
+export function formatRedeemReportDate(value: string) {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
@@ -51,19 +61,13 @@ function formatDate(value: string) {
   });
 }
 
-function pad(value: string, length: number) {
-  if (value.length <= length) {
-    return value.padEnd(length, " ");
-  }
-
-  return `${value.slice(0, Math.max(length - 1, 0))}.`;
-}
-
 function isValidId(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-export async function getRecentUsedRedeemReport() {
+export async function getRecentUsedRedeemReport(): Promise<
+  RecentUsedRedeemReportItem[]
+> {
   const { data: redeemRows, error } = await supabase
     .from(REDEEM_TABLE)
     .select("Redeem_ID, Redeem_Date, Student_ID, Product_ID")
@@ -79,7 +83,7 @@ export async function getRecentUsedRedeemReport() {
   const redeems = (redeemRows as RedeemReportRow[] | null) ?? [];
 
   if (redeems.length === 0) {
-    return "No used redeem records found in the last 14 days.";
+    return [];
   }
 
   const studentIds = Array.from(
@@ -125,24 +129,23 @@ export async function getRecentUsedRedeemReport() {
     ])
   );
 
-  const lines = redeems.map((redeem) => {
+  return redeems.map((redeem) => {
     const product = isValidId(redeem.Product_ID)
       ? productMap.get(redeem.Product_ID)
       : undefined;
     const name = isValidId(redeem.Student_ID)
       ? formatName(userMap.get(redeem.Student_ID), redeem.Student_ID)
       : "Unknown";
-    const date = formatDate(redeem.Redeem_Date);
-    const price = String(product?.Product_Price ?? 0);
+    const productName = product?.Product_name?.trim() || "Unknown reward";
 
-    return `${pad(name, 12)} ${pad(date, 7)} ${price}`;
+    return {
+      redeemId: redeem.Redeem_ID,
+      redeemDate: redeem.Redeem_Date,
+      studentId: redeem.Student_ID,
+      studentName: name,
+      productId: redeem.Product_ID,
+      productName,
+      tokenPrice: product?.Product_Price ?? 0,
+    };
   });
-
-  return [
-    "Used redeems in last 14 days",
-    "----------------------------",
-    `${pad("Name", 12)} ${pad("Time", 7)} Price`,
-    "----------------------------",
-    ...lines,
-  ].join("\n");
 }

@@ -3,7 +3,7 @@ import { createNotification } from "../shared/notification.js";
 import { sendRedeemApprovalCard } from "../line/sendRedeemApprovalCard.js";
 
 const REDEEM_TABLE = "Redeem";
-export const REDEEM_STATUSES = ["PENDING", "USED", "CANCELLED", "EXPIRED"] as const;
+export const REDEEM_STATUSES = ["USED", "CANCELLED", "EXPIRED"] as const;
 
 export type RedeemStatus = (typeof REDEEM_STATUSES)[number];
 
@@ -130,7 +130,7 @@ export async function countActiveMonthlyRedeems(
     .select("*", { count: "exact", head: true })
     .eq("Student_ID", studentId)
     .eq("Product_ID", productId)
-    .in("Redeem_Status", ["PENDING", "USED"])
+    .eq("Redeem_Status", "USED")
     .gte("Redeem_Date", start)
     .lt("Redeem_Date", end);
 
@@ -229,8 +229,27 @@ export async function getUserRedeem(studentId: number) {
   }
 
   const productIds = Array.from(
-    new Set(redeems.map((redeem) => redeem.Product_ID))
+    new Set(
+      redeems
+        .map((redeem) => redeem.Product_ID)
+        .filter((productId) => Number.isFinite(productId) && productId > 0)
+    )
   );
+
+  if (productIds.length === 0) {
+    return redeems.map((redeem) => ({
+      Redeem_ID: redeem.Redeem_ID,
+      Redeem_Date: redeem.Redeem_Date,
+      Student_ID: redeem.Student_ID,
+      Product_ID: redeem.Product_ID,
+      Product_name: "Unknown reward",
+      Product_Description: "",
+      Product_Price: 0,
+      Product_Img: redeem.Product_Img ?? null,
+      Product_ImgUrl: redeem.Product_ImgUrl ?? null,
+      Redeem_Status: redeem.Redeem_Status ?? "USED",
+    }));
+  }
 
   const { data: productRows, error: productError } = await supabase
     .from("Product")
@@ -263,7 +282,7 @@ export async function getUserRedeem(studentId: number) {
       Product_Price: product?.Product_Price ?? 0,
       Product_Img: redeem.Product_Img ?? product?.Product_Img ?? null,
       Product_ImgUrl: redeem.Product_ImgUrl ?? product?.Product_ImgUrl ?? null,
-      Redeem_Status: redeem.Redeem_Status ?? "PENDING",
+      Redeem_Status: redeem.Redeem_Status ?? "USED",
     };
   });
 }
@@ -313,7 +332,7 @@ export async function putUserRedeem(studentId: number, productId: number) {
     Product_ID: productRow.Product_ID,
     Product_Img: productRow.Product_Img,
     Product_ImgUrl: productRow.Product_ImgUrl,
-    Redeem_Status: "PENDING",
+    Redeem_Status: "USED",
   };
 
   const { data, error } = await supabase
@@ -330,7 +349,7 @@ export async function putUserRedeem(studentId: number, productId: number) {
     studentId,
     type: "TOKEN_EXCHANGED",
     title: "Reward redeemed",
-    message: `${productRow.Product_name ?? "Your reward"} has been added to your redeem cart.`,
+    message: `${productRow.Product_name ?? "Your reward"} has been redeemed successfully.`,
     metadata: {
       productId: productRow.Product_ID,
       redeemId: (data as RedeemRow).Redeem_ID,
@@ -382,6 +401,9 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
     throw new Error("Redeem not found");
   }
 
+  const deletedRedeem = data as RedeemRow;
+  const status = deletedRedeem.Redeem_Status;
+
   if (status === "USED" || status === "EXPIRED") {
     await createRedeemNotificationSafe({
       studentId,
@@ -394,7 +416,7 @@ export async function deleteUserRedeem(studentId: number, redeemId: number) {
       metadata: {
         redeemId,
         status,
-        productId: (data as RedeemRow).Product_ID,
+        productId: deletedRedeem.Product_ID,
       },
     });
   }

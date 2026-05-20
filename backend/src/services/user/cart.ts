@@ -37,7 +37,7 @@ function mapCartRows(
       Product_Price: product?.Product_Price ?? 0,
       Product_Img: redeem.Product_Img ?? null,
       Product_ImgUrl: redeem.Product_ImgUrl ?? product?.Product_ImgUrl ?? null,
-      Redeem_Status: redeem.Redeem_Status ?? "PENDING",
+      Redeem_Status: redeem.Redeem_Status ?? "USED",
     };
   });
 }

@@ -7,6 +7,15 @@ type LineWebhookBody = {
   events?: webhook.Event[];
 };
 
+function isLineWebhookBody(value: unknown): value is LineWebhookBody {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const body = value as LineWebhookBody;
+  return body.events === undefined || Array.isArray(body.events);
+}
+
 function logGroupIdForSetup(event: webhook.Event) {
   const source = event.source;
 
@@ -17,23 +26,32 @@ function logGroupIdForSetup(event: webhook.Event) {
   console.log("[LINE] groupId for approval setup:", source.groupId);
 }
 
+async function handleLineEvent(event: webhook.Event) {
+  if (event.type === "message") {
+    logGroupIdForSetup(event);
+    await handleLineMessage(event);
+    return;
+  }
+
+  if (event.type === "postback") {
+    await handleLinePostback(event);
+    return;
+  }
+
+  console.log("[LINE] ignored event type:", event.type);
+}
+
 export async function lineWebhookController(req: Request, res: Response) {
-  const body = req.body as LineWebhookBody;
+  if (!isLineWebhookBody(req.body)) {
+    console.warn("[LINE] invalid webhook body");
+    return res.status(400).json({ message: "Invalid LINE webhook body" });
+  }
+
+  const body = req.body;
   const events = body.events ?? [];
 
   try {
-    await Promise.all(
-      events.map(async (event) => {
-        if (event.type === "message") {
-          logGroupIdForSetup(event);
-          await handleLineMessage(event);
-        }
-
-        if (event.type === "postback") {
-          await handleLinePostback(event);
-        }
-      })
-    );
+    await Promise.all(events.map(handleLineEvent));
 
     return res.status(200).json({ ok: true });
   } catch (error) {

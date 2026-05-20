@@ -8,8 +8,8 @@ const REPORT_LIMIT = 25;
 type RedeemReportRow = {
   Redeem_ID: number;
   Redeem_Date: string;
-  Student_ID: number;
-  Product_ID: number;
+  Student_ID: number | null;
+  Product_ID: number | null;
 };
 
 type UserRow = {
@@ -59,6 +59,10 @@ function pad(value: string, length: number) {
   return `${value.slice(0, Math.max(length - 1, 0))}.`;
 }
 
+function isValidId(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
 export async function getRecentUsedRedeemReport() {
   const { data: redeemRows, error } = await supabase
     .from(REDEEM_TABLE)
@@ -78,20 +82,30 @@ export async function getRecentUsedRedeemReport() {
     return "No used redeem records found in the last 14 days.";
   }
 
-  const studentIds = Array.from(new Set(redeems.map((row) => row.Student_ID)));
-  const productIds = Array.from(new Set(redeems.map((row) => row.Product_ID)));
+  const studentIds = Array.from(
+    new Set(redeems.map((row) => row.Student_ID).filter(isValidId))
+  );
+  const productIds = Array.from(
+    new Set(redeems.map((row) => row.Product_ID).filter(isValidId))
+  );
+
+  const userQuery =
+    studentIds.length > 0
+      ? supabase
+          .from("User")
+          .select("Student_ID, Student_FullNameE, Student_NickNameE")
+          .in("Student_ID", studentIds)
+      : Promise.resolve({ data: [], error: null });
+  const productQuery =
+    productIds.length > 0
+      ? supabase
+          .from("Product")
+          .select("Product_ID, Product_name, Product_Price")
+          .in("Product_ID", productIds)
+      : Promise.resolve({ data: [], error: null });
 
   const [{ data: userRows, error: userError }, { data: productRows, error: productError }] =
-    await Promise.all([
-      supabase
-        .from("User")
-        .select("Student_ID, Student_FullNameE, Student_NickNameE")
-        .in("Student_ID", studentIds),
-      supabase
-        .from("Product")
-        .select("Product_ID, Product_name, Product_Price")
-        .in("Product_ID", productIds),
-    ]);
+    await Promise.all([userQuery, productQuery]);
 
   if (userError) {
     throw new Error(`Failed to fetch LINE redeem users: ${userError.message}`);
@@ -112,8 +126,12 @@ export async function getRecentUsedRedeemReport() {
   );
 
   const lines = redeems.map((redeem) => {
-    const product = productMap.get(redeem.Product_ID);
-    const name = formatName(userMap.get(redeem.Student_ID), redeem.Student_ID);
+    const product = isValidId(redeem.Product_ID)
+      ? productMap.get(redeem.Product_ID)
+      : undefined;
+    const name = isValidId(redeem.Student_ID)
+      ? formatName(userMap.get(redeem.Student_ID), redeem.Student_ID)
+      : "Unknown";
     const date = formatDate(redeem.Redeem_Date);
     const price = String(product?.Product_Price ?? 0);
 

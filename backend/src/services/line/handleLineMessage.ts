@@ -1,6 +1,7 @@
 import type { webhook } from "@line/bot-sdk";
 import { lineClient } from "../../lib/line.js";
 import { getRecentUsedRedeemReport } from "./getRecentUsedRedeemReport.js";
+import { checkLineCommandRateLimit } from "./lineCommandRateLimit.js";
 
 function isAllRedeemCommand(text: string) {
   return text.toLowerCase().includes("allre");
@@ -31,6 +32,16 @@ export async function handleLineMessage(event: webhook.MessageEvent) {
   const text = event.message.text.trim();
 
   if (!isAllRedeemCommand(text)) {
+    return;
+  }
+
+  const rateLimit = checkLineCommandRateLimit(event);
+
+  if (!rateLimit.allowed) {
+    await replyText(
+      event.replyToken,
+      `Please wait ${rateLimit.retryAfterSeconds} seconds before requesting AllRe again.`
+    );
     return;
   }
 

@@ -47,16 +47,16 @@ export function buildRedeemApprovalCard(
       contents: [
         {
           type: "text",
-          text: "Redeem Request",
+          text: "Redeemed",
           weight: "bold",
           size: "xl",
           color: "#0F172A",
         },
         {
           type: "text",
-          text: "Pending approval",
+          text: "New redeem activity",
           size: "sm",
-          color: "#F59E0B",
+          color: "#22C55E",
           weight: "bold",
         },
         {
@@ -66,39 +66,7 @@ export function buildRedeemApprovalCard(
         buildInfoRow("Product", params.productName),
         buildInfoRow("Student ID", String(params.studentId)),
         buildInfoRow("Name", params.name),
-        buildInfoRow("Price", `${params.price} tokens`),
-      ],
-    },
-    footer: {
-      type: "box",
-      layout: "vertical",
-      spacing: "sm",
-      contents: [
-        {
-          type: "button",
-          style: "primary",
-          color: "#22C55E",
-          action: {
-            type: "postback",
-            label: "Approve",
-            data: `action=approve_redeem&requestId=${encodeURIComponent(
-              params.requestId
-            )}`,
-            displayText: "Approve redeem request",
-          },
-        },
-        {
-          type: "button",
-          style: "link",
-          action: {
-            type: "postback",
-            label: "Cancel",
-            data: `action=cancel_redeem&requestId=${encodeURIComponent(
-              params.requestId
-            )}`,
-            displayText: "Cancel redeem request",
-          },
-        },
+        buildInfoRow("Tokens", `${params.price}`),
       ],
     },
   };
@@ -115,7 +83,7 @@ export function buildRedeemApprovalCard(
 
   return {
     type: "flex",
-    altText: `Redeem request ${params.requestId}`,
+    altText: `Redeemed ${params.productName}`,
     contents,
   } as messagingApi.FlexMessage;
 }

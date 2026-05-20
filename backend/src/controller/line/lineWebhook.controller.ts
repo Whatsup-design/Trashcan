@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type { webhook } from "@line/bot-sdk";
+import { handleLineMessage } from "../../services/line/handleLineMessage.js";
 import { handleLinePostback } from "../../services/line/handleLinePostback.js";
 
 type LineWebhookBody = {
@@ -25,6 +26,7 @@ export async function lineWebhookController(req: Request, res: Response) {
       events.map(async (event) => {
         if (event.type === "message") {
           logGroupIdForSetup(event);
+          await handleLineMessage(event);
         }
 
         if (event.type === "postback") {

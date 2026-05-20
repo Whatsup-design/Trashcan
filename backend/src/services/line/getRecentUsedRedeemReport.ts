@@ -1,0 +1,130 @@
+import { supabase } from "../../lib/supabase.js";
+
+const REDEEM_TABLE = "Redeem";
+const USED_STATUS = "USED";
+const REPORT_DAYS = 14;
+const REPORT_LIMIT = 25;
+
+type RedeemReportRow = {
+  Redeem_ID: number;
+  Redeem_Date: string;
+  Student_ID: number;
+  Product_ID: number;
+};
+
+type UserRow = {
+  Student_ID: number;
+  Student_FullNameE: string | null;
+  Student_NickNameE: string | null;
+};
+
+type ProductRow = {
+  Product_ID: number;
+  Product_name: string | null;
+  Product_Price: number | null;
+};
+
+function getReportStartDate() {
+  const start = new Date();
+  start.setUTCDate(start.getUTCDate() - REPORT_DAYS);
+  return start.toISOString();
+}
+
+function formatName(user: UserRow | undefined, studentId: number) {
+  return (
+    user?.Student_NickNameE?.trim() ||
+    user?.Student_FullNameE?.trim() ||
+    `Student ${studentId}`
+  );
+}
+
+function formatDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+  });
+}
+
+function pad(value: string, length: number) {
+  if (value.length <= length) {
+    return value.padEnd(length, " ");
+  }
+
+  return `${value.slice(0, Math.max(length - 1, 0))}.`;
+}
+
+export async function getRecentUsedRedeemReport() {
+  const { data: redeemRows, error } = await supabase
+    .from(REDEEM_TABLE)
+    .select("Redeem_ID, Redeem_Date, Student_ID, Product_ID")
+    .eq("Redeem_Status", USED_STATUS)
+    .gte("Redeem_Date", getReportStartDate())
+    .order("Redeem_Date", { ascending: false })
+    .limit(REPORT_LIMIT);
+
+  if (error) {
+    throw new Error(`Failed to fetch LINE redeem report: ${error.message}`);
+  }
+
+  const redeems = (redeemRows as RedeemReportRow[] | null) ?? [];
+
+  if (redeems.length === 0) {
+    return "No used redeem records found in the last 14 days.";
+  }
+
+  const studentIds = Array.from(new Set(redeems.map((row) => row.Student_ID)));
+  const productIds = Array.from(new Set(redeems.map((row) => row.Product_ID)));
+
+  const [{ data: userRows, error: userError }, { data: productRows, error: productError }] =
+    await Promise.all([
+      supabase
+        .from("User")
+        .select("Student_ID, Student_FullNameE, Student_NickNameE")
+        .in("Student_ID", studentIds),
+      supabase
+        .from("Product")
+        .select("Product_ID, Product_name, Product_Price")
+        .in("Product_ID", productIds),
+    ]);
+
+  if (userError) {
+    throw new Error(`Failed to fetch LINE redeem users: ${userError.message}`);
+  }
+
+  if (productError) {
+    throw new Error(`Failed to fetch LINE redeem products: ${productError.message}`);
+  }
+
+  const userMap = new Map(
+    ((userRows as UserRow[] | null) ?? []).map((user) => [user.Student_ID, user])
+  );
+  const productMap = new Map(
+    ((productRows as ProductRow[] | null) ?? []).map((product) => [
+      product.Product_ID,
+      product,
+    ])
+  );
+
+  const lines = redeems.map((redeem) => {
+    const product = productMap.get(redeem.Product_ID);
+    const name = formatName(userMap.get(redeem.Student_ID), redeem.Student_ID);
+    const date = formatDate(redeem.Redeem_Date);
+    const price = String(product?.Product_Price ?? 0);
+
+    return `${pad(name, 12)} ${pad(date, 7)} ${price}`;
+  });
+
+  return [
+    "Used redeems in last 14 days",
+    "----------------------------",
+    `${pad("Name", 12)} ${pad("Time", 7)} Price`,
+    "----------------------------",
+    ...lines,
+  ].join("\n");
+}
